@@ -1,0 +1,21 @@
+.draggableItem {
+  position: absolute;
+  user-select: none;
+  transition: background-color 0.15s ease;
+  border-radius: 4px;
+  padding: 0px;
+  z-index: 1000;
+  border: 1px solid blue;
+}
+
+.dragging {
+  background-color: rgba(0, 120, 215, 0.3);
+  box-shadow: 0 0 0 1px rgba(0, 120, 215, 0.5);
+}
+.selected {
+  background-color: rgba(100, 150, 255, 0.3);
+  box-shadow: 0 0 0 1px #4a90e2;
+}
+.dragging {
+  z-index: 99 !important;
+}

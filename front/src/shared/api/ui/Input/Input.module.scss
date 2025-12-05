@@ -1,0 +1,95 @@
+.wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-bottom: 4px;
+
+  & > div {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.label {
+  font-size: 14px;
+  line-height: 20px;
+  color: white;
+}
+
+.sublabel {
+  font-size: 14px;
+  line-height: 20px;
+  color: white;
+}
+
+.limit {
+  font-size: 13px;
+  line-height: 16px;
+  color: white;
+}
+
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 20px;
+  color: black;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 20px;
+
+  &:disabled {
+    pointer-events: none;
+    opacity: 0.4;
+  }
+
+  &:focus {
+    border: 1px solid white;
+  }
+}
+
+.haveCross {
+  padding: 8px 32px 8px 12px;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.errorText {
+  height: 12px;
+  font-size: 12px !important;
+  line-height: 140% !important;
+}
+
+.error label {
+  color: red;
+}
+
+.error .input {
+  border-color: red;
+}
+
+.large {
+  & label {
+    font-size: 18px;
+  }
+
+  & .input {
+    padding: 16px 20px;
+    font-size: 20px;
+  }
+}
+
+.inputWrapper {
+  position: relative;
+}

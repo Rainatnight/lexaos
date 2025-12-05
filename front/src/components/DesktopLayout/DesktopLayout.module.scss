@@ -1,0 +1,33 @@
+.desktopWrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  padding: 2px;
+}
+
+.staticIcon {
+  position: absolute;
+}
+
+.draggableItem {
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+}
+
+.desktopWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  overflow: hidden;
+}
+
+.selection {
+  position: fixed;
+  border: 1px dashed #3399ff;
+  background-color: rgba(51, 153, 255, 0.25);
+  pointer-events: none;
+  z-index: 9999;
+}

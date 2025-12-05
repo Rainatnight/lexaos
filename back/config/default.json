@@ -1,0 +1,8 @@
+{
+  "port": 5000,
+  "clientPort": 3000,
+  "baseUrl": "http://localhost:5000",
+  "mongoUri": "",
+  "jwtSecret": "sdfg9ug4mq;o;sdf~ksdmfg!;flgmd",
+  "isDev": true
+}

@@ -1,0 +1,51 @@
+.item {
+  position: relative;
+}
+
+.submenu {
+  position: absolute;
+  top: -2px;
+  left: auto;
+  right: auto;
+  min-width: 150px;
+  max-width: 90vw;
+  list-style: none;
+  padding: 5px 0;
+  border: 1px solid var(--modal-border);
+  background: var(--modal-color);
+  z-index: var(--z-index-1);
+  overflow: auto;
+}
+
+.right {
+  left: 100%;
+}
+
+.left {
+  right: 100%;
+}
+
+.submenu li {
+  padding: 5px 15px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+
+  &:hover {
+    background: #414141;
+  }
+}
+
+.underline {
+  position: relative;
+  padding-bottom: 2px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    bottom: 0;
+    width: 95%;
+    border-bottom: 1px solid var(--modal-border);
+  }
+}

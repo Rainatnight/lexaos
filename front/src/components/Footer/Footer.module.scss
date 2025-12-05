@@ -1,0 +1,167 @@
+.footer {
+  height: 35px;
+  width: 100%;
+  border-top: 1px solid black;
+  background-color: var(--modal-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.left {
+  display: flex;
+  height: 100%;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+.mid {
+  height: 100%;
+  width: 100%;
+}
+
+.time {
+  padding: 0 10px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 12px;
+  &:hover {
+    background-color: var(--modal-border);
+  }
+}
+
+.hover {
+  height: 100%;
+  width: 50px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  & > svg {
+    width: 20px;
+    height: 20px;
+    fill: white;
+  }
+  &:hover {
+    background-color: var(--modal-border);
+    & > svg {
+      fill: rgb(0, 78, 129);
+    }
+  }
+}
+
+/* прошедшие дни */
+.pastDay {
+  color: rgba(255, 255, 255, 0.233) !important;
+}
+
+/* будущие дни */
+.futureDay {
+  color: rgba(255, 255, 255, 0.849) !important;
+}
+
+.calendarWrapper {
+  position: absolute;
+  right: 0px;
+  bottom: 35px;
+  z-index: 1;
+  animation: slideUp 0.6s ease forwards;
+
+  /* сам контейнер календаря (тёмный полупрозрачный фон) */
+  :global(.react-calendar) {
+    width: 320px;
+    background: rgba(10, 10, 10, 0.397);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+    padding: 8px;
+    backdrop-filter: blur(6px);
+  }
+
+  /* навигация (название месяца + стрелки) */
+  :global(.react-calendar__navigation) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  :global(.react-calendar__navigation button) {
+    background: transparent;
+    border: none;
+    color: #fff;
+    padding: 6px;
+    cursor: pointer;
+  }
+  :global(.react-calendar__navigation button:enabled:hover) {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+  }
+
+  /* дни недели */
+  :global(.react-calendar__month-view__weekdays__weekday) {
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* плитки с числами */
+  :global(.react-calendar__tile) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #fff;
+    height: 36px;
+    line-height: 36px;
+    border-radius: 6px;
+  }
+  :global(.react-calendar__tile:enabled:hover) {
+    background: rgba(255, 255, 255, 0.233);
+  }
+
+  /* "сегодня" (now) — легкое выделение */
+  :global(.react-calendar__tile--now) {
+    background: rgba(0, 120, 215, 0.18);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+
+  /* выбранная дата */
+  :global(.react-calendar__tile--active) {
+    background: rgba(0, 120, 215, 1) !important;
+    color: #fff !important;
+    box-shadow: 0 0 0 2px rgba(0, 120, 215, 0.15);
+  }
+  :global(.react-calendar__tile:enabled:focus),
+  :global(.react-calendar__tile:enabled:active) {
+    background: rgba(255, 255, 255, 0.233) !important;
+    color: inherit !important;
+    outline: none !important;
+  }
+}
+
+:global(.react-calendar__navigation button:enabled:hover),
+:global(.react-calendar__navigation button:enabled:focus),
+:global(.react-calendar__navigation button:enabled:active) {
+  background: rgba(255, 255, 255, 0.1) !important; /* лёгкий подсвет */
+  outline: none !important;
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

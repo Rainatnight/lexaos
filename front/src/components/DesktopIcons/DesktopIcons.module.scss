@@ -1,0 +1,30 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  z-index: 30;
+}
+
+.img {
+}
+
+.title {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.renameInput {
+  border: 1px solid #0078d4;
+  border-radius: 3px;
+  background: white;
+  color: black;
+  text-align: center;
+  font-size: 13px;
+  padding: 2px 2px;
+  outline: none;
+  width: 90%;
+}

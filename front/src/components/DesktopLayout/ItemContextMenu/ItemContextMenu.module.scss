@@ -1,0 +1,23 @@
+.contextMenu {
+  position: absolute;
+  background: #1e1e1e;
+  color: #fff;
+  border-radius: 8px;
+  min-width: 160px;
+  padding: 6px 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 4;
+  list-style: none;
+  border: 1px solid green;
+}
+
+.menuItem {
+  padding: 8px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.menuItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
