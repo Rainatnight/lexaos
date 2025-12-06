@@ -2,19 +2,20 @@
 
 import { useEffect, useRef } from "react";
 import cls from "./FolderModal.module.scss";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import {
   moveFolder,
-  moveItemToFolder,
   setActiveFolder,
   setFolderWindowState,
 } from "@/store/slices/desktopSlice";
 import interact from "interactjs";
 import { DesktopElement } from "@/components/DesktopIcons";
+import { moveItemToFolderThunk } from "@/store/slices/desktopThunks";
+import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const pos = useRef({ x: position.x, y: position.y });
   const allItems = useSelector((state: RootState) => state.desktop.items);
@@ -181,7 +182,9 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
         const draggedId = event.relatedTarget.dataset.id;
         if (!draggedId) return;
 
-        dispatch(moveItemToFolder({ itemId: draggedId, parentId: item.id }));
+        dispatch(
+          moveItemToFolderThunk({ itemId: draggedId, parentId: item.id })
+        );
       },
     });
 
@@ -246,7 +249,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
               event.clientY > folderRect.bottom;
 
             dispatch(
-              moveItemToFolder({
+              moveItemToFolderThunk({
                 itemId: child.id,
                 parentId: droppedOutside ? null : item.id,
                 x: droppedOutside ? event.clientX - 50 : 10,

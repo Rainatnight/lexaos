@@ -96,4 +96,31 @@ export class FoldersController {
       return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
     }
   }
+
+  async moveToFolder(req: Request, res: Response) {
+    try {
+      const { id, parentId, x, y } = req.body
+      const { userId } = req.user as any
+
+      // parentId может быть null (рабочий стол), так что не проверяем
+      if (!id) {
+        return res.status(400).json({ error: 'id is required' })
+      }
+
+      const updateData: any = { parentId }
+
+      if (typeof x === 'number') updateData.x = x
+      if (typeof y === 'number') updateData.y = y
+
+      const folder = await Folders.findOneAndUpdate({ _id: id, userId }, updateData, { new: true }).lean()
+
+      if (!folder) {
+        return res.status(404).json({ error: 'Folder not found' })
+      }
+
+      return res.json(folder)
+    } catch (error) {
+      return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
+    }
+  }
 }

@@ -12,6 +12,7 @@ export function createFoldersRouter(): Router {
   foldersRouter.post('/create', authStrict, foldersController.createFolder)
   foldersRouter.put('/rename', authStrict, foldersController.renameFolder)
   foldersRouter.put('/move', authStrict, foldersController.moveFolder)
+  foldersRouter.put('/move-to-folder', authStrict, foldersController.moveToFolder)
 
   return foldersRouter
 }

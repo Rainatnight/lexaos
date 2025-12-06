@@ -3,6 +3,7 @@ import {
   addItem,
   DesktopItem,
   moveItem,
+  moveItemToFolder,
   renameItem,
   setItems,
 } from "./desktopSlice";
@@ -101,6 +102,42 @@ export const moveItemThunk = createAsyncThunk(
       );
 
       return { id, x, y };
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data || "Move error");
+    }
+  }
+);
+
+export const moveItemToFolderThunk = createAsyncThunk(
+  "desktop/moveFolder",
+  async (
+    {
+      itemId,
+      parentId,
+      x,
+      y,
+    }: {
+      itemId: string;
+      parentId: string | null;
+      x?: number;
+      y?: number;
+    },
+    { dispatch, rejectWithValue }
+  ) => {
+    try {
+      if (itemId === parentId) return;
+      await api.put("/folders/move-to-folder", { id: itemId, parentId, x, y });
+
+      dispatch(
+        moveItemToFolder({
+          itemId,
+          parentId,
+          x,
+          y,
+        })
+      );
+
+      return { itemId, parentId, x, y };
     } catch (err: any) {
       return rejectWithValue(err.response?.data || "Move error");
     }
