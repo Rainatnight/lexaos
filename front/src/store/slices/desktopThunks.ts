@@ -5,10 +5,21 @@ import {
   moveItem,
   moveItemToFolder,
   renameItem,
-  setItems,
 } from "./desktopSlice";
 import { api } from "@/shared/api/api";
 import { RootState } from "..";
+
+const isDescendant = (items, childId, parentId) => {
+  if (!parentId) return false;
+
+  const parent = items.find((i) => i.id === parentId);
+  if (!parent) return false;
+
+  // Если родитель имеет parentId = childId — значит он потомок
+  if (parent.parentId === childId) return true;
+
+  return isDescendant(items, childId, parent.parentId);
+};
 
 export const createFolderThunk = createAsyncThunk(
   "desktop/createFolder",
@@ -122,10 +133,22 @@ export const moveItemToFolderThunk = createAsyncThunk(
       x?: number;
       y?: number;
     },
-    { dispatch, rejectWithValue }
+    { dispatch, getState, rejectWithValue }
   ) => {
     try {
-      if (itemId === parentId) return;
+      const state = getState() as RootState;
+      const items = state.desktop.items;
+
+      // 1. Нельзя вложить в себя самого
+      if (itemId === parentId) {
+        return rejectWithValue("Cannot move item into itself");
+      }
+
+      // 2. Проверка рекурсивного вложения
+      if (isDescendant(items, itemId, parentId)) {
+        return rejectWithValue("Cannot move folder into its descendant");
+      }
+
       await api.put("/folders/move-to-folder", { id: itemId, parentId, x, y });
 
       dispatch(
