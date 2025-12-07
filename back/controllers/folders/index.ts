@@ -51,7 +51,7 @@ export class FoldersController {
     try {
       const { id, newName } = req.body
       const { userId } = req.user as any
-      console.log('rename')
+
       if (!id || !newName) {
         return res.status(400).json({ error: 'id and newName are required' })
       }
@@ -119,6 +119,21 @@ export class FoldersController {
       }
 
       return res.json(folder)
+    } catch (error) {
+      return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
+    }
+  }
+
+  async clearTrash(req: Request, res: Response) {
+    try {
+      const { ids } = req.body
+
+      if (!Array.isArray(ids)) {
+        return res.status(400).json({ error: 'ids must be an array' })
+      }
+      await Folders.deleteMany({ id: { $in: ids } })
+
+      return res.json()
     } catch (error) {
       return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
     }

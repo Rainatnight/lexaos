@@ -4,13 +4,34 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
+import { openFolder } from "@/store/slices/desktopSlice";
 
 export const TrashBin = () => {
   const { t } = useTranslation("desktopLayout");
+  const dispatch = useAppDispatch();
+
   const iconSize = useSelector((state: RootState) => state.desktop.iconSize);
 
+  // --- двойной клик открывает окно
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    dispatch(
+      openFolder({
+        id: "trash",
+        x: e.clientX,
+        y: e.clientY,
+      })
+    );
+  };
+
   return (
-    <div className={cls.wrap} style={{ width: iconSize, height: iconSize }}>
+    <div
+      className={cls.wrap}
+      style={{ width: iconSize, height: iconSize }}
+      onDoubleClick={(e) => {
+        handleDoubleClick(e);
+      }}
+    >
       <Image
         src="/img/icons/bin.png"
         alt="TrashBin"

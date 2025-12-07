@@ -4,6 +4,7 @@ import {
   DesktopItem,
   moveItem,
   moveItemToFolder,
+  removeManyItems,
   renameItem,
 } from "./desktopSlice";
 import { api } from "@/shared/api/api";
@@ -166,3 +167,35 @@ export const moveItemToFolderThunk = createAsyncThunk(
     }
   }
 );
+
+export const clearTrashThunk = createAsyncThunk<
+  string[],
+  void,
+  { state: RootState }
+>("desktop/clearTrash", async (_, { getState, dispatch }) => {
+  const state = getState();
+  const allItems = state.desktop.items;
+
+  // получаем корневые элементы в корзине
+  const trashRoots = allItems.filter((i) => i.parentId === "trash");
+
+  const allIdsToDelete: string[] = [];
+
+  // рекурсивная функция
+  const collectChildren = (id: string) => {
+    allIdsToDelete.push(id);
+
+    const children = allItems.filter((item) => item.parentId === id);
+    children.forEach((child) => collectChildren(child.id));
+  };
+
+  // запускаем рекурсию для каждого корневого элемента корзины
+  trashRoots.forEach((root) => collectChildren(root.id));
+
+  await api.post("/folders/clear-trash", { ids: allIdsToDelete });
+
+  // удаляем из стейта
+  dispatch(removeManyItems(allIdsToDelete));
+
+  return allIdsToDelete;
+});

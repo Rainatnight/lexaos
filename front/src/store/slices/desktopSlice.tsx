@@ -102,6 +102,11 @@ export const desktopSlice = createSlice({
       state.items = state.items.filter((i) => i.id !== action.payload);
     },
 
+    removeManyItems(state, action) {
+      const ids = action.payload;
+      state.items = state.items.filter((i) => !ids.includes(i.id));
+    },
+
     sortItemsByName(state) {
       const spacing = state.iconSize;
       const margin = 0;
@@ -254,6 +259,7 @@ export const {
   moveFolder,
   setFolderWindowState,
   moveItemToFolder,
+  removeManyItems,
 } = desktopSlice.actions;
 
 export default desktopSlice.reducer;

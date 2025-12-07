@@ -11,8 +11,12 @@ import {
 } from "@/store/slices/desktopSlice";
 import interact from "interactjs";
 import { DesktopElement } from "@/components/DesktopIcons";
-import { moveItemToFolderThunk } from "@/store/slices/desktopThunks";
+import {
+  clearTrashThunk,
+  moveItemToFolderThunk,
+} from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
+import { useTranslation } from "react-i18next";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   const dispatch = useAppDispatch();
@@ -20,6 +24,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   const pos = useRef({ x: position.x, y: position.y });
   const allItems = useSelector((state: RootState) => state.desktop.items);
   const children = allItems.filter((i) => i.parentId === item.id);
+  const { t } = useTranslation("folderModal");
 
   const folderState = useSelector((state: RootState) =>
     state.desktop.openFolders.find((f) => f.id === item.id)
@@ -300,7 +305,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
 
       <div className={cls.folderContent}>
         {children.length === 0 ? (
-          <p className={cls.empty}>Папка пуста</p>
+          <p className={cls.empty}>{t("Папка пуста")}</p>
         ) : (
           <div className={cls.itemsGrid}>
             {children.map((el) => (
@@ -323,6 +328,18 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
             ))}
           </div>
         )}
+      </div>
+
+      <div className={cls.bottom}>
+        <p>{`${children.length} ${t("элементов")}`}</p>
+        <div
+          className={cls.clear}
+          onClick={() => {
+            dispatch(clearTrashThunk());
+          }}
+        >
+          {t("Очистить корзину")}
+        </div>
       </div>
     </div>
   );

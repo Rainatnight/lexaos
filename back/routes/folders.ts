@@ -10,6 +10,8 @@ export function createFoldersRouter(): Router {
 
   foldersRouter.get('/find', authStrict, foldersController.getFolders)
   foldersRouter.post('/create', authStrict, foldersController.createFolder)
+  foldersRouter.post('/clear-trash', authStrict, foldersController.clearTrash)
+
   foldersRouter.put('/rename', authStrict, foldersController.renameFolder)
   foldersRouter.put('/move', authStrict, foldersController.moveFolder)
   foldersRouter.put('/move-to-folder', authStrict, foldersController.moveToFolder)

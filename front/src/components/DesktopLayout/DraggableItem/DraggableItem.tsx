@@ -84,6 +84,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+
     dispatch(setSelectedItem(item.id));
   };
 

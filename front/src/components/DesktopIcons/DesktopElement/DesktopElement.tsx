@@ -83,7 +83,7 @@ export const DesktopElement = ({
 
   // --- двойной клик открывает окно
   const handleDoubleClick = (e: React.MouseEvent) => {
-    if (type === "folder") {
+    if (["folder", "trash"].includes(type)) {
       dispatch(
         openFolder({
           id,

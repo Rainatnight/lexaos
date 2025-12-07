@@ -51,8 +51,13 @@
   background: #202020;
   padding: 10px;
   min-height: 350px;
+  display: flex;
+  flex-direction: column;
+}
 
-  color: red;
+.empty {
+  font-size: 14px;
+  align-self: center;
 }
 
 .maximized {
@@ -91,4 +96,31 @@
   position: relative;
   border: 1px solid green;
   width: 20px;
+}
+
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #333333;
+  color: white;
+
+  font-weight: 500;
+  height: 30px;
+  font-size: 14px;
+  & > p {
+    margin: 5px;
+  }
+}
+
+.clear {
+  padding: 0 6px;
+  height: 100%;
+  align-self: center;
+  cursor: pointer;
+  justify-self: center;
+  line-height: 30px;
+  &:hover {
+    background-color: #414141;
+  }
 }
