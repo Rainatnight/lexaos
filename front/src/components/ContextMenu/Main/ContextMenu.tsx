@@ -83,6 +83,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
             x: newX,
             y: newY,
             parentId: null,
+            type: "folder",
           })
         );
 
@@ -105,14 +106,13 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
           newX += offset;
           newY += offset;
         }
-
         dispatch(
-          addItem({
-            id: nanoid(),
-            type: "txt",
-            name: t("Документ"),
+          createFolderThunk({
+            name: `Документ ${items.length - 2}`,
             x: newX,
             y: newY,
+            parentId: null,
+            type: "txt",
           })
         );
 

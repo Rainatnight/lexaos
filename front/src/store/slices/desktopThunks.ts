@@ -30,7 +30,14 @@ export const createFolderThunk = createAsyncThunk(
       x,
       y,
       parentId,
-    }: { name: string; x: number; y: number; parentId?: string | null },
+      type,
+    }: {
+      name: string;
+      x: number;
+      y: number;
+      parentId?: string | null;
+      type: "folder" | "txt";
+    },
     { dispatch, rejectWithValue }
   ) => {
     try {
@@ -39,11 +46,11 @@ export const createFolderThunk = createAsyncThunk(
         x,
         y,
         parentId: parentId ?? null,
+        type,
       });
-
       const folder = res.data;
 
-      dispatch(addItem(folder));
+      dispatch(addItem({ x, y, parentId, name, id: folder.id, type }));
 
       return folder;
     } catch (err: any) {

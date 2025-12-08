@@ -28,20 +28,20 @@ export class FoldersController {
 
   async createFolder(req: Request, res: Response) {
     try {
-      const { name, x, y, parentId } = req.body
+      const { name, x, y, parentId, type } = req.body
       const { userId } = req.user as any
 
       const folder = await Folders.create({
         userId: userId,
         _id: createId(),
-        type: 'folder',
+        type,
         name: name || 'Новая папка',
         x: x ?? 0,
         y: y ?? 0,
         parentId: parentId ?? null,
       })
 
-      return res.json(folder)
+      return res.json({ id: folder._id })
     } catch (error) {
       return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
     }
