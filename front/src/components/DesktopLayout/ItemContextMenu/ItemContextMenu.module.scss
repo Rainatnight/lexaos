@@ -1,14 +1,23 @@
-.contextMenu {
-  position: absolute;
-  background: #1e1e1e;
+.itemContextMenu {
+  background: var(--modal-color);
   color: #fff;
-  border-radius: 8px;
-  min-width: 160px;
-  padding: 6px 0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  z-index: 4;
+  padding: 2px 0;
+  width: 250px;
   list-style: none;
-  border: 1px solid green;
+  font-size: 12px;
+  border: 1px solid var(--modal-border);
+  li {
+    padding: 5px 15px;
+    cursor: pointer;
+    position: relative;
+
+    &:hover {
+      background: #666;
+    }
+  }
+  z-index: 4;
+
+  border: 2px solid purple;
 }
 
 .menuItem {

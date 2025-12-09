@@ -6,7 +6,7 @@ import {
   setRenamingItem,
   setSelectedItem,
 } from "@/store/slices/desktopSlice";
-import cls from "../../ContextMenu/Main/ContextMenu.module.scss";
+import cls from "./ItemContextMenu.module.scss";
 import { useTranslation } from "react-i18next";
 
 interface Props {
@@ -93,7 +93,7 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   return (
     <ul
       ref={ref}
-      className={cls.contextMenu}
+      className={cls.itemContextMenu}
       style={{
         top: `${pos.top}`,
         left: `${pos.left}`,
