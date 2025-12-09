@@ -77,7 +77,25 @@ export const DesktopElement = ({
     e.preventDefault();
     e.stopPropagation();
 
-    setItemMenu({ x: 0, y: 0, itemId: id });
+    if (!ref.current) return;
+
+    const rect = ref.current.getBoundingClientRect();
+
+    const offsetX = 0; // сдвиг вправо
+    const offsetY = 0; // сдвиг вниз
+
+    let menuX = rect.left + offsetX;
+    let menuY = rect.bottom + offsetY; // чуть ниже иконки
+
+    const { innerWidth, innerHeight } = window;
+    const menuWidth = 250; // ширина вашего меню
+    const menuHeight = 200; // примерная высота меню
+
+    // чтобы меню не вылезало за экран
+    if (menuX + menuWidth > innerWidth) menuX = rect.right - menuWidth;
+    if (menuY + menuHeight > innerHeight) menuY = rect.top - menuHeight;
+
+    setItemMenu({ x: menuX, y: menuY, itemId: id });
     dispatch(setSelectedItem(id));
   };
 

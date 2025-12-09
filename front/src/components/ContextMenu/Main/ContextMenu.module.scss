@@ -1,5 +1,5 @@
 .contextMenu {
-  position: absolute;
+  position: fixed;
   background: var(--modal-color);
   color: #fff;
   padding: 2px 0;
@@ -16,7 +16,7 @@
       background: #666;
     }
   }
-  z-index: 4;
+  z-index: 9999;
 
-  border: 1px solid green;
+  border: 2px solid beige;
 }

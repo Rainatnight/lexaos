@@ -41,31 +41,34 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
     interact(element).draggable({
       listeners: {
         start(event) {
-          event.target.classList.add(cls.dragging);
+          element.classList.add(cls.dragging);
           document.body.classList.add("dragging");
         },
         move(event) {
-          const x = currentPos.current.x + event.dx;
-          const y = currentPos.current.y + event.dy;
-
-          const parent = element.parentElement!;
-          const parentRect = parent.getBoundingClientRect();
+          const parentRect = element.parentElement!.getBoundingClientRect();
 
           currentPos.current.x = Math.max(
             0,
-            Math.min(x, parentRect.width - element.offsetWidth)
+            Math.min(
+              currentPos.current.x + event.dx,
+              parentRect.width - element.offsetWidth
+            )
           );
           currentPos.current.y = Math.max(
             0,
-            Math.min(y, parentRect.height - element.offsetHeight)
+            Math.min(
+              currentPos.current.y + event.dy,
+              parentRect.height - element.offsetHeight
+            )
           );
 
-          element.style.transform = `translate(${currentPos.current.x}px, ${currentPos.current.y}px)`;
+          element.style.left = `${currentPos.current.x}px`;
+          element.style.top = `${currentPos.current.y}px`;
         },
         end() {
           element.classList.remove(cls.dragging);
           document.body.classList.remove("dragging");
-          dragEndSound.currentTime = 0; // на случай, если звук короткий и срабатывает быстро
+          dragEndSound.currentTime = 0;
           dragEndSound.play().catch((err) => console.log(err));
 
           dispatch(
@@ -82,23 +85,20 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
     return () => interact(element).unset();
   }, [dispatch, item.id]);
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-
-    dispatch(setSelectedItem(item.id));
-  };
-
   useEffect(() => {
     if (ref.current) {
-      ref.current.style.transform = `translate(${item.x}px, ${item.y}px)`;
+      ref.current.style.left = `${item.x}px`;
+      ref.current.style.top = `${item.y}px`;
       currentPos.current = { x: item.x, y: item.y };
     }
   }, [item.x, item.y]);
 
-  if (item.parentId) {
-    // Значит элемент лежит в папке — тут вообще НЕ должно быть drag на рабочий стол
-    return null; // компонент будет отрисован внутри FolderModal
-  }
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(setSelectedItem(item.id));
+  };
+
+  if (item.parentId) return null;
 
   return (
     <>
@@ -109,7 +109,12 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
         className={`${cls.draggableItem} draggableItem ${
           selectedItemId === item.id ? cls.selected : ""
         }`}
-        style={{ transform: `translate(${item.x}px, ${item.y}px)` }}
+        style={{
+          position: "absolute", // важно!
+          left: item.x,
+          top: item.y,
+          zIndex: 1000,
+        }}
       >
         {item.type === "pc" && <PC />}
         {item.type === "vs" && <Vs />}

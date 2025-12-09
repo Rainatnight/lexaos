@@ -95,10 +95,10 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
       ref={ref}
       className={cls.itemContextMenu}
       style={{
-        top: `${pos.top}`,
-        left: `${pos.left}`,
-        position: "absolute",
-        zIndex: 10,
+        position: "fixed", // фиксируем к окну
+        top: `${pos.top}px`,
+        left: `${pos.left}px`,
+        zIndex: 9999,
       }}
     >
       {options.map((opt, i) => (
