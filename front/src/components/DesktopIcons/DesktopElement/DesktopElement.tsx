@@ -81,24 +81,15 @@ export const DesktopElement = ({
 
     const rect = ref.current.getBoundingClientRect();
 
-    const offsetX = 0; // сдвиг вправо
-    const offsetY = 0; // сдвиг вниз
+    const offsetX = 0;
+    const offsetY = 0;
 
     let menuX = rect.left + offsetX;
-    let menuY = rect.bottom + offsetY; // чуть ниже иконки
+    let menuY = rect.bottom + offsetY;
 
-    const { innerWidth, innerHeight } = window;
-    const menuWidth = 250; // ширина вашего меню
-    const menuHeight = 200; // примерная высота меню
-
-    // чтобы меню не вылезало за экран
-    if (menuX + menuWidth > innerWidth) menuX = rect.right - menuWidth;
-    if (menuY + menuHeight > innerHeight) menuY = rect.top - menuHeight;
-
+    // откроем меню сначала "влево/вверх", если нужно
     setItemMenu({ x: menuX, y: menuY, itemId: id });
-    dispatch(setSelectedItem(id));
   };
-
   // --- двойной клик открывает окно
   const handleDoubleClick = (e: React.MouseEvent) => {
     if (["folder", "trash"].includes(type)) {
