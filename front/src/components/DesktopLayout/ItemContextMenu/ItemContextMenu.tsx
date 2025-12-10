@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import {
   openFolder,
@@ -10,6 +10,7 @@ import cls from "./ItemContextMenu.module.scss";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { moveItemToFolderThunk } from "@/store/slices/desktopThunks";
+import { createPortal } from "react-dom"; // ← добавили
 
 interface Props {
   x: number;
@@ -44,16 +45,12 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
     setPos({ top: newY, left: newX });
 
     const handleOutsideEvent = (e: MouseEvent) => {
-      // если клик вне меню
       if (menu && !menu.contains(e.target as Node)) {
-        e.stopPropagation();
-
         onClose();
         dispatch(setSelectedItem(null));
       }
     };
 
-    //  Слушаем оба события с capture, чтобы сработало раньше, чем preventDefault
     document.addEventListener("click", handleOutsideEvent, true);
     document.addEventListener("contextmenu", handleOutsideEvent, true);
 
@@ -71,14 +68,11 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   };
 
   const handleDelete = () => {
-    // here
-    dispatch(moveItemToFolderThunk({ itemId: itemId, parentId: "trash" }));
+    dispatch(moveItemToFolderThunk({ itemId, parentId: "trash" }));
     onClose();
   };
 
-  const handleProperties = () => {
-    onClose();
-  };
+  const handleProperties = () => onClose();
 
   const handleOpen = () => {
     dispatch(openFolder({ id: itemId, x, y }));
@@ -95,12 +89,13 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
     options.push({ label: t("Открыть"), action: handleOpen });
   }
 
-  return (
+  //  оборачиваем меню в createPortal
+  return createPortal(
     <ul
       ref={ref}
       className={cls.itemContextMenu}
       style={{
-        position: "fixed", // фиксируем к окну
+        position: "fixed",
         top: `${pos.top}px`,
         left: `${pos.left}px`,
         zIndex: 9999,
@@ -111,6 +106,7 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
           {opt.label}
         </li>
       ))}
-    </ul>
+    </ul>,
+    document.body
   );
 };

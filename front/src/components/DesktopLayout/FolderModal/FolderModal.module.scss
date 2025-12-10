@@ -1,5 +1,5 @@
 .folderWindow {
-  position: absolute;
+  position: relative;
 
   width: 500px;
   background: #fff;
@@ -95,7 +95,6 @@
   display: flex;
   position: relative;
   border: 2px solid pink;
-  width: 20px;
 }
 
 .bottom {
