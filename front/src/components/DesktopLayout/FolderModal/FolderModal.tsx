@@ -10,13 +10,12 @@ import {
   setFolderWindowState,
 } from "@/store/slices/desktopSlice";
 import interact from "interactjs";
-import { DesktopElement } from "@/components/DesktopIcons";
-import {
-  clearTrashThunk,
-  moveItemToFolderThunk,
-} from "@/store/slices/desktopThunks";
+import { moveItemToFolderThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { useTranslation } from "react-i18next";
+import { FolderHeader } from "./FolderHeader/FolderHeader";
+import { FolderContent } from "./FolderContent/FolderContent";
+import { FolderFooter } from "./FolderFooter/FolderFooter";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   const dispatch = useAppDispatch();
@@ -291,56 +290,15 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
         pointerEvents: isDragging ? "none" : "auto",
       }}
     >
-      <div className={cls.folderHeader}>
-        <span>{item.name || "Папка"}</span>
-        <div className={cls.controls}>
-          <button onClick={handleMinimize}>−</button>
-
-          {/* □ меняется на ⧉ при максимизации */}
-          <button onClick={handleMaximize}>{maximized ? "⧉" : "□"}</button>
-
-          <button onClick={handleCloseWindow}>×</button>
-        </div>
-      </div>
-
-      <div className={cls.folderContent}>
-        {children.length === 0 ? (
-          <p className={cls.empty}>{t("Папка пуста")}</p>
-        ) : (
-          <div className={cls.itemsGrid}>
-            {children.map((el) => (
-              <div key={el.id}>
-                {el.type === "folder" && (
-                  <DesktopElement
-                    id={el.id}
-                    name={el.name || "Новая папка"}
-                    type="folder"
-                  />
-                )}
-                {el.type === "txt" && (
-                  <DesktopElement
-                    id={el.id}
-                    name={el.name || "Новая папка"}
-                    type="txt"
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className={cls.bottom}>
-        <p>{`${children.length} ${t("элементов")}`}</p>
-        <div
-          className={cls.clear}
-          onClick={() => {
-            dispatch(clearTrashThunk());
-          }}
-        >
-          {t("Очистить корзину")}
-        </div>
-      </div>
+      <FolderHeader
+        item={item}
+        handleMinimize={handleMinimize}
+        handleMaximize={handleMaximize}
+        maximized={maximized}
+        handleCloseWindow={handleCloseWindow}
+      />
+      <FolderContent children={children} />
+      <FolderFooter children={children} item={item} />
     </div>
   );
 };

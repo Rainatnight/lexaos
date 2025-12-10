@@ -1,0 +1,16 @@
+.folderContent {
+  background: #202020;
+  padding: 10px;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+}
+.empty {
+  font-size: 14px;
+  align-self: center;
+}
+.itemsGrid {
+  display: flex;
+  position: relative;
+  border: 2px solid pink;
+}
