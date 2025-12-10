@@ -6,7 +6,7 @@
   text-align: center;
   cursor: pointer;
   position: relative;
-  z-index: 30;
+  z-index: var(--z-index-3);
 }
 
 .img {

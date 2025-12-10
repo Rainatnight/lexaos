@@ -287,7 +287,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
       style={{
         top: 0,
         left: 0,
-        zIndex: isActive ? 1000 : 999,
+        zIndex: isActive ? "var(--z-index-2)" : "var(--z-index-1)",
         pointerEvents: isDragging ? "none" : "auto",
       }}
     >

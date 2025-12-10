@@ -110,10 +110,10 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
           selectedItemId === item.id ? cls.selected : ""
         }`}
         style={{
-          position: "absolute", // важно!
+          position: "absolute", // важно
           left: item.x,
           top: item.y,
-          zIndex: 1000,
+          zIndex: "var(--z-index-1)",
         }}
       >
         {item.type === "pc" && <PC />}

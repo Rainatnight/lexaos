@@ -44,7 +44,6 @@ export default function Home() {
               left: 0,
               width: "100%",
               height: "100%",
-              zIndex: 0,
             }}
           />
         ) : (
@@ -57,7 +56,6 @@ export default function Home() {
         <main
           style={{
             position: "relative",
-            zIndex: 1,
             width: "100%",
             height: "100%",
           }}

@@ -8,7 +8,7 @@ export function GlobalLoader() {
   if (!isLoading) return null;
 
   return (
-    <div className="global-loader">
+    <div>
       <div className={cls.spinnerContainer}>
         <div className={cls.spinner}></div>
       </div>

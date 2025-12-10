@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { DraggableItem } from "./DraggableItem/DraggableItem";
 import { closeFolder, setSelectedItem } from "@/store/slices/desktopSlice";
 import cls from "./DesktopLayout.module.scss";
@@ -7,7 +7,6 @@ import useSession from "@/shared/hooks/useSession";
 import { openedWindows, selectRootDesktopItems } from "@/store/selectors";
 import { FolderModal } from "./FolderModal/FolderModal";
 import { RootState } from "@/store";
-import { api } from "@/shared/api/api";
 import { loadDesktopThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 
@@ -25,7 +24,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
 
   const loaded = useRef(false);
 
-  // 👇 состояние для рамки выделения
+  // состояние для рамки выделения
   const [selecting, setSelecting] = useState(false);
   const [selectionRect, setSelectionRect] = useState<{
     x: number;
@@ -44,7 +43,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     }
   };
 
-  // 👇 начало выделения
+  //  начало выделения
   const handleMouseDown = (e: React.MouseEvent) => {
     // только ЛКМ и только по фону
     if (e.button !== 0 || e.target !== e.currentTarget) return;
@@ -56,7 +55,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     setSelectionRect({ x: e.clientX, y: e.clientY, w: 0, h: 0 });
   };
 
-  // 👇 движение мыши — обновляем размеры рамки
+  //  движение мыши — обновляем размеры рамки
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!selecting || !startPos.current) return;
 
@@ -68,7 +67,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     setSelectionRect({ x, y, w, h });
   };
 
-  // 👇 отпускание мыши — завершаем выделение
+  //  отпускание мыши — завершаем выделение
   const handleMouseUp = () => {
     if (!selecting) return;
     setSelecting(false);

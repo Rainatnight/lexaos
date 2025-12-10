@@ -29,5 +29,5 @@
   border: 1px dashed #3399ff;
   background-color: rgba(51, 153, 255, 0.25);
   pointer-events: none;
-  z-index: 9999;
+  z-index: var(--z-index-10);
 }
