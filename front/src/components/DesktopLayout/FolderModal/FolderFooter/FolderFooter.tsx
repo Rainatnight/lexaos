@@ -4,13 +4,13 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { clearTrashThunk } from "@/store/slices/desktopThunks";
 
-export const FolderFooter = ({ children, item }) => {
+export const FolderFooter = ({ folders, item }) => {
   const { t } = useTranslation("folderModal");
   const dispatch = useAppDispatch();
 
   return (
     <div className={cls.bottom}>
-      <p>{`${children.length} ${t("элементов")}`}</p>
+      <p>{`${folders.length} ${t("элементов")}`}</p>
       {item.id === "trash" && (
         <div
           className={cls.clear}

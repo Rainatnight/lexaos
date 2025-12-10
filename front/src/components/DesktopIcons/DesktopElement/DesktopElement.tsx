@@ -4,11 +4,7 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import {
-  openFolder,
-  setRenamingItem,
-  setSelectedItem,
-} from "@/store/slices/desktopSlice";
+import { openFolder, setRenamingItem } from "@/store/slices/desktopSlice";
 import { useState, useEffect, useRef } from "react";
 import { ItemContextMenu } from "@/components/DesktopLayout/ItemContextMenu/ItemContextMenu";
 import { renameFolderThunk } from "@/store/slices/desktopThunks";

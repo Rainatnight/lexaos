@@ -12,7 +12,6 @@ import {
 import interact from "interactjs";
 import { moveItemToFolderThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
-import { useTranslation } from "react-i18next";
 import { FolderHeader } from "./FolderHeader/FolderHeader";
 import { FolderContent } from "./FolderContent/FolderContent";
 import { FolderFooter } from "./FolderFooter/FolderFooter";
@@ -23,7 +22,6 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   const pos = useRef({ x: position.x, y: position.y });
   const allItems = useSelector((state: RootState) => state.desktop.items);
   const children = allItems.filter((i) => i.parentId === item.id);
-  const { t } = useTranslation("folderModal");
 
   const folderState = useSelector((state: RootState) =>
     state.desktop.openFolders.find((f) => f.id === item.id)
@@ -297,8 +295,8 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
         maximized={maximized}
         handleCloseWindow={handleCloseWindow}
       />
-      <FolderContent children={children} />
-      <FolderFooter children={children} item={item} />
+      <FolderContent folders={children} />
+      <FolderFooter folders={children} item={item} />
     </div>
   );
 };

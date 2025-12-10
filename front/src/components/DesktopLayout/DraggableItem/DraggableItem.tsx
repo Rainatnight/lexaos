@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import interact from "interactjs";
-import { moveItem, setSelectedItem } from "@/store/slices/desktopSlice";
+import { setSelectedItem } from "@/store/slices/desktopSlice";
 import { DesktopElement } from "@/components/DesktopIcons/DesktopElement/DesktopElement";
 import { RootState } from "@/store";
 import cls from "./DraggableItem.module.scss";
@@ -40,7 +40,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
 
     interact(element).draggable({
       listeners: {
-        start(event) {
+        start() {
           element.classList.add(cls.dragging);
           document.body.classList.add("dragging");
         },

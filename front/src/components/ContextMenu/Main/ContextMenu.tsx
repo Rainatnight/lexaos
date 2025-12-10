@@ -1,15 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import cls from "./ContextMenu.module.scss";
 import { ContextMenuItem } from "../ContextMenuItem/ContextMenuItem";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { setBackground } from "@/store/slices/themeSlice";
 import { useTranslation } from "react-i18next";
-import {
-  addItem,
-  setIconSize,
-  sortItemsByName,
-} from "@/store/slices/desktopSlice";
-import { nanoid } from "nanoid";
+import { setIconSize, sortItemsByName } from "@/store/slices/desktopSlice";
 import { RootState } from "@/store";
 import { createFolderThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
