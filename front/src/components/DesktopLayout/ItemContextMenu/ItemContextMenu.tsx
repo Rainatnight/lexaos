@@ -8,6 +8,8 @@ import {
 } from "@/store/slices/desktopSlice";
 import cls from "./ItemContextMenu.module.scss";
 import { useTranslation } from "react-i18next";
+import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
+import { moveItemToFolderThunk } from "@/store/slices/desktopThunks";
 
 interface Props {
   x: number;
@@ -20,7 +22,7 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   const { t } = useTranslation("itemContextMenu");
   const ref = useRef<HTMLUListElement>(null);
   const [pos, setPos] = useState({ top: y, left: x });
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const item = useSelector((state: RootState) =>
     state.desktop.items.find((i) => i.id === itemId)
@@ -67,7 +69,10 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
     dispatch(setRenamingItem(itemId));
     onClose();
   };
+
   const handleDelete = () => {
+    // here
+    dispatch(moveItemToFolderThunk({ itemId: itemId, parentId: "trash" }));
     onClose();
   };
 
