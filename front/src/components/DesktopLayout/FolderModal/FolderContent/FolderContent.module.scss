@@ -2,8 +2,10 @@
   background: #202020;
   padding: 10px;
   min-height: 350px;
+  max-height: inherit;
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 .empty {
   font-size: 14px;
@@ -12,5 +14,4 @@
 .itemsGrid {
   display: flex;
   position: relative;
-  border: 2px solid pink;
 }

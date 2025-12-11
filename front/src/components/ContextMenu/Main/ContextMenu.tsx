@@ -71,10 +71,13 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
           newX += offset;
           newY += offset;
         }
-
+        const folderCount = items.filter(
+          (item) => item.type === "folder"
+        ).length;
+        console.log(folderCount);
         dispatch(
           createFolderThunk({
-            name: `Новая папка ${items.length - 2}`,
+            name: `Новая папка ${folderCount + 1}`,
             x: newX,
             y: newY,
             parentId: null,
@@ -101,9 +104,12 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
           newX += offset;
           newY += offset;
         }
+
+        const docsCount = items.filter((item) => item.type === "txt").length;
+
         dispatch(
           createFolderThunk({
-            name: `Документ ${items.length - 2}`,
+            name: `Документ ${docsCount + 1}`,
             x: newX,
             y: newY,
             parentId: null,

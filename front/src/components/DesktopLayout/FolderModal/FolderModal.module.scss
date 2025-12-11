@@ -3,11 +3,9 @@
 
   width: 500px;
   background: #fff;
-  border: 1px solid black;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   z-index: var(--z-index-1);
-  border: 1px solid red;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -51,5 +49,4 @@
 .itemsGrid {
   display: flex;
   position: relative;
-  border: 2px solid pink;
 }
