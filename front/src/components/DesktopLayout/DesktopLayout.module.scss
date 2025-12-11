@@ -31,3 +31,12 @@
   pointer-events: none;
   z-index: var(--z-index-10);
 }
+
+.login {
+  font-size: 22px;
+  line-height: 28px;
+  border: 1px solid red;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}

@@ -9,6 +9,17 @@ import {
 } from "./desktopSlice";
 import { api } from "@/shared/api/api";
 import { RootState } from "..";
+import { USER_KEY } from "@/shared/hooks/useSession";
+import { nanoid } from "nanoid";
+
+interface IFolder {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  parentId: string | null;
+  type: "folder" | "txt";
+}
 
 const isDescendant = (items, childId, parentId) => {
   if (!parentId) return false;
@@ -41,16 +52,24 @@ export const createFolderThunk = createAsyncThunk(
     { dispatch, rejectWithValue }
   ) => {
     try {
-      const res = await api.post("/folders/create", {
-        name,
-        x,
-        y,
-        parentId: parentId ?? null,
-        type,
-      });
-      const folder = res.data;
+      const user = localStorage.getItem(USER_KEY);
+      let folder: IFolder;
 
-      dispatch(addItem({ x, y, parentId, name, id: folder.id, type }));
+      if (user) {
+        const res = await api.post("/folders/create", {
+          name,
+          x,
+          y,
+          parentId: parentId ?? null,
+          type,
+        });
+        folder = res.data;
+
+        dispatch(addItem({ x, y, parentId, name, id: folder.id, type }));
+      } else {
+        folder = { id: nanoid(), name, x, y, parentId: parentId ?? null, type };
+        dispatch(addItem(folder));
+      }
 
       return folder;
     } catch (err: any) {
@@ -64,18 +83,27 @@ export const loadDesktopThunk = createAsyncThunk(
   "desktop/loadDesktop",
   async (_, { dispatch, getState, rejectWithValue }) => {
     try {
-      const res = await api.get("/folders/find");
-      const userItems: DesktopItem[] = res.data;
+      const user = localStorage.getItem(USER_KEY);
+      let userItems: DesktopItem[] = [];
 
-      const state = getState() as RootState;
-      const existingItems = state.desktop.items;
+      if (user) {
+        const res = await api.get("/folders/find");
+        userItems = res.data;
 
-      userItems.forEach((item) => {
-        const exists = existingItems.some((i) => i.id === item.id);
-        if (!exists) {
-          dispatch(addItem(item));
-        }
-      });
+        const state = getState() as RootState;
+        const existingItems = state.desktop.items;
+
+        userItems.forEach((item) => {
+          const exists = existingItems.some((i) => i.id === item.id);
+          if (!exists) {
+            dispatch(addItem(item));
+          }
+        });
+      } else {
+        // Если юзера нет — можно вернуть локальные элементы из Redux
+        const state = getState() as RootState;
+        userItems = state.desktop.items;
+      }
 
       return userItems;
     } catch (err: any) {
@@ -91,9 +119,12 @@ export const renameFolderThunk = createAsyncThunk(
     { dispatch, rejectWithValue }
   ) => {
     try {
-      await api.put("/folders/rename", { id, newName });
+      const user = localStorage.getItem(USER_KEY);
 
-      // обновляем Redux только после успешного ответа
+      if (user) {
+        await api.put("/folders/rename", { id, newName });
+      }
+
       dispatch(renameItem({ id, newName }));
 
       return { id, newName };
@@ -110,7 +141,11 @@ export const moveItemThunk = createAsyncThunk(
     { dispatch, rejectWithValue }
   ) => {
     try {
-      await api.put("/folders/move", { id, newX: x, newY: y });
+      const user = localStorage.getItem(USER_KEY);
+
+      if (user) {
+        await api.put("/folders/move", { id, newX: x, newY: y });
+      }
 
       dispatch(
         moveItem({
@@ -157,7 +192,16 @@ export const moveItemToFolderThunk = createAsyncThunk(
         return rejectWithValue("Cannot move folder into its descendant");
       }
 
-      await api.put("/folders/move-to-folder", { id: itemId, parentId, x, y });
+      const user = localStorage.getItem(USER_KEY);
+
+      if (user) {
+        await api.put("/folders/move-to-folder", {
+          id: itemId,
+          parentId,
+          x,
+          y,
+        });
+      }
 
       dispatch(
         moveItemToFolder({
@@ -179,30 +223,34 @@ export const clearTrashThunk = createAsyncThunk<
   string[],
   void,
   { state: RootState }
->("desktop/clearTrash", async (_, { getState, dispatch }) => {
-  const state = getState();
-  const allItems = state.desktop.items;
+>("desktop/clearTrash", async (_, { getState, dispatch, rejectWithValue }) => {
+  try {
+    const state = getState();
+    const allItems = state.desktop.items;
 
-  // получаем корневые элементы в корзине
-  const trashRoots = allItems.filter((i) => i.parentId === "trash");
+    const trashRoots = allItems.filter((i) => i.parentId === "trash");
 
-  const allIdsToDelete: string[] = [];
+    const allIdsToDelete: string[] = [];
 
-  // рекурсивная функция
-  const collectChildren = (id: string) => {
-    allIdsToDelete.push(id);
+    const collectChildren = (id: string) => {
+      allIdsToDelete.push(id);
 
-    const children = allItems.filter((item) => item.parentId === id);
-    children.forEach((child) => collectChildren(child.id));
-  };
+      const children = allItems.filter((item) => item.parentId === id);
+      children.forEach((child) => collectChildren(child.id));
+    };
 
-  // запускаем рекурсию для каждого корневого элемента корзины
-  trashRoots.forEach((root) => collectChildren(root.id));
+    trashRoots.forEach((root) => collectChildren(root.id));
 
-  await api.post("/folders/clear-trash", { ids: allIdsToDelete });
+    const user = localStorage.getItem(USER_KEY);
 
-  // удаляем из стейта
-  dispatch(removeManyItems(allIdsToDelete));
+    if (user) {
+      await api.post("/folders/clear-trash", { ids: allIdsToDelete });
+    }
 
-  return allIdsToDelete;
+    dispatch(removeManyItems(allIdsToDelete));
+
+    return allIdsToDelete;
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data || "Clear trash error");
+  }
 });

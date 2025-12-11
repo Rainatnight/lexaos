@@ -3,9 +3,12 @@ import cls from "./Menu.module.scss";
 import Image from "next/image";
 import useSession from "@/shared/hooks/useSession";
 import router from "next/router";
+import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
+import { clearDesktop } from "@/store/slices/desktopSlice";
 
 export const Menu = ({ menuRef }) => {
   const session = useSession();
+  const dispatch = useAppDispatch();
 
   return (
     <div className={cls.menu} ref={menuRef}>
@@ -14,6 +17,7 @@ export const Menu = ({ menuRef }) => {
           className={cls.iconWrapper}
           onClick={() => {
             session.clear();
+            dispatch(clearDesktop());
             router.push("/login");
           }}
         >

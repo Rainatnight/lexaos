@@ -74,7 +74,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
         const folderCount = items.filter(
           (item) => item.type === "folder"
         ).length;
-        console.log(folderCount);
+
         dispatch(
           createFolderThunk({
             name: `Новая папка ${folderCount + 1}`,

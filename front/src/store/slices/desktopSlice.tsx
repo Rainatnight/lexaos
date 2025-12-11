@@ -240,6 +240,16 @@ export const desktopSlice = createSlice({
       // Сброс выделения
       state.selectedItemId = null;
     },
+
+    clearDesktop: (state) => {
+      // Сбрасываем состояние на начальное
+      state.items = [...defaultIcons];
+      state.iconSize = 80;
+      state.selectedItemId = null;
+      state.renamingItemId = null;
+      state.openFolders = [];
+      state.activeFolderId = null;
+    },
   },
 });
 
@@ -260,6 +270,7 @@ export const {
   setFolderWindowState,
   moveItemToFolder,
   removeManyItems,
+  clearDesktop,
 } = desktopSlice.actions;
 
 export default desktopSlice.reducer;

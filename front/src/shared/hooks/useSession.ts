@@ -90,10 +90,7 @@ const useSession = (): Session => {
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(USER_KEY);
         localStorage.removeItem(EXPIRES_TOKEN_KEY);
-
-        // if (state.isAuthorized) {
-        //   window.location.href = "/";
-        // }
+        dispatch({ type: "logout" });
       },
       setUser: (user: any) => {
         dispatch({
