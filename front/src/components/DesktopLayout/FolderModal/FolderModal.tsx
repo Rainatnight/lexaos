@@ -82,7 +82,8 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
     // Инициализация interact
     const interactInstance = interact(element)
       .draggable({
-        allowFrom: `.${cls.folderHeader}`,
+        allowFrom: `.dragableHeader`,
+
         enabled: windowState === "normal",
         listeners: {
           start() {
@@ -289,13 +290,16 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
         pointerEvents: isDragging ? "none" : "auto",
       }}
     >
-      <FolderHeader
-        item={item}
-        handleMinimize={handleMinimize}
-        handleMaximize={handleMaximize}
-        maximized={maximized}
-        handleCloseWindow={handleCloseWindow}
-      />
+      <div className={"dragableHeader"}>
+        <FolderHeader
+          item={item}
+          handleMinimize={handleMinimize}
+          handleMaximize={handleMaximize}
+          maximized={maximized}
+          handleCloseWindow={handleCloseWindow}
+        />
+      </div>
+
       {item.type === "folder" ? (
         <>
           <FolderContent folders={children} />
