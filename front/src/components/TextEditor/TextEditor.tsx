@@ -2,58 +2,61 @@ import React, { useState, useRef } from "react";
 import cls from "./TextEditor.module.scss";
 
 export const TextEditor = () => {
-  const editorRef = useRef(null);
+  const editorRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState("");
   const [currentColor, setCurrentColor] = useState("#000000");
   const [currentFontSize, setCurrentFontSize] = useState("16px");
 
-  // Apply style to selection or to caret (so next typed text has that style)
-  const applyStyle = (style) => {
+  // Универсальная функция применения стиля
+  const applyStyle = (style: {
+    color?: string;
+    fontSize?: string;
+    fontWeight?: string;
+  }) => {
     const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
+    if (!sel) return;
 
-    const range = sel.getRangeAt(0);
-
-    // If text is selected → wrap selection with styled span
-    if (!range.collapsed) {
+    // Если есть выделение
+    if (!sel.isCollapsed) {
+      const range = sel.getRangeAt(0);
       const span = document.createElement("span");
-      Object.assign(span.style, style);
+      if (style.color) span.style.color = style.color;
+      if (style.fontSize) span.style.fontSize = style.fontSize;
+      if (style.fontWeight) span.style.fontWeight = style.fontWeight;
+
       span.appendChild(range.extractContents());
       range.insertNode(span);
 
-      // keep selection on the newly inserted span
+      // Выделяем вновь вставленный span
       sel.removeAllRanges();
       const newRange = document.createRange();
       newRange.selectNodeContents(span);
       sel.addRange(newRange);
+    } else {
+      // Если выделения нет, применяем execCommand для каретки
+      if (style.color) document.execCommand("foreColor", false, style.color);
+      if (style.fontWeight === "bold") document.execCommand("bold", false);
+      if (style.fontSize) {
+        // execCommand fontSize использует 1-7, потом заменим px через span
+        document.execCommand("fontSize", false, "7");
 
-      // focus editor
-      if (editorRef.current) (editorRef.current as HTMLElement).focus();
-      return;
+        // Подправим font-size через span
+        const editor = editorRef.current;
+        if (editor) {
+          const spans = editor.querySelectorAll("font[size='7']");
+          spans.forEach((f) => {
+            (f as HTMLElement).style.fontSize = style.fontSize!;
+            f.removeAttribute("size");
+          });
+        }
+      }
     }
 
-    // No selection → create an empty styled span containing a zero-width-space
-    const span = document.createElement("span");
-    span.textContent = "\u200B"; // zero-width space
-    Object.assign(span.style, style);
-
-    range.insertNode(span);
-
-    // place caret inside the span after the zero-width-space so typed text inherits style
-    sel.removeAllRanges();
-    const r = document.createRange();
-    // span.firstChild is the text node with the ZWS; set start after that char (offset 1)
-    if (span.firstChild) {
-      r.setStart(span.firstChild, 1);
-      r.collapse(true);
-      sel.addRange(r);
-    }
-
-    // focus editor
-    if (editorRef.current) (editorRef.current as HTMLElement).focus();
+    // фокусим редактор
+    if (editorRef.current) editorRef.current.focus();
   };
 
-  const onInput = (e) => {
+  const onInput = (e: React.FormEvent<HTMLDivElement>) => {
     setContent(e.currentTarget.innerHTML);
   };
 
@@ -89,7 +92,7 @@ export const TextEditor = () => {
 
         <button
           className={cls.boldBtn}
-          onMouseDown={(ev) => ev.preventDefault()} // prevent blurring the editor
+          onMouseDown={(ev) => ev.preventDefault()} // prevent blurring
           onClick={() => applyStyle({ fontWeight: "bold" })}
         >
           B
@@ -102,8 +105,7 @@ export const TextEditor = () => {
         contentEditable
         suppressContentEditableWarning
         onInput={onInput}
-        // ensure base color is black unless styled
-        style={{ color: "#000000" }}
+        style={{ color: "#000000", fontSize: currentFontSize }}
       />
     </div>
   );
