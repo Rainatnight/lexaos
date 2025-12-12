@@ -15,6 +15,7 @@ import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { FolderHeader } from "./FolderHeader/FolderHeader";
 import { FolderContent } from "./FolderContent/FolderContent";
 import { FolderFooter } from "./FolderFooter/FolderFooter";
+import { TextEditor } from "@/components/TextEditor/TextEditor";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   const dispatch = useAppDispatch();
@@ -295,8 +296,14 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
         maximized={maximized}
         handleCloseWindow={handleCloseWindow}
       />
-      <FolderContent folders={children} />
-      <FolderFooter folders={children} item={item} />
+      {item.type === "folder" ? (
+        <>
+          <FolderContent folders={children} />
+          <FolderFooter folders={children} item={item} />
+        </>
+      ) : (
+        <TextEditor />
+      )}
     </div>
   );
 };
