@@ -7,7 +7,17 @@ export const TextEditor = () => {
   const [currentColor, setCurrentColor] = useState("#000000");
   const [currentFontSize, setCurrentFontSize] = useState("16px");
 
-  // Универсальная функция применения стиля
+  const COLORS = [
+    "#000000", // черный
+    "#FF0000", // красный
+    "#00FF00", // зеленый
+    "#0000FF", // синий
+    "#FFA500", // оранжевый
+    "#800080", // фиолетовый
+    "#008080", // бирюзовый
+    "#808080", // серый
+  ];
+
   const applyStyle = (style: {
     color?: string;
     fontSize?: string;
@@ -16,7 +26,6 @@ export const TextEditor = () => {
     const sel = window.getSelection();
     if (!sel) return;
 
-    // Если есть выделение
     if (!sel.isCollapsed) {
       const range = sel.getRangeAt(0);
       const span = document.createElement("span");
@@ -27,20 +36,15 @@ export const TextEditor = () => {
       span.appendChild(range.extractContents());
       range.insertNode(span);
 
-      // Выделяем вновь вставленный span
       sel.removeAllRanges();
       const newRange = document.createRange();
       newRange.selectNodeContents(span);
       sel.addRange(newRange);
     } else {
-      // Если выделения нет, применяем execCommand для каретки
       if (style.color) document.execCommand("foreColor", false, style.color);
       if (style.fontWeight === "bold") document.execCommand("bold", false);
       if (style.fontSize) {
-        // execCommand fontSize использует 1-7, потом заменим px через span
         document.execCommand("fontSize", false, "7");
-
-        // Подправим font-size через span
         const editor = editorRef.current;
         if (editor) {
           const spans = editor.querySelectorAll("font[size='7']");
@@ -52,7 +56,6 @@ export const TextEditor = () => {
       }
     }
 
-    // фокусим редактор
     if (editorRef.current) editorRef.current.focus();
   };
 
@@ -79,20 +82,26 @@ export const TextEditor = () => {
           <option value="32px">32px</option>
         </select>
 
-        <input
-          type="color"
-          className={cls.color}
-          value={currentColor}
-          onChange={(e) => {
-            const c = e.target.value;
-            setCurrentColor(c);
-            applyStyle({ color: c });
-          }}
-        />
+        {/* Цвета */}
+        {COLORS.map((c) => (
+          <button
+            key={c}
+            className={cls.colorBtn}
+            style={{
+              backgroundColor: c,
+              border: currentColor === c ? "2px solid #000" : "1px solid #ccc",
+            }}
+            onMouseDown={(ev) => ev.preventDefault()}
+            onClick={() => {
+              setCurrentColor(c);
+              applyStyle({ color: c });
+            }}
+          />
+        ))}
 
         <button
           className={cls.boldBtn}
-          onMouseDown={(ev) => ev.preventDefault()} // prevent blurring
+          onMouseDown={(ev) => ev.preventDefault()}
           onClick={() => applyStyle({ fontWeight: "bold" })}
         >
           B
