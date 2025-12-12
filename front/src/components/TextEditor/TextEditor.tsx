@@ -1,22 +1,24 @@
 import React, { useState, useRef } from "react";
 import cls from "./TextEditor.module.scss";
 
+const COLORS = [
+  "#000000",
+  "#FF0000",
+  "#00FF00",
+  "#0000FF",
+  "#FFA500",
+  "#800080",
+  "#008080",
+  "#FFC0CB",
+];
+
+const FONT_SIZES = ["14px", "16px", "18px", "24px", "32px"];
+
 export const TextEditor = () => {
   const editorRef = useRef<HTMLDivElement>(null);
-  const [content, setContent] = useState("");
   const [currentColor, setCurrentColor] = useState("#000000");
   const [currentFontSize, setCurrentFontSize] = useState("16px");
-
-  const COLORS = [
-    "#000000", // черный
-    "#FF0000", // красный
-    "#00FF00", // зеленый
-    "#0000FF", // синий
-    "#FFA500", // оранжевый
-    "#800080", // фиолетовый
-    "#008080", // бирюзовый
-    "#808080", // серый
-  ];
+  const [isBold, setIsBold] = useState(false);
 
   const applyStyle = (style: {
     color?: string;
@@ -24,74 +26,73 @@ export const TextEditor = () => {
     fontWeight?: string;
   }) => {
     const sel = window.getSelection();
-    if (!sel) return;
+    if (!sel || sel.rangeCount === 0) return;
 
-    if (!sel.isCollapsed) {
-      const range = sel.getRangeAt(0);
+    const range = sel.getRangeAt(0);
+
+    if (!range.collapsed) {
+      // есть выделение → обернуть в span
       const span = document.createElement("span");
       if (style.color) span.style.color = style.color;
       if (style.fontSize) span.style.fontSize = style.fontSize;
       if (style.fontWeight) span.style.fontWeight = style.fontWeight;
-
       span.appendChild(range.extractContents());
       range.insertNode(span);
 
+      // сохраняем выделение
       sel.removeAllRanges();
       const newRange = document.createRange();
       newRange.selectNodeContents(span);
       sel.addRange(newRange);
     } else {
-      if (style.color) document.execCommand("foreColor", false, style.color);
-      if (style.fontWeight === "bold") document.execCommand("bold", false);
-      if (style.fontSize) {
-        document.execCommand("fontSize", false, "7");
-        const editor = editorRef.current;
-        if (editor) {
-          const spans = editor.querySelectorAll("font[size='7']");
-          spans.forEach((f) => {
-            (f as HTMLElement).style.fontSize = style.fontSize!;
-            f.removeAttribute("size");
-          });
-        }
-      }
+      // нет выделения → вставляем пустой span для наследования
+      const span = document.createElement("span");
+      if (style.color) span.style.color = style.color;
+      if (style.fontSize) span.style.fontSize = style.fontSize;
+      if (style.fontWeight) span.style.fontWeight = style.fontWeight;
+      span.textContent = "\u200B"; // zero-width-space
+      range.insertNode(span);
+
+      const newRange = document.createRange();
+      newRange.setStart(span.firstChild!, 1);
+      newRange.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
     }
 
-    if (editorRef.current) editorRef.current.focus();
-  };
-
-  const onInput = (e: React.FormEvent<HTMLDivElement>) => {
-    setContent(e.currentTarget.innerHTML);
+    editorRef.current?.focus();
   };
 
   return (
     <div className={cls.wrap}>
       <div className={cls.toolbar}>
+        {/* Font size */}
         <select
           className={cls.select}
           value={currentFontSize}
           onChange={(e) => {
-            const v = e.target.value;
-            setCurrentFontSize(v);
-            applyStyle({ fontSize: v });
+            const size = e.target.value;
+            setCurrentFontSize(size);
+            applyStyle({ fontSize: size });
           }}
         >
-          <option value="14px">14px</option>
-          <option value="16px">16px</option>
-          <option value="18px">18px</option>
-          <option value="24px">24px</option>
-          <option value="32px">32px</option>
+          {FONT_SIZES.map((size) => (
+            <option key={size} value={size}>
+              {size}
+            </option>
+          ))}
         </select>
 
-        {/* Цвета */}
+        {/* Colors */}
         {COLORS.map((c) => (
           <button
             key={c}
             className={cls.colorBtn}
             style={{
               backgroundColor: c,
-              border: currentColor === c ? "2px solid #000" : "1px solid #ccc",
+              border: c === currentColor ? "2px solid #000" : "1px solid #ccc",
             }}
-            onMouseDown={(ev) => ev.preventDefault()}
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => {
               setCurrentColor(c);
               applyStyle({ color: c });
@@ -99,10 +100,14 @@ export const TextEditor = () => {
           />
         ))}
 
+        {/* Bold */}
         <button
-          className={cls.boldBtn}
-          onMouseDown={(ev) => ev.preventDefault()}
-          onClick={() => applyStyle({ fontWeight: "bold" })}
+          className={`${cls.boldBtn} ${isBold ? cls.active : ""}`}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => {
+            setIsBold(!isBold);
+            applyStyle({ fontWeight: isBold ? "normal" : "bold" });
+          }}
         >
           B
         </button>
@@ -113,8 +118,7 @@ export const TextEditor = () => {
         className={cls.editor}
         contentEditable
         suppressContentEditableWarning
-        onInput={onInput}
-        style={{ color: "#000000", fontSize: currentFontSize }}
+        style={{ color: "#000000", fontSize: "16px" }}
       />
     </div>
   );
