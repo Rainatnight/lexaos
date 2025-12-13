@@ -1,5 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import cls from "./TextEditor.module.scss";
+import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
+import { saveTextFileThunk } from "@/store/slices/desktopThunks";
 
 const COLORS = [
   "#000000",
@@ -14,11 +16,12 @@ const COLORS = [
 
 const FONT_SIZES = ["14px", "16px", "18px", "24px", "32px"];
 
-export const TextEditor = () => {
+export const TextEditor = ({ item }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const [currentColor, setCurrentColor] = useState("#000000");
   const [currentFontSize, setCurrentFontSize] = useState("16px");
   const [isBold, setIsBold] = useState(false);
+  const dispatch = useAppDispatch();
 
   const applyStyle = (style: {
     color?: string;
@@ -62,6 +65,23 @@ export const TextEditor = () => {
 
     editorRef.current?.focus();
   };
+
+  const handleSave = () => {
+    const html = editorRef.current?.innerHTML || "";
+
+    dispatch(
+      saveTextFileThunk({
+        id: item.id,
+        content: html,
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (editorRef.current && item?.content) {
+      editorRef.current.innerHTML = item.content;
+    }
+  }, [item]);
 
   return (
     <div className={cls.wrap}>
@@ -114,7 +134,7 @@ export const TextEditor = () => {
         <button
           className={cls.save}
           onMouseDown={(e) => e.preventDefault()}
-          onClick={() => {}}
+          onClick={handleSave}
         >
           {"Сохранить"}
         </button>

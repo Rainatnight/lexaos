@@ -306,7 +306,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
           <FolderFooter folders={children} item={item} />
         </>
       ) : (
-        <TextEditor />
+        <TextEditor item={item} />
       )}
     </div>
   );

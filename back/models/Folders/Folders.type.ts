@@ -6,6 +6,7 @@ export type FolderType = {
   x: number
   y: number
   name: string
+  content?: string
   createdAt: number
   updatedAt: number
 }

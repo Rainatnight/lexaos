@@ -28,7 +28,7 @@ export class FoldersController {
 
   async createFolder(req: Request, res: Response) {
     try {
-      const { name, x, y, parentId, type } = req.body
+      const { name, x, y, parentId, type, content } = req.body
       const { userId } = req.user as any
 
       const folder = await Folders.create({
@@ -39,6 +39,7 @@ export class FoldersController {
         x: x ?? 0,
         y: y ?? 0,
         parentId: parentId ?? null,
+        content,
       })
 
       return res.json({ id: folder._id })
@@ -134,6 +135,28 @@ export class FoldersController {
       await Folders.deleteMany({ id: { $in: ids } })
 
       return res.json()
+    } catch (error) {
+      return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
+    }
+  }
+
+  async saveText(req: Request, res: Response) {
+    try {
+      const { id, content } = req.body
+
+      if (!id || typeof content !== 'string') {
+        return res.status(400).json({
+          error: 'id and content are required',
+        })
+      }
+
+      const result = await Folders.findOneAndUpdate({ _id: id, type: 'txt' }, { content }, { new: true })
+
+      if (!result) {
+        return res.status(404).json({ error: 'Text file not found' })
+      }
+
+      return res.json({ success: true })
     } catch (error) {
       return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
     }

@@ -8,6 +8,7 @@ export interface DesktopItem {
   x: number;
   y: number;
   parentId?: string | null;
+  content?: string;
 }
 
 export interface IOpenFolder {
@@ -250,6 +251,16 @@ export const desktopSlice = createSlice({
       state.openFolders = [];
       state.activeFolderId = null;
     },
+
+    updateTextContent(
+      state,
+      action: PayloadAction<{ id: string; content: string }>
+    ) {
+      const item = state.items.find((i) => i.id === action.payload.id);
+      if (item && item.type === "txt") {
+        item.content = action.payload.content;
+      }
+    },
   },
 });
 
@@ -271,6 +282,7 @@ export const {
   moveItemToFolder,
   removeManyItems,
   clearDesktop,
+  updateTextContent,
 } = desktopSlice.actions;
 
 export default desktopSlice.reducer;

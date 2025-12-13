@@ -6,6 +6,7 @@ import {
   moveItemToFolder,
   removeManyItems,
   renameItem,
+  updateTextContent,
 } from "./desktopSlice";
 import { api } from "@/shared/api/api";
 import { RootState } from "..";
@@ -19,6 +20,7 @@ interface IFolder {
   y: number;
   parentId: string | null;
   type: "folder" | "txt";
+  content?: string;
 }
 
 const isDescendant = (items, childId, parentId) => {
@@ -65,9 +67,19 @@ export const createFolderThunk = createAsyncThunk(
         });
         folder = res.data;
 
-        dispatch(addItem({ x, y, parentId, name, id: folder.id, type }));
+        dispatch(
+          addItem({ x, y, parentId, name, id: folder.id, type, content: "" })
+        );
       } else {
-        folder = { id: nanoid(), name, x, y, parentId: parentId ?? null, type };
+        folder = {
+          id: nanoid(),
+          name,
+          x,
+          y,
+          parentId: parentId ?? null,
+          type,
+          content: "",
+        };
         dispatch(addItem(folder));
       }
 
@@ -254,3 +266,35 @@ export const clearTrashThunk = createAsyncThunk<
     return rejectWithValue(err.response?.data || "Clear trash error");
   }
 });
+
+export const saveTextFileThunk = createAsyncThunk(
+  "desktop/saveTextFile",
+  async (
+    { id, content }: { id: string; content: string },
+    { dispatch, rejectWithValue }
+  ) => {
+    try {
+      const user = localStorage.getItem(USER_KEY);
+
+      // если залогинен — сохраняем на сервер
+      if (user) {
+        await api.put("/folders/save-text", {
+          id,
+          content,
+        });
+      }
+
+      // всегда обновляем redux
+      dispatch(
+        updateTextContent({
+          id,
+          content,
+        })
+      );
+
+      return { id, content };
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data || "Save text error");
+    }
+  }
+);

@@ -11,7 +11,7 @@ const FoldersSchema = new Schema(
     parentId: { type: String, default: null }, // id папки, если внутри
     x: { type: Schema.Types.Number, default: 0 },
     y: { type: Schema.Types.Number, default: 0 },
-
+    content: { type: Schema.Types.String, default: '' },
     updatedAt: { type: Schema.Types.Number },
     createdAt: { type: Schema.Types.Number },
   },
