@@ -111,6 +111,13 @@ export const TextEditor = () => {
         >
           B
         </button>
+        <button
+          className={cls.save}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => {}}
+        >
+          {"Сохранить"}
+        </button>
       </div>
 
       <div

@@ -160,7 +160,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
         },
         modifiers: [
           interact.modifiers!.restrictSize({
-            min: { width: 300, height: 200 },
+            min: { width: 400, height: 400 },
           }),
         ],
       });
