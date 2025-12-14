@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 
 import { errorsCodes } from '@constants/common'
 import { createId } from '@helpers/createId'
+import { sanitizeHtml } from '@helpers/validator/sanitizehtml'
 
 import Folders from '@models/Folders/Folders'
 
@@ -150,7 +151,13 @@ export class FoldersController {
         })
       }
 
-      const result = await Folders.findOneAndUpdate({ _id: id, type: 'txt' }, { content }, { new: true })
+      if (content.length > 100_000) {
+        return res.status(413).json({ error: 'Text file is too large' })
+      }
+
+      const cleanContent = sanitizeHtml(content)
+
+      const result = await Folders.findOneAndUpdate({ _id: id, type: 'txt' }, { content: cleanContent }, { new: true })
 
       if (!result) {
         return res.status(404).json({ error: 'Text file not found' })

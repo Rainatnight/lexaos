@@ -300,7 +300,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
         />
       </div>
 
-      {item.type === "folder" ? (
+      {["folder", "trash"].includes(item.type) ? (
         <>
           <FolderContent folders={children} />
           <FolderFooter folders={children} item={item} />

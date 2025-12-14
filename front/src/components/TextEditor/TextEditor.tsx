@@ -77,6 +77,36 @@ export const TextEditor = ({ item }) => {
     );
   };
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    const text = e.clipboardData.getData("text/plain");
+
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+
+    // вставляем как текст
+    const textNode = document.createTextNode(text);
+    range.insertNode(textNode);
+
+    // ставим курсор после вставленного текста
+    range.setStartAfter(textNode);
+    range.collapse(true);
+
+    sel.removeAllRanges();
+    sel.addRange(range);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    const text = e.dataTransfer.getData("text/plain");
+    document.execCommand("insertText", false, text);
+  };
+
   useEffect(() => {
     if (editorRef.current && item?.content) {
       editorRef.current.innerHTML = item.content;
@@ -142,6 +172,8 @@ export const TextEditor = ({ item }) => {
 
       <div
         ref={editorRef}
+        onPaste={handlePaste}
+        onDrop={handleDrop}
         className={cls.editor}
         contentEditable
         suppressContentEditableWarning
