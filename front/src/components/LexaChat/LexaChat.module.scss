@@ -1,0 +1,10 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 350px;
+
+  height: inherit;
+
+  overflow: hidden;
+  background: #fff;
+}

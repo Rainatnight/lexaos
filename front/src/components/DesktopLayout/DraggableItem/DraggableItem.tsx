@@ -10,6 +10,7 @@ import cls from "./DraggableItem.module.scss";
 import { PC, TrashBin, Vs } from "@/components/DesktopIcons";
 import { moveItemThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
+import { LexaChatEl } from "@/components/DesktopIcons/LexaChat/LexaChatEl";
 
 interface IProps {
   item: {
@@ -110,7 +111,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
           selectedItemId === item.id ? cls.selected : ""
         }`}
         style={{
-          position: "absolute", // важно
+          position: "absolute",
           left: item.x,
           top: item.y,
           zIndex: "var(--z-index-1)",
@@ -119,6 +120,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
         {item.type === "pc" && <PC />}
         {item.type === "vs" && <Vs />}
         {item.type === "trash" && <TrashBin />}
+        {item.type === "chat" && <LexaChatEl />}
         {item.type === "folder" && (
           <DesktopElement
             id={item.id}

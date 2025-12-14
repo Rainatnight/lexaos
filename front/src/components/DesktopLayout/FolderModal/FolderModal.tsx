@@ -16,6 +16,7 @@ import { FolderHeader } from "./FolderHeader/FolderHeader";
 import { FolderContent } from "./FolderContent/FolderContent";
 import { FolderFooter } from "./FolderFooter/FolderFooter";
 import { TextEditor } from "@/components/TextEditor/TextEditor";
+import { LexaChat } from "@/components/LexaChat/LexaChat";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   const dispatch = useAppDispatch();
@@ -305,6 +306,8 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
           <FolderContent folders={children} />
           <FolderFooter folders={children} item={item} />
         </>
+      ) : item.type === "chat" ? (
+        <LexaChat />
       ) : (
         <TextEditor item={item} />
       )}

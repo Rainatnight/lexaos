@@ -3,7 +3,7 @@ import { russianCompare } from "@/helpers/russianSort";
 
 export interface DesktopItem {
   id: string;
-  type: "pc" | "vs" | "trash" | "folder" | string;
+  type: "pc" | "vs" | "trash" | "folder" | "chat" | string;
   name: string;
   x: number;
   y: number;
@@ -48,6 +48,13 @@ const defaultIcons: DesktopItem[] = [
     name: "Корзина",
     x: 0,
     y: 160,
+  },
+  {
+    id: "chat",
+    type: "chat",
+    name: "LexaChat",
+    x: 0,
+    y: 240,
   },
 ];
 

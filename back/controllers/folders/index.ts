@@ -133,7 +133,8 @@ export class FoldersController {
       if (!Array.isArray(ids)) {
         return res.status(400).json({ error: 'ids must be an array' })
       }
-      await Folders.deleteMany({ id: { $in: ids } })
+
+      await Folders.deleteMany({ _id: { $in: ids } })
 
       return res.json()
     } catch (error) {
