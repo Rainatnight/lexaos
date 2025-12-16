@@ -1,10 +1,163 @@
 .wrap {
-  display: flex;
-  flex-direction: column;
-  min-height: 350px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  min-height: 550px;
 
   height: inherit;
-
+  color: black;
   overflow: hidden;
-  background: #fff;
+}
+
+.left {
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.leftHeader {
+  height: 56px;
+  padding: 16px;
+  font-weight: 600;
+  font-size: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.usersList {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.userChat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+}
+
+.chosen {
+  background: #eef2ff;
+
+  .avatar {
+    background: #4f46e5;
+  }
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #9ca3af;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.login {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* RIGHT */
+.right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatHeader {
+  height: 56px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  font-weight: 600;
+}
+
+.messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  background: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.message {
+  max-width: 60%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  word-break: break-word;
+  font-size: 14px;
+}
+
+.myMsg {
+  align-self: flex-end;
+  background: #4f46e5;
+  color: white;
+  border-bottom-right-radius: 0;
+}
+
+.otherMsg {
+  align-self: flex-start;
+  background: #e5e7eb;
+  color: black;
+  border-bottom-left-radius: 0;
+}
+
+.inputWrap {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.input {
+  flex: 1;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+
+  &:focus {
+    border-color: #4f46e5;
+  }
+}
+
+.send {
+  width: 44px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: #4f46e5;
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    background: #4338ca;
+  }
+
+  &.disabled {
+    background: #a5b4fc;
+    cursor: not-allowed;
+  }
+}
+
+.empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
 }

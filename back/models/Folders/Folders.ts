@@ -6,7 +6,7 @@ const FoldersSchema = new Schema(
   {
     _id: Schema.Types.String,
     userId: { type: Schema.Types.String, ref: 'User', required: true },
-    type: { type: Schema.Types.String, required: true }, // "pc" | "vs" | "folder"
+    type: { type: Schema.Types.String, required: true }, // "txt"  "folder"
     name: { type: Schema.Types.String, required: true },
     parentId: { type: String, default: null }, // id папки, если внутри
     x: { type: Schema.Types.Number, default: 0 },

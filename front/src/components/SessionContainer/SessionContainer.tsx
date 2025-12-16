@@ -1,9 +1,11 @@
 import { api } from "@/shared/api/api";
 import useSession, { UserData } from "@/shared/hooks/useSession";
 import { useEffect } from "react";
+import { io } from "socket.io-client";
 
 export const SessionContainer = () => {
   const session = useSession();
+  const { setSocket } = useSession();
 
   useEffect(() => {
     async function initSession() {
@@ -14,14 +16,14 @@ export const SessionContainer = () => {
             session.setUser({
               ...data.user,
             });
-            // const socket = io(
-            //   process.env.NEXT_PUBLIC_SOCKET || "http://localhost:5000",
-            //   {
-            //     extraHeaders: { authorization: session.token as string },
-            //   }
-            // );
+            const socket = io(
+              process.env.NEXT_PUBLIC_SOCKET || "http://localhost:5000",
+              {
+                extraHeaders: { authorization: session.token as string },
+              }
+            );
 
-            // setSocket(socket);
+            setSocket(socket);
           })
           .catch(() => {
             session.clear();
