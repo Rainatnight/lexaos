@@ -3,12 +3,14 @@ import cls from "./LexaChat.module.scss";
 import { api } from "@/shared/api/api";
 import { classNames } from "@/helpers/classNames/classNames";
 import useSession from "@/shared/hooks/useSession";
+import { useTranslation } from "react-i18next";
 
 export const LexaChat = () => {
   const [users, setUsers] = useState<{ _id: string; login: string }[]>([]);
   const [selectedChat, setSelectedChat] = useState<null | string>(null);
   const [messages, setMessages] = useState<any>([]);
   const [msg, setMsg] = useState("");
+  const { t } = useTranslation("lexachat");
 
   const { socket, user } = useSession();
 
@@ -26,10 +28,11 @@ export const LexaChat = () => {
   const filteredMessages = messages.filter(
     (m) =>
       (m.from === selectedChat && m.to === user?.id) || // сообщения от собеседника
-      (m.from === user?.id && m.to === selectedChat) // твои сообщения этому собеседнику
+      (m.from === user?.id && m.to === selectedChat) //  сообщения этому собеседнику
   );
 
   useEffect(() => {
+    if (!user?.id) return;
     api.get("/users/get-for-chat").then((data) => {
       setUsers(data.data.users);
     });
@@ -38,7 +41,7 @@ export const LexaChat = () => {
       console.log(msgData);
       setMessages((prev) => [...prev, msgData]);
     });
-  }, []);
+  }, [user]);
 
   const selectedUser = users.find((u) => u._id === selectedChat);
 
@@ -46,28 +49,34 @@ export const LexaChat = () => {
     <div className={cls.wrap}>
       {/* LEFT */}
       <div className={cls.left}>
-        <div className={cls.leftHeader}>Чаты</div>
+        <div className={cls.leftHeader}>{t("Чаты")}</div>
 
         <div className={cls.usersList}>
-          {users.map((el) => (
-            <div
-              key={el._id}
-              onClick={() => setSelectedChat(el._id)}
-              className={classNames(cls.userChat, {
-                [cls.chosen]: selectedChat === el._id,
-              })}
-            >
-              <div className={cls.avatar}>{el.login[0].toUpperCase()}</div>
-              <div className={cls.login}>{el.login}</div>
-            </div>
-          ))}
+          {user?.id ? (
+            users.map((el) => (
+              <div
+                key={el._id}
+                onClick={() => setSelectedChat(el._id)}
+                className={classNames(cls.userChat, {
+                  [cls.chosen]: selectedChat === el._id,
+                })}
+              >
+                <div className={cls.avatar}>{el.login[0].toUpperCase()}</div>
+                <div className={cls.login}>{el.login}</div>
+              </div>
+            ))
+          ) : (
+            <p className={cls.guest}>
+              {t("Для использования чата необходимо авторизоваться")}
+            </p>
+          )}
         </div>
       </div>
 
       {/* RIGHT */}
       <div className={cls.right}>
         {!selectedUser ? (
-          <div className={cls.empty}>Выберите чат слева</div>
+          <div className={cls.empty}>{t("Выберите чат слева")}</div>
         ) : (
           <>
             <div className={cls.chatHeader}>{selectedUser.login}</div>
@@ -90,7 +99,7 @@ export const LexaChat = () => {
               <input
                 value={msg}
                 onChange={(e) => setMsg(e.target.value)}
-                placeholder="Введите сообщение..."
+                placeholder={t("Введите сообщение...")}
                 className={cls.input}
               />
               {msg.trim() && (
