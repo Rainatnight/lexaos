@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import cls from "./LexaChat.module.scss";
 import { api } from "@/shared/api/api";
 import { classNames } from "@/helpers/classNames/classNames";
@@ -10,6 +10,12 @@ export const LexaChat = () => {
   const [selectedChat, setSelectedChat] = useState<null | string>(null);
   const [messages, setMessages] = useState<any>([]);
   const [msg, setMsg] = useState("");
+
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [hasMoreHistory, setHasMoreHistory] = useState(true);
+  const [historySkip, setHistorySkip] = useState(0);
+  const messagesRef = useRef<HTMLDivElement>(null);
+
   const { t } = useTranslation("lexachat");
 
   const { socket, user } = useSession();
@@ -25,6 +31,46 @@ export const LexaChat = () => {
     setMsg("");
   };
 
+  const loadHistory = async () => {
+    if (!selectedChat || loadingHistory || !hasMoreHistory) return;
+
+    const el = messagesRef.current;
+    const scrollHeightBefore = el?.scrollHeight || 0;
+
+    setLoadingHistory(true);
+
+    const res = await api.get("/chats/get-history", {
+      params: {
+        withUserId: selectedChat,
+        skip: historySkip,
+        limit: 10,
+      },
+    });
+
+    const newMessages = res.data.messages;
+
+    setMessages((prev) => [...newMessages, ...prev]);
+    setHistorySkip((prev) => prev + newMessages.length);
+    if (newMessages.length < 10) setHasMoreHistory(false);
+
+    setLoadingHistory(false);
+
+    // корректируем scrollTop, чтобы оставалось на том же месте
+    if (el) {
+      const scrollHeightAfter = el.scrollHeight;
+      el.scrollTop = scrollHeightAfter - scrollHeightBefore;
+    }
+  };
+
+  const handleScroll = () => {
+    const el = messagesRef.current;
+    if (!el) return;
+
+    if (el.scrollTop === 0) {
+      loadHistory();
+    }
+  };
+
   const filteredMessages = messages.filter(
     (m) =>
       (m.from === selectedChat && m.to === user?.id) || // сообщения от собеседника
@@ -32,16 +78,31 @@ export const LexaChat = () => {
   );
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id || !socket) return;
+
     api.get("/users/get-for-chat").then((data) => {
       setUsers(data.data.users);
     });
 
-    socket?.on("message:new", (msgData) => {
-      console.log(msgData);
+    const onNewMessage = (msgData: any) => {
       setMessages((prev) => [...prev, msgData]);
-    });
-  }, [user]);
+    };
+
+    socket.on("message:new", onNewMessage);
+
+    return () => {
+      socket.off("message:new", onNewMessage);
+    };
+  }, [user, socket]);
+
+  useEffect(() => {
+    if (selectedChat) {
+      setMessages([]);
+      setHistorySkip(0);
+      setHasMoreHistory(true);
+      loadHistory();
+    }
+  }, [selectedChat]);
 
   const selectedUser = users.find((u) => u._id === selectedChat);
 
@@ -56,7 +117,13 @@ export const LexaChat = () => {
             users.map((el) => (
               <div
                 key={el._id}
-                onClick={() => setSelectedChat(el._id)}
+                onClick={() => {
+                  setLoadingHistory(false);
+                  setHasMoreHistory(true);
+                  setHistorySkip(0);
+
+                  setSelectedChat(el._id);
+                }}
                 className={classNames(cls.userChat, {
                   [cls.chosen]: selectedChat === el._id,
                 })}
@@ -81,7 +148,11 @@ export const LexaChat = () => {
           <>
             <div className={cls.chatHeader}>{selectedUser.login}</div>
 
-            <div className={cls.messages}>
+            <div
+              className={cls.messages}
+              ref={messagesRef}
+              onScroll={handleScroll}
+            >
               {filteredMessages.map((m) => (
                 <div
                   key={m._id}
@@ -101,6 +172,12 @@ export const LexaChat = () => {
                 onChange={(e) => setMsg(e.target.value)}
                 placeholder={t("Введите сообщение...")}
                 className={cls.input}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    sendMsg();
+                  }
+                }}
               />
               {msg.trim() && (
                 <button

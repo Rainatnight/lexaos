@@ -58,6 +58,7 @@ const routes = createRoutes(io)
 app.use('/api/v1', routes.authRouter)
 app.use('/api/v1/folders', routes.foldersRouter)
 app.use('/api/v1/users', routes.usersRouter)
+app.use('/api/v1/chats', routes.chatsRouter)
 
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: 'Not found', code: errorsCodes.NOT_FOUND })

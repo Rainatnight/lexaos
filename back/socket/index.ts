@@ -10,7 +10,6 @@ export async function onConnection(io: Server, socket: AppSocket) {
   socket.join(socket.userId)
 
   socket.on('message:send', async ({ to, msg }) => {
-    console.log('here')
     if (!to || !msg?.trim()) return
 
     const message = await ChatMessages.create({
@@ -27,10 +26,7 @@ export async function onConnection(io: Server, socket: AppSocket) {
       msg: message.msg,
     }
 
-    // получатель
-    io.to(to.toString()).emit('message:new', msgData)
-
-    // отправитель (чтобы сразу увидеть сообщение)
-    socket.emit('message:new', msgData)
+    // отправляем сразу и отправителю, и получателю
+    io.to([socket.userId, to.toString()]).emit('message:new', msgData)
   })
 }
