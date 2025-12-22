@@ -1,14 +1,13 @@
 .folderWindow {
-  position: relative;
-  width: 500px;
+  position: absolute;
+  width: 800px;
+  min-height: 400px;
+  height: 80vh;
   background: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  z-index: var(--z-index-1);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
+  overflow: hidden;
 }
 
 .minimized {

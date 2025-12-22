@@ -5,6 +5,7 @@
   height: 100%;
   color: black;
   overflow: hidden;
+  flex: 1;
 }
 
 .left {
@@ -68,8 +69,8 @@
 .right {
   display: flex;
   flex-direction: column;
-  height: 100%;
   min-height: 0;
+  flex: 1;
 }
 
 .chatHeader {
@@ -84,6 +85,7 @@
 }
 
 .messages {
+  display: block;
   flex: 1;
   padding: 16px;
   min-height: 0;
@@ -92,6 +94,30 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    width: 4px; // толщина скролла
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #e5e7eb; // трек скролла
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #4f46e5; // ползунок
+    border-radius: 4px;
+    border: 2px solid #e5e7eb;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #4338ca; // цвет при наведении
+  }
+
+  /* Для Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #4f46e5 #e5e7eb;
 }
 .message {
   max-width: 60%;

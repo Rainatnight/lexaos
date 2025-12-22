@@ -43,7 +43,7 @@ export const LexaChat = () => {
       params: {
         withUserId: selectedChat,
         skip: historySkip,
-        limit: 10,
+        limit: 20,
       },
     });
 
