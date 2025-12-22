@@ -104,6 +104,19 @@ export const LexaChat = () => {
     }
   }, [selectedChat]);
 
+  useEffect(() => {
+    const el = messagesRef.current;
+    if (!el) return;
+
+    // Проверяем, насколько близко к низу находится пользователь
+    const isAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 50; // 50px допустимый порог
+
+    if (isAtBottom) {
+      // Прокручиваем только если был внизу
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [messages]);
+
   const selectedUser = users.find((u) => u._id === selectedChat);
 
   return (
