@@ -9,14 +9,6 @@ import { RootState } from "@/store";
 import { api } from "@/shared/api/api";
 
 const MainComponent = () => {
-  api
-    .get("/ping")
-    .then((res) => console.log(res.data))
-    .catch((err) => {
-      if (err.response)
-        console.log("Response error:", err.response.status, err.response.data);
-      else console.log("Network error?", err.message);
-    });
   const [desktopMenu, setDesktopMenu] = useState<{
     x: number;
     y: number;
