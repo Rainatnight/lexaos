@@ -17,6 +17,8 @@ import { socketAuthStrict } from '@middleware/socketAuthStrict'
 import { createRoutes } from './routes'
 import { onConnection } from './socket'
 
+const allowedOrigins = ['https://lexaos-omega.vercel.app/', 'http://localhost:3000']
+
 const app = express()
 dotenv.config()
 const PORT = config.get('port') || 5000
@@ -26,9 +28,15 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
 
 app.use(
   cors({
-    origin: [config.get('clientPort')],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   })
 )
 app.use(fileUpload({}) as any)
@@ -41,7 +49,7 @@ const server = createServer(app)
 
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: 'https://lexaos-omega.vercel.app/',
   },
   serveClient: false,
 })
