@@ -65,7 +65,7 @@ app.use((_req: Request, res: Response) => {
 })
 
 async function start() {
-  const mongoUri = process.env.mongoUri
+  const mongoUri = process.env.mongoUri || 'mongodb://127.0.0.1:27017/dummy'
   if (!mongoUri) {
     console.error('Server Error: mongoUri is not defined!')
     process.exit(1)
