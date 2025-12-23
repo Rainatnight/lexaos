@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "next build",
     "start": "next start",
     "extract-i18n": "i18next -c i18next-parser.config.ts"
   },
@@ -41,5 +41,8 @@
     "eslint-config-next": "15.5.3",
     "i18next-parser": "^9.3.0",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
