@@ -6,7 +6,6 @@ import { ContextMenu } from "../ContextMenu/Main/ContextMenu";
 import Footer from "../Footer/Footer";
 import { DesktopLayout } from "../DesktopLayout/DesktopLayout";
 import { RootState } from "@/store";
-import { api } from "@/shared/api/api";
 
 const MainComponent = () => {
   const [desktopMenu, setDesktopMenu] = useState<{

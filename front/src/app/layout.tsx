@@ -1,5 +1,5 @@
 import { Providers } from "./providers";
-import "../styles/globals.css";
+import "../styles/globals.scss";
 
 export default function RootLayout({
   children,
