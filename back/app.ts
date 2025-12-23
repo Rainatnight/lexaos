@@ -17,7 +17,7 @@ import { socketAuthStrict } from '@middleware/socketAuthStrict'
 import { createRoutes } from './routes'
 import { onConnection } from './socket'
 
-const allowedOrigins = ['https://lexaos-omega.vercel.app/', 'http://localhost:3000']
+const allowedOrigins = ['https://lexaos-omega.vercel.app', 'http://localhost:3000']
 
 const app = express()
 dotenv.config()
@@ -49,7 +49,7 @@ const server = createServer(app)
 
 const io = new Server(server, {
   cors: {
-    origin: 'https://lexaos-omega.vercel.app/',
+    origin: 'https://lexaos-omega.vercel.app',
   },
   serveClient: false,
 })
