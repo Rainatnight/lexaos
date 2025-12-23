@@ -84,6 +84,7 @@
   },
   "_moduleAliases": {
     "@root": ".",
+    "constants": "./constants/",
     "@helpers": "./helpers/",
     "@routes": "./routes/",
     "@customTypes": "./customTypes/",
