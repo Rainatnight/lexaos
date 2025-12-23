@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "start": "node ./dist/app.js --env=production",
-    "build": "tsc --project ./",
+    "start": "node dist/app.js --env=production",
+    "build": "tsc && tsc-alias",
     "dev": "ts-node-dev --respawn app.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
@@ -80,6 +80,7 @@
     "swagger-ui-express": "^5.0.0",
     "ts-node": "^10.3.0",
     "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.3.2"
   },
   "_moduleAliases": {
