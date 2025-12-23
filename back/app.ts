@@ -65,16 +65,19 @@ app.use((_req: Request, res: Response) => {
 })
 
 async function start() {
-  try {
-    await mongoose.connect(config.get('mongoUri'), {
-      autoIndex: true,
-    })
+  const mongoUri = process.env.mongoUri
+  if (!mongoUri) {
+    console.error('Server Error: mongoUri is not defined!')
+    process.exit(1)
+  }
 
+  try {
+    await mongoose.connect(mongoUri, { autoIndex: true })
     server.listen(PORT, () => {
-      console.log(`Server started in ${PORT} port`)
+      console.log(`Server started on port ${PORT}`)
     })
   } catch (error) {
-    console.log('Server Error', (error as Error).message)
+    console.error('Server Error', (error as Error).message)
     process.exit(1)
   }
 }
