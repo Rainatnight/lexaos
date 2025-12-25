@@ -1,0 +1,43 @@
+.outgoingWrap {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.outgoingCard {
+  background: #fff;
+  padding: 32px;
+  border-radius: 20px;
+  text-align: center;
+  width: 240px;
+}
+
+.bigAvatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6a8dff, #9f7aea);
+  color: #fff;
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 16px;
+}
+
+.cancelBtn {
+  background: #ff4d4f;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+}
