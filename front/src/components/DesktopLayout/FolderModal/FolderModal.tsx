@@ -17,6 +17,7 @@ import { FolderContent } from "./FolderContent/FolderContent";
 import { FolderFooter } from "./FolderFooter/FolderFooter";
 import { TextEditor } from "@/components/TextEditor/TextEditor";
 import { LexaChat } from "@/components/LexaChat/LexaChat";
+import { LexaZoom } from "@/components/LexaZoom/LexaZoom";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   const dispatch = useAppDispatch();
@@ -308,6 +309,8 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
         </>
       ) : item.type === "chat" ? (
         <LexaChat />
+      ) : item.type === "zoom" ? (
+        <LexaZoom />
       ) : (
         <TextEditor item={item} />
       )}
