@@ -5,6 +5,7 @@ import { UsersList } from "./UsersList/UsersList";
 import { OutgoingCall } from "./OutgoingCall/OutgoingCall";
 import { IncomingCall } from "./IncomingCall/IncomingCall";
 import useSession from "@/shared/hooks/useSession";
+import { CallSession } from "./CallSession/CallSession";
 
 export type ChatUser = {
   _id: string;
@@ -18,6 +19,7 @@ export const LexaZoom = () => {
   const [users, setUsers] = useState<ChatUser[]>([]);
   const [activeUser, setActiveUser] = useState<ChatUser | null>(null);
   const { socket, user } = useSession();
+  const [isCallInitiator, setIsCallInitiator] = useState(false);
 
   useEffect(() => {
     api.get("/users/get-for-chat").then((data) => {
@@ -28,7 +30,7 @@ export const LexaZoom = () => {
   const handleCallUser = (Touser: ChatUser) => {
     setActiveUser(Touser);
     setMode("OUTGOING_CALL");
-
+    setIsCallInitiator(true);
     socket?.emit("call:offer", {
       toUserId: Touser._id,
       fromUser: { _id: user?.id, login: user?.login },
@@ -48,11 +50,11 @@ export const LexaZoom = () => {
   const handleAcceptCall = () => {
     if (!activeUser) return;
 
+    setMode("IN_CALL");
+
     socket?.emit("call:accept", {
       fromUserId: activeUser._id,
     });
-
-    // дальше будет IN_CALL
   };
 
   const handleRejectCall = () => {
@@ -70,6 +72,7 @@ export const LexaZoom = () => {
     socket?.on("call:incoming", ({ fromUser }) => {
       setActiveUser(fromUser);
       setMode("INCOMING_CALL");
+      setIsCallInitiator(false);
     });
 
     socket?.on("call:cancelled", () => {
@@ -109,6 +112,17 @@ export const LexaZoom = () => {
           user={activeUser}
           onAccept={handleAcceptCall}
           onReject={handleRejectCall}
+        />
+      )}
+
+      {mode === "IN_CALL" && activeUser && (
+        <CallSession
+          user={activeUser}
+          isInitiator={isCallInitiator}
+          onEndCall={() => {
+            setMode("IDLE");
+            setActiveUser(null);
+          }}
         />
       )}
     </div>

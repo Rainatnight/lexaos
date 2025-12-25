@@ -48,4 +48,29 @@ export async function onConnection(io: Server, socket: AppSocket) {
   socket.on('call:cancel', ({ toUserId }) => {
     io.to(toUserId.toString()).emit('call:cancelled')
   })
+
+  // webrtc
+  // Offer
+  socket.on('webrtc:offer', ({ toUserId, sdp }) => {
+    io.to(toUserId.toString()).emit('webrtc:offer', {
+      fromUserId: socket.userId,
+      sdp,
+    })
+  })
+
+  // Answer
+  socket.on('webrtc:answer', ({ toUserId, sdp }) => {
+    io.to(toUserId.toString()).emit('webrtc:answer', {
+      fromUserId: socket.userId,
+      sdp,
+    })
+  })
+
+  // ICE candidates
+  socket.on('webrtc:ice-candidate', ({ toUserId, candidate }) => {
+    io.to(toUserId.toString()).emit('webrtc:ice-candidate', {
+      fromUserId: socket.userId,
+      candidate,
+    })
+  })
 }
