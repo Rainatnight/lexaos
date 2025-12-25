@@ -11,13 +11,13 @@ export type ChatUser = {
   login: string;
 };
 
-type Mode = "IDLE" | "OUTGOING_CALL" | "INCOMING_CALL";
+type Mode = "IDLE" | "OUTGOING_CALL" | "INCOMING_CALL" | "IN_CALL";
 
 export const LexaZoom = () => {
   const [mode, setMode] = useState<Mode>("IDLE");
   const [users, setUsers] = useState<ChatUser[]>([]);
   const [activeUser, setActiveUser] = useState<ChatUser | null>(null);
-  const { socket } = useSession();
+  const { socket, user } = useSession();
 
   useEffect(() => {
     api.get("/users/get-for-chat").then((data) => {
@@ -25,13 +25,22 @@ export const LexaZoom = () => {
     });
   }, []);
 
-  const handleCallUser = (user: ChatUser) => {
-    setActiveUser(user);
+  const handleCallUser = (Touser: ChatUser) => {
+    setActiveUser(Touser);
     setMode("OUTGOING_CALL");
-    // 👉 здесь позже будет socket.emit("call:offer")
+
+    socket?.emit("call:offer", {
+      toUserId: Touser._id,
+      fromUser: { _id: user?.id, login: user?.login },
+    });
   };
 
   const handleCancelCall = () => {
+    if (activeUser) {
+      // сообщаем вызываемому, что звонок отменён
+      socket?.emit("call:cancel", { toUserId: activeUser._id });
+    }
+
     setActiveUser(null);
     setMode("IDLE");
   };
@@ -44,7 +53,6 @@ export const LexaZoom = () => {
     });
 
     // дальше будет IN_CALL
-    console.log("CALL ACCEPTED");
   };
 
   const handleRejectCall = () => {
@@ -64,10 +72,29 @@ export const LexaZoom = () => {
       setMode("INCOMING_CALL");
     });
 
+    socket?.on("call:cancelled", () => {
+      // вызываемый видит, что звонок отменён
+      setActiveUser(null);
+      setMode("IDLE");
+    });
+
+    socket?.on("call:rejected", () => {
+      // вызывающий видит, что звонок отклонён
+      setActiveUser(null);
+      setMode("IDLE");
+    });
+
+    socket?.on("call:accepted", () => {
+      setMode("IN_CALL");
+    });
+
     return () => {
       socket?.off("call:incoming");
+      socket?.off("call:cancelled");
+      socket?.off("call:rejected");
+      socket?.off("call:accepted");
     };
-  }, []);
+  }, [socket]);
 
   return (
     <div className={cls.wrap}>

@@ -29,4 +29,23 @@ export async function onConnection(io: Server, socket: AppSocket) {
     // отправляем сразу и отправителю, и получателю
     io.to([socket.userId, to.toString()]).emit('message:new', msgData)
   })
+
+  socket.on('call:offer', ({ toUserId, fromUser }) => {
+    io.to(toUserId.toString()).emit('call:incoming', { fromUser })
+  })
+
+  // Принять звонок
+  socket.on('call:accept', ({ fromUserId }) => {
+    io.to(fromUserId.toString()).emit('call:accepted', { by: socket.userId })
+  })
+
+  // Отклонить звонок
+  socket.on('call:reject', ({ fromUserId }) => {
+    io.to(fromUserId.toString()).emit('call:rejected', { by: socket.userId })
+  })
+
+  // Отмена звонка
+  socket.on('call:cancel', ({ toUserId }) => {
+    io.to(toUserId.toString()).emit('call:cancelled')
+  })
 }
