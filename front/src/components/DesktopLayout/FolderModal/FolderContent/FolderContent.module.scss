@@ -14,4 +14,7 @@
 .itemsGrid {
   display: flex;
   position: relative;
+  & > div {
+    cursor: pointer !important;
+  }
 }

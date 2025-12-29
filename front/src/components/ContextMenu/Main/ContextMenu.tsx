@@ -8,6 +8,7 @@ import { setIconSize, sortItemsByName } from "@/store/slices/desktopSlice";
 import { RootState } from "@/store";
 import { createFolderThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
+import { createPortal } from "react-dom";
 
 interface ContextMenuProps {
   x: number;
@@ -188,7 +189,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
     setPosition({ top: newY, left: newX });
   }, [x, y]);
 
-  return (
+  return createPortal(
     <ul
       className={cls.contextMenu}
       ref={menuRef}
@@ -197,6 +198,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
       {options.map((option, idx) => (
         <ContextMenuItem key={idx} option={option} onClose={onClose} />
       ))}
-    </ul>
+    </ul>,
+    document.body
   );
 };

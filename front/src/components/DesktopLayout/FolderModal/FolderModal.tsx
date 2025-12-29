@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import cls from "./FolderModal.module.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
@@ -314,6 +314,13 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
       ) : (
         <TextEditor item={item} />
       )}
+      {/* {desktopMenu && !selectedItemId && (
+        <ContextMenu
+          x={item.x}
+          y={item.y}
+          onClose={() => setDesktopMenu(null)}
+        />
+      )} */}
     </div>
   );
 };
