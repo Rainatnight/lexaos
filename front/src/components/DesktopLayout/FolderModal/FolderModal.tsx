@@ -20,6 +20,7 @@ import { LexaChat } from "@/components/LexaChat/LexaChat";
 import { LexaZoom } from "@/components/LexaZoom/LexaZoom";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
+  console.log(item);
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const pos = useRef({ x: position.x, y: position.y });
@@ -304,7 +305,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
 
       {["folder", "trash"].includes(item.type) ? (
         <>
-          <FolderContent folders={children} />
+          <FolderContent folders={children} parentId={item.id} />
           <FolderFooter folders={children} item={item} />
         </>
       ) : item.type === "chat" ? (
@@ -314,13 +315,6 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
       ) : (
         <TextEditor item={item} />
       )}
-      {/* {desktopMenu && !selectedItemId && (
-        <ContextMenu
-          x={item.x}
-          y={item.y}
-          onClose={() => setDesktopMenu(null)}
-        />
-      )} */}
     </div>
   );
 };

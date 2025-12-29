@@ -14,6 +14,7 @@ interface ContextMenuProps {
   x: number;
   y: number;
   onClose: () => void;
+  parentId?: string | null;
 }
 
 export interface MenuOption {
@@ -25,7 +26,12 @@ export interface MenuOption {
   selected?: boolean;
 }
 
-export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
+export const ContextMenu: React.FC<ContextMenuProps> = ({
+  x,
+  y,
+  onClose,
+  parentId = null,
+}) => {
   const menuRef = useRef<HTMLUListElement>(null);
   const [position, setPosition] = useState({ top: y, left: x });
   const { t } = useTranslation("contextMenu");
@@ -81,7 +87,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
             name: `Новая папка ${folderCount + 1}`,
             x: newX,
             y: newY,
-            parentId: null,
+            parentId,
             type: "folder",
           })
         );
@@ -113,7 +119,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
             name: `Документ ${docsCount + 1}`,
             x: newX,
             y: newY,
-            parentId: null,
+            parentId,
             type: "txt",
           })
         );

@@ -8,10 +8,10 @@ import { setSelectedItem } from "@/store/slices/desktopSlice";
 import { ContextMenu } from "@/components/ContextMenu";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 
-export const FolderContent = ({ folders }) => {
+export const FolderContent = ({ folders, parentId }) => {
   const { t } = useTranslation("folderModal");
   const dispatch = useAppDispatch();
-
+  console.log(parentId);
   const [desktopMenu, setDesktopMenu] = useState<{
     x: number;
     y: number;
@@ -54,6 +54,7 @@ export const FolderContent = ({ folders }) => {
           x={desktopMenu.x}
           y={desktopMenu.y}
           onClose={() => setDesktopMenu(null)}
+          parentId={parentId}
         />
       )}
     </div>
