@@ -1,0 +1,41 @@
+.incomingWrap {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+}
+
+.incomingCard {
+  margin-top: 20px;
+  background: #fff;
+  padding: 32px;
+  border-radius: 20px;
+  text-align: center;
+  width: 260px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.acceptBtn {
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.rejectBtn {
+  background: #ff4d4f;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+}

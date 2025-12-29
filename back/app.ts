@@ -49,7 +49,7 @@ const server = createServer(app)
 
 const io = new Server(server, {
   cors: {
-    origin: 'https://lexaos-omega.vercel.app',
+    origin: ['https://lexaos-omega.vercel.app', 'http://localhost:3000'],
   },
   serveClient: false,
 })

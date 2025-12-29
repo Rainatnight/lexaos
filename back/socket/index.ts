@@ -29,4 +29,48 @@ export async function onConnection(io: Server, socket: AppSocket) {
     // отправляем сразу и отправителю, и получателю
     io.to([socket.userId, to.toString()]).emit('message:new', msgData)
   })
+
+  socket.on('call:offer', ({ toUserId, fromUser }) => {
+    io.to(toUserId.toString()).emit('call:incoming', { fromUser })
+  })
+
+  // Принять звонок
+  socket.on('call:accept', ({ fromUserId }) => {
+    io.to(fromUserId.toString()).emit('call:accepted', { by: socket.userId })
+  })
+
+  // Отклонить звонок
+  socket.on('call:reject', ({ fromUserId }) => {
+    io.to(fromUserId.toString()).emit('call:rejected', { by: socket.userId })
+  })
+
+  // Отмена звонка
+  socket.on('call:cancel', ({ toUserId }) => {
+    io.to(toUserId.toString()).emit('call:cancelled')
+  })
+
+  // webrtc
+  // Offer
+  socket.on('webrtc:offer', ({ toUserId, sdp }) => {
+    io.to(toUserId.toString()).emit('webrtc:offer', {
+      fromUserId: socket.userId,
+      sdp,
+    })
+  })
+
+  // Answer
+  socket.on('webrtc:answer', ({ toUserId, sdp }) => {
+    io.to(toUserId.toString()).emit('webrtc:answer', {
+      fromUserId: socket.userId,
+      sdp,
+    })
+  })
+
+  // ICE candidates
+  socket.on('webrtc:ice-candidate', ({ toUserId, candidate }) => {
+    io.to(toUserId.toString()).emit('webrtc:ice-candidate', {
+      fromUserId: socket.userId,
+      candidate,
+    })
+  })
 }

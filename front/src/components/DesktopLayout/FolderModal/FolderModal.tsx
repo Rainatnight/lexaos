@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import cls from "./FolderModal.module.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
@@ -17,8 +17,10 @@ import { FolderContent } from "./FolderContent/FolderContent";
 import { FolderFooter } from "./FolderFooter/FolderFooter";
 import { TextEditor } from "@/components/TextEditor/TextEditor";
 import { LexaChat } from "@/components/LexaChat/LexaChat";
+import { LexaZoom } from "@/components/LexaZoom/LexaZoom";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
+  console.log(item);
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const pos = useRef({ x: position.x, y: position.y });
@@ -303,11 +305,13 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
 
       {["folder", "trash"].includes(item.type) ? (
         <>
-          <FolderContent folders={children} />
+          <FolderContent folders={children} parentId={item.id} />
           <FolderFooter folders={children} item={item} />
         </>
       ) : item.type === "chat" ? (
         <LexaChat />
+      ) : item.type === "zoom" ? (
+        <LexaZoom />
       ) : (
         <TextEditor item={item} />
       )}
