@@ -10,6 +10,7 @@ export function createAuthRouter(): Router {
 
   authRouter.post('/create', authController.signup)
   authRouter.put('/login', authController.login)
+  authRouter.get('/test', authController.test)
 
   authRouter.get('/user', authStrict, authController.getUser)
   return authRouter

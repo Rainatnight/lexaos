@@ -68,6 +68,7 @@ export class AuthController {
 
   async login(req: Request, res: Response) {
     try {
+      console.log(1)
       const { login, password } = req.body
 
       if (!password.trim()) {
@@ -98,6 +99,13 @@ export class AuthController {
       )
 
       return res.json({ token, expiredToken, userId: user._id })
+    } catch (error) {
+      return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
+    }
+  }
+  async test(req: Request, res: Response) {
+    try {
+      return res.json({ msg: 'success' })
     } catch (error) {
       return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
     }

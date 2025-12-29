@@ -11,7 +11,7 @@ export const api = axios.create({
     cacheFlag: "useCache",
   }),
   timeout: 20000,
-  // withCredentials: true,
+  withCredentials: true,
 });
 
 api.interceptors.request.use((config: any) => {

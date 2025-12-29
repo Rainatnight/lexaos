@@ -14,7 +14,11 @@ const Footer = () => {
   const { t, i18n } = useTranslation("footer");
   const [showCalendar, setShowCalendar] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   const calendarRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +45,9 @@ const Footer = () => {
   useEffect(() => {
     const language =
       localStorage.getItem("currentLanguage") ||
-      (navigator ? navigator.language.substr(0, 2).toLowerCase() : "ru");
+      (typeof navigator !== "undefined"
+        ? navigator.language.substr(0, 2).toLowerCase()
+        : "ru");
     i18next.changeLanguage(language);
   }, []);
 
@@ -100,8 +106,8 @@ const Footer = () => {
           className={cls.time}
           onClick={() => setShowCalendar(!showCalendar)}
         >
-          <div>{formattedTime}</div>
-          <div>{formattedDate}</div>
+          <div>{isClient ? formattedTime : "--:--"}</div>
+          <div>{isClient ? formattedDate : "--.--.----"}</div>
         </div>
       </div>
 

@@ -17,28 +17,27 @@ import { socketAuthStrict } from '@middleware/socketAuthStrict'
 import { createRoutes } from './routes'
 import { onConnection } from './socket'
 
-const allowedOrigins = ['https://lexaos-omega.vercel.app', 'http://localhost:3000']
+const allowedOrigins = [
+  'https://lexaos-omega.vercel.app',
+  'http://localhost:3000',
+  'http://host.docker.internal:3000',
+  'http://172.27.128.1:3000',
+]
 
 const app = express()
 dotenv.config()
-const PORT = config.get('port') || 5000
+const PORT = Number(config.get('port') || 5000)
 
 // @ts-ignore
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true)
-      } else {
-        callback(new Error('Not allowed by CORS'))
-      }
-    },
+    origin: true, // разрешаем все
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   })
 )
+
 app.use(fileUpload({}) as any)
 app.use(express.json({ limit: '10mb' }))
 
@@ -49,7 +48,12 @@ const server = createServer(app)
 
 const io = new Server(server, {
   cors: {
-    origin: ['https://lexaos-omega.vercel.app', 'http://localhost:3000'],
+    origin: [
+      'https://lexaos-omega.vercel.app',
+      'http://localhost:3000',
+      'http://host.docker.internal:3000',
+      'http://172.27.128.1:3000',
+    ],
   },
   serveClient: false,
 })
@@ -81,7 +85,7 @@ async function start() {
 
   try {
     await mongoose.connect(mongoUri, { autoIndex: true })
-    server.listen(PORT, () => {
+    server.listen(PORT, '0.0.0.0', () => {
       console.log(`Server started on port ${PORT}`)
     })
   } catch (error) {
