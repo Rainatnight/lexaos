@@ -13,7 +13,6 @@ export const FolderHeader = ({
   item,
   handleMinimize,
   handleMaximize,
-  maximized,
   handleCloseWindow,
   folderWindowId,
 }: any) => {
@@ -77,41 +76,43 @@ export const FolderHeader = ({
       </div>
 
       {/* Нижняя навигация */}
-      <div className={cls.folderNav}>
-        <div className={cls.navControls}>
-          <button onClick={handleGoBack}>←</button>
-          <button onClick={handleGoForward}>→</button>
-        </div>
-        <div className={cls.breadcrumbs}>
-          <span
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              if (folderWindow) {
-                // сброс к рабочему столу внутри этого окна
-                dispatch(setActiveFolder(folderWindow.currentFolderId));
-              } else {
-                dispatch(setActiveFolder(null));
-              }
-            }}
-          >
-            {userLogin}
-          </span>
-          {breadcrumbs.length > 0 && " > "}
-          {breadcrumbs.map((f, idx) => (
+      {item.type === "folder" && (
+        <div className={cls.folderNav}>
+          <div className={cls.navControls}>
+            <button onClick={handleGoBack}>←</button>
+            <button onClick={handleGoForward}>→</button>
+          </div>
+          <div className={cls.breadcrumbs}>
             <span
-              key={f.id}
+              style={{ cursor: "pointer" }}
               onClick={() => {
                 if (folderWindow) {
-                  dispatch(setActiveFolder(f.id));
+                  // сброс к рабочему столу внутри этого окна
+                  dispatch(setActiveFolder(folderWindow.currentFolderId));
+                } else {
+                  dispatch(setActiveFolder(null));
                 }
               }}
-              style={{ cursor: "pointer" }}
             >
-              {f.name} {idx < breadcrumbs.length - 1 ? " > " : ""}
+              {userLogin}
             </span>
-          ))}
+            {breadcrumbs.length > 0 && " > "}
+            {breadcrumbs.map((f, idx) => (
+              <span
+                key={f.id}
+                onClick={() => {
+                  if (folderWindow) {
+                    dispatch(setActiveFolder(f.id));
+                  }
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                {f.name} {idx < breadcrumbs.length - 1 ? " > " : ""}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
