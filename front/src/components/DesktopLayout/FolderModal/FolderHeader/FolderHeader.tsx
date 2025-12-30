@@ -8,6 +8,7 @@ import {
   setWindowFolder,
 } from "@/store/slices/desktopSlice";
 import useSession from "@/shared/hooks/useSession";
+import { useTranslation } from "react-i18next";
 
 export const FolderHeader = ({
   item,
@@ -16,9 +17,10 @@ export const FolderHeader = ({
   handleCloseWindow,
   folderWindowId,
 }: any) => {
+  const { t } = useTranslation("footer");
   const dispatch = useDispatch();
   const { user } = useSession();
-  const userLogin = user?.login || "Пользователь";
+  const userLogin = user?.login || t("Гость");
 
   const items = useSelector((state: RootState) => state.desktop.items);
   const folderWindow = useSelector((state: RootState) =>

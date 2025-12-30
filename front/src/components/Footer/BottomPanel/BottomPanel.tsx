@@ -21,7 +21,10 @@ export const BottomPanel = () => {
   return (
     <div className={cls.panel}>
       {openFolders.map((folder) => {
-        const item = items.find((i) => i.id === folder.id);
+        const item = items.find(
+          (i) => i.id === (folder.currentFolderId ?? folder.id)
+        );
+
         if (!item) return null;
 
         return (
