@@ -141,10 +141,11 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
 
         return (
           <FolderModal
-            key={folder.id} // теперь key не меняется при навигации внутри окна
+            key={folder.id}
             item={currentItem}
             handleCloseWindow={() => dispatch(closeFolder(folder.id))}
             position={{ x: folder.x, y: folder.y }}
+            folderId={folder.id}
           />
         );
       })}

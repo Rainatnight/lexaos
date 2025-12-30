@@ -19,7 +19,12 @@ import { TextEditor } from "@/components/TextEditor/TextEditor";
 import { LexaChat } from "@/components/LexaChat/LexaChat";
 import { LexaZoom } from "@/components/LexaZoom/LexaZoom";
 
-export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
+export const FolderModal = ({
+  item,
+  handleCloseWindow,
+  position,
+  folderId,
+}: any) => {
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const pos = useRef({ x: position.x, y: position.y });
@@ -294,6 +299,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
     >
       <div className={"dragableHeader"}>
         <FolderHeader
+          folderWindowId={folderId}
           item={item}
           handleMinimize={handleMinimize}
           handleMaximize={handleMaximize}

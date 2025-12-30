@@ -11,17 +11,20 @@ export const FolderHeader = ({
   handleMaximize,
   maximized,
   handleCloseWindow,
+  folderWindowId, // id окна
 }: any) => {
   const dispatch = useDispatch();
   const { user } = useSession();
   const userLogin = user?.login || "Пользователь";
 
-  const activeFolderId = useSelector(
-    (state: RootState) => state.desktop.activeFolderId
-  );
   const items = useSelector((state: RootState) => state.desktop.items);
+  const folderWindow = useSelector((state: RootState) =>
+    state.desktop.openFolders.find((f) => f.id === folderWindowId)
+  );
 
-  const folder = items.find((i) => i.id === activeFolderId) || item;
+  // текущая папка окна (если folderWindow есть, иначе используем item)
+  const folder =
+    items.find((i) => i.id === folderWindow?.currentFolderId) || item;
 
   // Формируем хлебные крошки
   const breadcrumbs: DesktopItem[] = [];
@@ -43,9 +46,9 @@ export const FolderHeader = ({
 
   return (
     <div className={cls.folderHeaderWrapper}>
-      {/* Верхний заголовок */}
+      {/* Верхний заголовок — оставляем старую логику */}
       <div className={cls.folderHeader}>
-        <span>{item.name || "Папка"}</span>
+        <span>{folder.name || "Папка"}</span>
         <div className={cls.controls}>
           <button onClick={handleMinimize}>−</button>
           <button onClick={handleMaximize}>{maximized ? "⧉" : "□"}</button>
@@ -63,7 +66,14 @@ export const FolderHeader = ({
           {/* имя пользователя как первый элемент */}
           <span
             style={{ cursor: "pointer" }}
-            onClick={() => dispatch(setActiveFolder(null))}
+            onClick={() => {
+              if (folderWindow) {
+                // сброс к рабочему столу внутри этого окна
+                dispatch(setActiveFolder(folderWindow.currentFolderId));
+              } else {
+                dispatch(setActiveFolder(null));
+              }
+            }}
           >
             {userLogin}
           </span>
@@ -71,7 +81,11 @@ export const FolderHeader = ({
           {breadcrumbs.map((f, idx) => (
             <span
               key={f.id}
-              onClick={() => dispatch(setActiveFolder(f.id))}
+              onClick={() => {
+                if (folderWindow) {
+                  dispatch(setActiveFolder(f.id)); // можно заменить на экшен currentFolderId окна
+                }
+              }}
               style={{ cursor: "pointer" }}
             >
               {f.name} {idx < breadcrumbs.length - 1 ? " > " : ""}
