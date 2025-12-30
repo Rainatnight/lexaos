@@ -19,6 +19,9 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
   const items = useSelector(selectRootDesktopItems);
   const openFolders = useSelector(openedWindows);
   const allItems = useSelector((state: RootState) => state.desktop.items);
+  const activeFolderId = useSelector(
+    (state: RootState) => state.desktop.activeFolderId
+  );
 
   const { user } = useSession();
 
@@ -128,14 +131,18 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
         />
       )}
 
-      {/*   открытые папки */}
+      {/* открытые папки */}
       {openFolders.map((folder) => {
-        const folderItem = allItems.find((i) => i.id === folder.id);
-        if (!folderItem) return null;
+        // в item передаём текущую папку окна
+        const currentItem = allItems.find(
+          (i) => i.id === folder.currentFolderId
+        );
+        if (!currentItem) return null;
+
         return (
           <FolderModal
-            key={folder.id}
-            item={folderItem}
+            key={folder.id} // теперь key не меняется при навигации внутри окна
+            item={currentItem}
             handleCloseWindow={() => dispatch(closeFolder(folder.id))}
             position={{ x: folder.x, y: folder.y }}
           />

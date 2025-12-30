@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { russianCompare } from "@/helpers/russianSort";
+import { isDescendantOrSameWindow } from "@/helpers/isDesc";
 
 export interface DesktopItem {
   id: string;
@@ -16,6 +17,7 @@ export interface IOpenFolder {
   x: number;
   y: number;
   windowState: "normal" | "minimized" | "maximized";
+  currentFolderId: string; //  внутри этого окна какая папка открыта
 }
 
 interface DesktopState {
@@ -193,18 +195,25 @@ export const desktopSlice = createSlice({
     ) => {
       const { id, x, y } = action.payload;
 
-      if (state.openFolders.some((f) => f.id === id)) return;
+      const existingWindow = state.openFolders.find((f) =>
+        isDescendantOrSameWindow(state.items, id, f.id)
+      );
 
+      if (existingWindow) {
+        // внутри окна меняем текущую папку
+        existingWindow.currentFolderId = id;
+        return;
+      }
+
+      // создаём новое окно
       state.openFolders.push({
         id,
         x: x + 10,
         y: y + 10,
         windowState: "normal",
+        currentFolderId: id, // начальная папка окна
       });
-
-      state.activeFolderId = id;
     },
-
     closeFolder: (state, action: PayloadAction<string>) => {
       state.openFolders = state.openFolders.filter(
         (f) => f.id !== action.payload
