@@ -32,7 +32,7 @@ export const FolderModal = ({
   const children = allItems.filter((i) => i.parentId === item.id);
 
   const folderState = useSelector((state: RootState) =>
-    state.desktop.openFolders.find((f) => f.id === item.id)
+    state.desktop.openFolders.find((f) => f.id === folderId)
   );
 
   const windowState = folderState?.windowState || "normal";
@@ -43,21 +43,22 @@ export const FolderModal = ({
   const activeFolderId = useSelector(
     (state: RootState) => state.desktop.activeFolderId
   );
-  const isActive = activeFolderId === item.id;
+  const isActive = activeFolderId === folderId;
 
   // === делаем окно активным при клике ===
   const handleMouseDown = () => {
-    dispatch(setActiveFolder(item.id));
+    dispatch(setActiveFolder(folderId));
   };
 
   const changeState = (state: "normal" | "minimized" | "maximized") => {
     dispatch(
       setFolderWindowState({
-        id: item.id,
+        id: folderId,
         windowState: state,
       })
     );
   };
+
   const playSound = () => {
     const closeSound = new Audio("/sounds/close.mp3");
     closeSound.preload = "auto";
@@ -94,7 +95,7 @@ export const FolderModal = ({
         enabled: windowState === "normal",
         listeners: {
           start() {
-            dispatch(setActiveFolder(item.id));
+            dispatch(setActiveFolder(folderId));
 
             const transform = element.style.transform.match(
               /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/

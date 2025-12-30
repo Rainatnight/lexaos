@@ -2,7 +2,11 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import cls from "./FolderHeader.module.scss";
 import { RootState } from "@/store";
-import { DesktopItem, setActiveFolder } from "@/store/slices/desktopSlice";
+import {
+  DesktopItem,
+  setActiveFolder,
+  setWindowFolder,
+} from "@/store/slices/desktopSlice";
 import useSession from "@/shared/hooks/useSession";
 
 export const FolderHeader = ({
@@ -11,7 +15,7 @@ export const FolderHeader = ({
   handleMaximize,
   maximized,
   handleCloseWindow,
-  folderWindowId, // id окна
+  folderWindowId,
 }: any) => {
   const dispatch = useDispatch();
   const { user } = useSession();
@@ -37,21 +41,37 @@ export const FolderHeader = ({
   }
 
   const handleGoBack = () => {
-    console.log("Назад");
+    if (!folder || !folderWindow) return;
+    if (!folder.parentId) return; // уже на рабочем столе
+
+    dispatch(
+      setWindowFolder({ windowId: folderWindow.id, folderId: folder.parentId })
+    );
   };
 
   const handleGoForward = () => {
-    console.log("Вперед");
+    if (!folder || !folderWindow) return;
+
+    const childFolder = items.find(
+      (i) => i.parentId === folder.id && i.type === "folder"
+    );
+
+    if (childFolder) {
+      dispatch(
+        setWindowFolder({ windowId: folderWindow.id, folderId: childFolder.id })
+      );
+    }
   };
 
   return (
     <div className={cls.folderHeaderWrapper}>
-      {/* Верхний заголовок — оставляем старую логику */}
       <div className={cls.folderHeader}>
         <span>{folder.name || "Папка"}</span>
         <div className={cls.controls}>
-          <button onClick={handleMinimize}>−</button>
-          <button onClick={handleMaximize}>{maximized ? "⧉" : "□"}</button>
+          <button onClick={() => handleMinimize(folderWindow?.id)}>−</button>
+          <button onClick={() => handleMaximize(folderWindow?.id)}>
+            {folderWindow?.windowState === "maximized" ? "⧉" : "□"}
+          </button>
           <button onClick={handleCloseWindow}>×</button>
         </div>
       </div>
@@ -63,7 +83,6 @@ export const FolderHeader = ({
           <button onClick={handleGoForward}>→</button>
         </div>
         <div className={cls.breadcrumbs}>
-          {/* имя пользователя как первый элемент */}
           <span
             style={{ cursor: "pointer" }}
             onClick={() => {
@@ -83,7 +102,7 @@ export const FolderHeader = ({
               key={f.id}
               onClick={() => {
                 if (folderWindow) {
-                  dispatch(setActiveFolder(f.id)); // можно заменить на экшен currentFolderId окна
+                  dispatch(setActiveFolder(f.id));
                 }
               }}
               style={{ cursor: "pointer" }}

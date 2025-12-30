@@ -17,7 +17,7 @@ export interface IOpenFolder {
   x: number;
   y: number;
   windowState: "normal" | "minimized" | "maximized";
-  currentFolderId: string; //  внутри этого окна какая папка открыта
+  currentFolderId: string | null; //  внутри этого окна какая папка открыта
 }
 
 interface DesktopState {
@@ -188,7 +188,16 @@ export const desktopSlice = createSlice({
       if (item) item.name = action.payload.newName.trim();
       state.renamingItemId = null;
     },
-
+    setWindowFolder: (
+      state,
+      action: PayloadAction<{ windowId: string; folderId: string | null }>
+    ) => {
+      const win = state.openFolders.find(
+        (f) => f.id === action.payload.windowId
+      );
+      if (!win) return;
+      win.currentFolderId = action.payload.folderId;
+    },
     openFolder: (
       state,
       action: PayloadAction<{ id: string; x: number; y: number }>
@@ -319,6 +328,7 @@ export const {
   removeManyItems,
   clearDesktop,
   updateTextContent,
+  setWindowFolder,
 } = desktopSlice.actions;
 
 export default desktopSlice.reducer;
