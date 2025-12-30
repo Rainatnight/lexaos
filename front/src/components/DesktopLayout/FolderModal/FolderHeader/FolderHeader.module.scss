@@ -30,3 +30,53 @@
     }
   }
 }
+.folderHeaderWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.folderNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #444444; // чуть светлее, чем верхний header
+  color: white;
+  font-size: 13px;
+  height: 24px;
+  padding: 0 5px;
+}
+
+.navControls {
+  display: flex;
+  gap: 4px;
+
+  & > button {
+    height: 100%;
+    border: none;
+    background: none;
+    color: white;
+    cursor: pointer;
+    padding: 0 6px;
+    font-size: 14px;
+    transition: background 0.3s;
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  & > span {
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

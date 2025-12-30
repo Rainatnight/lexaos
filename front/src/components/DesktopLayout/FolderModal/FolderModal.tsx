@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import cls from "./FolderModal.module.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
