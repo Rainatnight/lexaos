@@ -11,7 +11,7 @@ import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 export const FolderContent = ({ folders, parentId }) => {
   const { t } = useTranslation("folderModal");
   const dispatch = useAppDispatch();
-  console.log(parentId);
+
   const [desktopMenu, setDesktopMenu] = useState<{
     x: number;
     y: number;

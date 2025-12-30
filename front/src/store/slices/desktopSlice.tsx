@@ -34,6 +34,7 @@ const defaultIcons: DesktopItem[] = [
     name: "Этот компьютер",
     x: 0,
     y: 0,
+    parentId: null,
   },
   {
     id: "vs",
@@ -41,6 +42,7 @@ const defaultIcons: DesktopItem[] = [
     name: "Visual Studio",
     x: 0,
     y: 80,
+    parentId: null,
   },
   {
     id: "trash",
@@ -48,6 +50,7 @@ const defaultIcons: DesktopItem[] = [
     name: "Корзина",
     x: 0,
     y: 160,
+    parentId: null,
   },
   {
     id: "chat",
@@ -55,6 +58,7 @@ const defaultIcons: DesktopItem[] = [
     name: "LexaChat",
     x: 0,
     y: 240,
+    parentId: null,
   },
 
   {
@@ -63,6 +67,7 @@ const defaultIcons: DesktopItem[] = [
     name: "LexaZoom",
     x: 0,
     y: 320,
+    parentId: null,
   },
 ];
 
@@ -126,12 +131,19 @@ export const desktopSlice = createSlice({
     sortItemsByName(state) {
       const spacing = state.iconSize;
       const margin = 0;
-      let screenHeight =
+      const screenHeight =
         typeof window !== "undefined" ? window.innerHeight : 800;
-      state.items.sort((a, b) => russianCompare(a.name, b.name));
+
+      // 1. Получаем элементы рабочего стола
+      const contextEls = state.items.filter((e) => e.parentId === null);
+
+      // 2. Сортируем их по имени
+      contextEls.sort((a, b) => russianCompare(a.name, b.name));
+
+      // 3. Расставляем координаты
       let x = margin,
         y = margin;
-      for (const item of state.items) {
+      for (const item of contextEls) {
         item.x = x;
         item.y = y;
         y += spacing;

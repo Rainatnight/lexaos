@@ -149,13 +149,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         action: b.action,
       })),
     },
-    {
-      label: t("Сортировать по"),
-      submenu: sortOptions.map((b) => ({
-        label: b.label,
-        action: b.action,
-      })),
-    },
+
     {
       label: t("Изменить размер"),
       submenu: [
@@ -177,6 +171,15 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
       ],
     },
   ];
+
+  parentId === null &&
+    options.push({
+      label: t("Сортировать по"),
+      submenu: sortOptions.map((b) => ({
+        label: b.label,
+        action: b.action,
+      })),
+    });
 
   // Проверка границ экрана
   useEffect(() => {

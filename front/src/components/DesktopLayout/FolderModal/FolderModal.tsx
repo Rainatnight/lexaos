@@ -20,7 +20,6 @@ import { LexaChat } from "@/components/LexaChat/LexaChat";
 import { LexaZoom } from "@/components/LexaZoom/LexaZoom";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
-  console.log(item);
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const pos = useRef({ x: position.x, y: position.y });
