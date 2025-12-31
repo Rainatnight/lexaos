@@ -13,6 +13,8 @@ import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { LexaChatEl } from "@/components/DesktopIcons/LexaChat/LexaChatEl";
 import { LexaZoomEl } from "@/components/DesktopIcons/LexaZoom/LexaZoom";
 import { Calculexa } from "@/components/DesktopIcons/Calculexa/Calculexa";
+import { Terminal } from "@/components/DesktopIcons/Terminal/Terminal";
+import { Chrome } from "@/components/DesktopIcons/Chrome/Chrome";
 
 interface IProps {
   item: {
@@ -125,6 +127,8 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
         {item.type === "chat" && <LexaChatEl />}
         {item.type === "zoom" && <LexaZoomEl />}
         {item.type === "calc" && <Calculexa />}
+        {item.type === "term" && <Terminal />}
+        {item.type === "chrome" && <Chrome />}
         {item.type === "folder" && (
           <DesktopElement
             id={item.id}

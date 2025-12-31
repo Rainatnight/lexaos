@@ -4,7 +4,17 @@ import { isDescendantOrSameWindow } from "@/helpers/isDesc";
 
 export interface DesktopItem {
   id: string;
-  type: "pc" | "vs" | "trash" | "folder" | "chat" | "zoom" | string;
+  type:
+    | "pc"
+    | "vs"
+    | "trash"
+    | "folder"
+    | "chat"
+    | "zoom"
+    | "calc"
+    | "term"
+    | "chrome"
+    | string;
   name: string;
   x: number;
   y: number;
@@ -77,6 +87,22 @@ const defaultIcons: DesktopItem[] = [
     name: "Calculexa",
     x: 0,
     y: 400,
+    parentId: null,
+  },
+  {
+    id: "term",
+    type: "term",
+    name: "Terminal",
+    x: 0,
+    y: 480,
+    parentId: null,
+  },
+  {
+    id: "chrome",
+    type: "chrome",
+    name: "Chrome",
+    x: 0,
+    y: 560,
     parentId: null,
   },
 ];

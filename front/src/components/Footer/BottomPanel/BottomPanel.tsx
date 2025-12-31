@@ -27,6 +27,12 @@ export const BottomPanel = () => {
         return "/img/icons/chat.png";
       case "trash":
         return "/img/icons/bin.png";
+      case "calc":
+        return "/img/icons/calc.png";
+      case "term":
+        return "/img/icons/term.png";
+      case "chrome":
+        return "/img/icons/chrome.png";
 
       default:
         return "/img/icons/folder.png";
