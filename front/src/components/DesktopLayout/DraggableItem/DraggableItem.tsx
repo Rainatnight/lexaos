@@ -76,6 +76,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
           dragEndSound.currentTime = 0;
           dragEndSound.play().catch((err) => console.log(err));
 
+          if (!["folder", "txt"].includes(item.type)) return;
           dispatch(
             moveItemThunk({
               id: item.id,
