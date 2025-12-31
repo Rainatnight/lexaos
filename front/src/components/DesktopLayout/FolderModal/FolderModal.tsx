@@ -18,6 +18,7 @@ import { FolderFooter } from "./FolderFooter/FolderFooter";
 import { TextEditor } from "@/components/TextEditor/TextEditor";
 import { LexaChat } from "@/components/LexaChat/LexaChat";
 import { LexaZoom } from "@/components/LexaZoom/LexaZoom";
+import { Calculexa } from "@/components/Calculexa/Calculexa";
 
 export const FolderModal = ({
   item,
@@ -76,6 +77,30 @@ export const FolderModal = ({
   const handleMaximize = () => {
     changeState(maximized ? "normal" : "maximized");
     playSound();
+  };
+
+  const renderContent = () => {
+    switch (item.type) {
+      case "folder":
+      case "trash":
+        return (
+          <>
+            <FolderContent folders={children} parentId={item.id} />
+            <FolderFooter folders={children} item={item} />
+          </>
+        );
+
+      case "chat":
+        return <LexaChat />;
+      case "zoom":
+        return <LexaZoom />;
+      case "calc":
+        return <Calculexa />;
+      case "txt":
+        return <TextEditor item={item} />;
+      default:
+        return null;
+    }
   };
 
   useEffect(() => {
@@ -309,18 +334,7 @@ export const FolderModal = ({
         />
       </div>
 
-      {["folder", "trash"].includes(item.type) ? (
-        <>
-          <FolderContent folders={children} parentId={item.id} />
-          <FolderFooter folders={children} item={item} />
-        </>
-      ) : item.type === "chat" ? (
-        <LexaChat />
-      ) : item.type === "zoom" ? (
-        <LexaZoom />
-      ) : (
-        <TextEditor item={item} />
-      )}
+      {renderContent()}
     </div>
   );
 };

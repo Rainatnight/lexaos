@@ -71,6 +71,14 @@ const defaultIcons: DesktopItem[] = [
     y: 320,
     parentId: null,
   },
+  {
+    id: "calc",
+    type: "calc",
+    name: "Calculexa",
+    x: 0,
+    y: 400,
+    parentId: null,
+  },
 ];
 
 const initialState: DesktopState = {

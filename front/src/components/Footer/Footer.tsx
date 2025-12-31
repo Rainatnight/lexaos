@@ -16,9 +16,6 @@ const Footer = () => {
   const [showModal, setShowModal] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
   const calendarRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -40,6 +37,10 @@ const Footer = () => {
   useEffect(() => {
     const id = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    setIsClient(true);
   }, []);
 
   useEffect(() => {

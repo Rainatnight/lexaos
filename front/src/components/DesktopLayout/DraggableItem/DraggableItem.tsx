@@ -12,6 +12,7 @@ import { moveItemThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { LexaChatEl } from "@/components/DesktopIcons/LexaChat/LexaChatEl";
 import { LexaZoomEl } from "@/components/DesktopIcons/LexaZoom/LexaZoom";
+import { Calculexa } from "@/components/DesktopIcons/Calculexa/Calculexa";
 
 interface IProps {
   item: {
@@ -123,6 +124,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
         {item.type === "trash" && <TrashBin />}
         {item.type === "chat" && <LexaChatEl />}
         {item.type === "zoom" && <LexaZoomEl />}
+        {item.type === "calc" && <Calculexa />}
         {item.type === "folder" && (
           <DesktopElement
             id={item.id}
