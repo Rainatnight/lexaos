@@ -5,11 +5,12 @@ import {
   setActiveFolder,
   setFolderWindowState,
 } from "@/store/slices/desktopSlice";
+import Image from "next/image";
+
 import cls from "./BottomPanel.module.scss";
 
 export const BottomPanel = () => {
   const dispatch = useDispatch();
-
   const openFolders = useSelector(
     (state: RootState) => state.desktop.openFolders
   );
@@ -17,6 +18,20 @@ export const BottomPanel = () => {
   const activeFolderId = useSelector(
     (state: RootState) => state.desktop.activeFolderId
   );
+
+  const getImgSrc = (id: string) => {
+    switch (id) {
+      case "zoom":
+        return "/img/icons/lexazoom.png";
+      case "chat":
+        return "/img/icons/chat.png";
+      case "trash":
+        return "/img/icons/bin.png";
+
+      default:
+        return "/img/icons/folder.png";
+    }
+  };
 
   return (
     <div className={cls.panel}>
@@ -52,7 +67,16 @@ export const BottomPanel = () => {
               dispatch(setActiveFolder(folder.id));
             }}
           >
-            {item.name ?? <span>{item.name}</span>}
+            <div className={cls.name}>
+              <Image
+                src={getImgSrc(item.id) || "/img/icons/folder.png"}
+                alt={"folder"}
+                className={cls.img}
+                width={18}
+                height={18}
+              />
+              {item.name ?? <span>{item.name}</span>}
+            </div>
           </div>
         );
       })}
