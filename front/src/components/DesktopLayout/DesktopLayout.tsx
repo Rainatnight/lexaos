@@ -97,6 +97,21 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     setSelectionRect(null);
   };
 
+  const getSafePosition = (x: number, y: number) => {
+    const padding = 20;
+
+    const windowWidth = 800;
+    const windowHeight = window.innerHeight * 0.8;
+
+    const maxX = window.innerWidth - windowWidth - padding;
+    const maxY = window.innerHeight - windowHeight - padding;
+
+    return {
+      x: Math.max(padding, Math.min(x, maxX)),
+      y: Math.max(padding, Math.min(y, maxY)),
+    };
+  };
+
   useEffect(() => {
     if (!loaded.current) {
       loaded.current = true;
@@ -139,12 +154,14 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
         );
         if (!currentItem) return null;
 
+        const pos = getSafePosition(folder.x, folder.y);
+
         return (
           <FolderModal
             key={folder.id}
             item={currentItem}
             handleCloseWindow={() => dispatch(closeFolder(folder.id))}
-            position={{ x: folder.x, y: folder.y }}
+            position={pos}
             folderId={folder.id}
           />
         );
