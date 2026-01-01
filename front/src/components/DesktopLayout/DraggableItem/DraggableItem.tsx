@@ -7,7 +7,7 @@ import { setSelectedItem } from "@/store/slices/desktopSlice";
 import { DesktopElement } from "@/components/DesktopIcons/DesktopElement/DesktopElement";
 import { RootState } from "@/store";
 import cls from "./DraggableItem.module.scss";
-import { PC, TrashBin, Vs } from "@/components/DesktopIcons";
+import { PC, Vs, Bin } from "@/components/DesktopIcons";
 import { moveItemThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { LexaChatEl } from "@/components/DesktopIcons/LexaChat/LexaChatEl";
@@ -124,7 +124,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
       >
         {item.type === "pc" && <PC />}
         {item.type === "vs" && <Vs />}
-        {item.type === "trash" && <TrashBin />}
+        {item.type === "bin" && <Bin />}
         {item.type === "chat" && <LexaChatEl />}
         {item.type === "zoom" && <LexaZoomEl />}
         {item.type === "calc" && <Calculexa />}

@@ -68,7 +68,7 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   };
 
   const handleDelete = () => {
-    dispatch(moveItemToFolderThunk({ itemId, parentId: "trash" }));
+    dispatch(moveItemToFolderThunk({ itemId, parentId: "bin" }));
     onClose();
   };
 

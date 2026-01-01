@@ -29,7 +29,7 @@ export const LexaZoomEl = () => {
       }}
     >
       <Image
-        src="/img/icons/lexazoom.png"
+        src="/img/icons/zoom.png"
         alt="lexaZoom"
         className={cls.img}
         width={iconSize / 2}

@@ -2,7 +2,7 @@ import React from "react";
 import cls from "./FolderFooter.module.scss";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
-import { clearTrashThunk } from "@/store/slices/desktopThunks";
+import { clearbinThunk } from "@/store/slices/desktopThunks";
 
 export const FolderFooter = ({ folders, item }) => {
   const { t } = useTranslation("folderModal");
@@ -25,11 +25,11 @@ export const FolderFooter = ({ folders, item }) => {
         {count} {getPlural(count, t("элемент"), t("элемента"), t("элементов"))}
       </p>
 
-      {item.id === "trash" && (
+      {item.id === "bin" && (
         <div
           className={cls.clear}
           onClick={() => {
-            dispatch(clearTrashThunk());
+            dispatch(clearbinThunk());
           }}
         >
           {t("Очистить корзину")}

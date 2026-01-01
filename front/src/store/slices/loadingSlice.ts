@@ -9,7 +9,7 @@ interface DesktopLoadingState {
   moveFolder: boolean;
   moveItem: boolean;
   moveItemToFolder: boolean;
-  clearTrash: boolean;
+  clearbin: boolean;
   [key: string]: boolean;
 }
 
@@ -20,7 +20,7 @@ const initialState: DesktopLoadingState = {
   moveFolder: false,
   moveItem: false,
   moveItemToFolder: false,
-  clearTrash: false,
+  clearbin: false,
 };
 
 const desktopLoadingSlice = createSlice({

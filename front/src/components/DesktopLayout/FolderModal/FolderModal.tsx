@@ -82,7 +82,7 @@ export const FolderModal = ({
   const renderContent = () => {
     switch (item.type) {
       case "folder":
-      case "trash":
+      case "bin":
         return (
           <>
             <FolderContent folders={children} parentId={item.id} />

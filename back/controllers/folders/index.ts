@@ -126,7 +126,7 @@ export class FoldersController {
     }
   }
 
-  async clearTrash(req: Request, res: Response) {
+  async clearbin(req: Request, res: Response) {
     try {
       const { ids } = req.body
 

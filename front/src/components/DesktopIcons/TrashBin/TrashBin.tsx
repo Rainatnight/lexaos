@@ -7,7 +7,7 @@ import { RootState } from "@/store";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { openFolder } from "@/store/slices/desktopSlice";
 
-export const TrashBin = () => {
+export const Bin = () => {
   const { t } = useTranslation("desktopLayout");
   const dispatch = useAppDispatch();
 
@@ -17,7 +17,7 @@ export const TrashBin = () => {
   const handleDoubleClick = (e: React.MouseEvent) => {
     dispatch(
       openFolder({
-        id: "trash",
+        id: "bin",
         x: e.clientX,
         y: e.clientY,
       })
@@ -34,7 +34,7 @@ export const TrashBin = () => {
     >
       <Image
         src="/img/icons/bin.png"
-        alt="TrashBin"
+        alt="binBin"
         className={cls.img}
         width={iconSize / 2}
         height={iconSize / 2}

@@ -7,7 +7,7 @@ export interface DesktopItem {
   type:
     | "pc"
     | "vs"
-    | "trash"
+    | "bin"
     | "folder"
     | "chat"
     | "zoom"
@@ -39,7 +39,7 @@ interface DesktopState {
   activeFolderId: string | null;
 }
 
-const defaultIcons: DesktopItem[] = [
+export const defaultIcons: DesktopItem[] = [
   {
     id: "pc",
     type: "pc",
@@ -57,8 +57,8 @@ const defaultIcons: DesktopItem[] = [
     parentId: null,
   },
   {
-    id: "trash",
-    type: "trash",
+    id: "bin",
+    type: "bin",
     name: "Корзина",
     x: 0,
     y: 160,
@@ -293,7 +293,7 @@ export const desktopSlice = createSlice({
       if (!item) return;
 
       // Нельзя положить ПК, VS или корзину внутрь папки
-      if (parentId && ["vs", "pc", "trash"].includes(item.type)) return;
+      if (parentId && ["vs", "pc", "bin"].includes(item.type)) return;
 
       // Проверка на рекурсивное вложение (если перемещаем папку внутрь другой папки)
       if (item.type === "folder" && parentId) {

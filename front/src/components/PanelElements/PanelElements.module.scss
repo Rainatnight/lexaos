@@ -1,0 +1,28 @@
+.list {
+  height: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.el {
+  display: flex;
+  gap: 4px;
+  cursor: pointer;
+
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #e6e6e6;
+  transition: background 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(4px);
+  }
+  & > img {
+    width: 20px;
+    height: 20px;
+  }
+}

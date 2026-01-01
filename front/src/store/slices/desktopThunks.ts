@@ -231,16 +231,16 @@ export const moveItemToFolderThunk = createAsyncThunk(
   }
 );
 
-export const clearTrashThunk = createAsyncThunk<
+export const clearbinThunk = createAsyncThunk<
   string[],
   void,
   { state: RootState }
->("desktop/clearTrash", async (_, { getState, dispatch, rejectWithValue }) => {
+>("desktop/clearbin", async (_, { getState, dispatch, rejectWithValue }) => {
   try {
     const state = getState();
     const allItems = state.desktop.items;
 
-    const trashRoots = allItems.filter((i) => i.parentId === "trash");
+    const binRoots = allItems.filter((i) => i.parentId === "bin");
 
     const allIdsToDelete: string[] = [];
 
@@ -251,19 +251,19 @@ export const clearTrashThunk = createAsyncThunk<
       children.forEach((child) => collectChildren(child.id));
     };
 
-    trashRoots.forEach((root) => collectChildren(root.id));
+    binRoots.forEach((root) => collectChildren(root.id));
 
     const user = localStorage.getItem(USER_KEY);
 
     if (user) {
-      await api.post("/folders/clear-trash", { ids: allIdsToDelete });
+      await api.post("/folders/clear-bin", { ids: allIdsToDelete });
     }
 
     dispatch(removeManyItems(allIdsToDelete));
 
     return allIdsToDelete;
   } catch (err: any) {
-    return rejectWithValue(err.response?.data || "Clear trash error");
+    return rejectWithValue(err.response?.data || "Clear bin error");
   }
 });
 

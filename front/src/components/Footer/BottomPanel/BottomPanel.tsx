@@ -25,7 +25,7 @@ export const BottomPanel = () => {
         return "/img/icons/lexazoom.png";
       case "chat":
         return "/img/icons/chat.png";
-      case "trash":
+      case "bin":
         return "/img/icons/bin.png";
       case "calc":
         return "/img/icons/calc.png";

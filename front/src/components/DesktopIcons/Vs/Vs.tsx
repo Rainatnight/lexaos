@@ -10,7 +10,7 @@ export const Vs = () => {
   return (
     <div className={cls.wrap} style={{ width: iconSize, height: iconSize }}>
       <Image
-        src="/img/icons/vscode.png"
+        src="/img/icons/vs.png"
         alt="VS Code"
         className={cls.img}
         width={iconSize / 2}
