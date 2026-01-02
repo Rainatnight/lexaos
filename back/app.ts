@@ -17,13 +17,6 @@ import { socketAuthStrict } from '@middleware/socketAuthStrict'
 import { createRoutes } from './routes'
 import { onConnection } from './socket'
 
-const allowedOrigins = [
-  'https://lexaos-omega.vercel.app',
-  'http://localhost:3000',
-  'http://host.docker.internal:3000',
-  'http://172.27.128.1:3000',
-]
-
 const app = express()
 dotenv.config()
 const PORT = Number(config.get('port') || 5000)
@@ -47,13 +40,9 @@ app.use(passport.initialize() as any)
 const server = createServer(app)
 
 const io = new Server(server, {
+  path: '/',
   cors: {
-    origin: [
-      'https://lexaos-omega.vercel.app',
-      'http://localhost:3000',
-      'http://host.docker.internal:3000',
-      'http://172.27.128.1:3000',
-    ],
+    origin: '*',
   },
   serveClient: false,
 })
@@ -77,7 +66,7 @@ app.use((_req: Request, res: Response) => {
 })
 
 async function start() {
-  const mongoUri = 'mongodb+srv://faudi:Alexnaf1999uh@test.kzhbe.mongodb.net/lexaos'
+  const mongoUri = process.env.MONGO_URI
   if (!mongoUri) {
     console.error('Server Error: mongoUri is not defined!')
     process.exit(1)
