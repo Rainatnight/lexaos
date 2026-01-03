@@ -1,6 +1,6 @@
 import React from "react";
 import cls from "../DesktopIcons.module.scss";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";

@@ -3,7 +3,7 @@ import cls from "./ContextMenu.module.scss";
 import { ContextMenuItem } from "../ContextMenuItem/ContextMenuItem";
 import { useSelector } from "react-redux";
 import { setBackground } from "@/store/slices/themeSlice";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import { setIconSize, sortItemsByName } from "@/store/slices/desktopSlice";
 import { RootState } from "@/store";
 import { createFolderThunk } from "@/store/slices/desktopThunks";

@@ -1,6 +1,6 @@
 import React from "react";
 import cls from "./FolderFooter.module.scss";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { clearbinThunk } from "@/store/slices/desktopThunks";
 

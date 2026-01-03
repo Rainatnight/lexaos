@@ -9,6 +9,7 @@ import { FolderModal } from "./FolderModal/FolderModal";
 import { RootState } from "@/store";
 import { loadDesktopThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
+import { useTranslation } from "next-i18next";
 
 interface Props {
   onBackgroundContextMenu: (x: number, y: number) => void;
@@ -19,9 +20,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
   const items = useSelector(selectRootDesktopItems);
   const openFolders = useSelector(openedWindows);
   const allItems = useSelector((state: RootState) => state.desktop.items);
-  const activeFolderId = useSelector(
-    (state: RootState) => state.desktop.activeFolderId
-  );
+  const { t } = useTranslation("DesktopLayout");
 
   const { user } = useSession();
 
@@ -127,7 +126,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      <div className={cls.login}>{user?.login}</div>
+      <div className={cls.login}>{`${t("Пользователь")}  ${user?.login}`}</div>
 
       {items.map((item) => (
         <DraggableItem key={item.id} item={item} />

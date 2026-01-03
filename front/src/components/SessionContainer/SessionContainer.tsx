@@ -38,7 +38,7 @@ export const SessionContainer = () => {
     }
 
     initSession();
-  }, []);
+  }, [session.token]);
 
   return <></>;
 };

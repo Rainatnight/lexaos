@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import cls from "./FolderContent.module.scss";
 import { DesktopElement } from "@/components/DesktopIcons";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { setSelectedItem } from "@/store/slices/desktopSlice";

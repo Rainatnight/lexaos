@@ -6,7 +6,7 @@ import router from "next/router";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { clearDesktop } from "@/store/slices/desktopSlice";
 import { PanelElements } from "@/components/PanelElements/PanelElements";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 
 export const Menu = ({ menuRef }) => {
   const session = useSession();

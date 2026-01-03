@@ -40,7 +40,6 @@ app.use(passport.initialize() as any)
 const server = createServer(app)
 
 const io = new Server(server, {
-  path: '/',
   cors: {
     origin: '*',
   },

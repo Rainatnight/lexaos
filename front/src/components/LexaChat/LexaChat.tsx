@@ -3,7 +3,7 @@ import cls from "./LexaChat.module.scss";
 import { api } from "@/shared/api/api";
 import { classNames } from "@/helpers/classNames/classNames";
 import useSession from "@/shared/hooks/useSession";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 
 export const LexaChat = () => {
   const [users, setUsers] = useState<{ _id: string; login: string }[]>([]);

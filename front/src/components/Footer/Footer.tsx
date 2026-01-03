@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import InstrumentsIcon from "@/shared/api/ui/Icons/InstrumentsIcon";
 import SearchIcon from "@/shared/api/ui/Icons/SearchIcon";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import i18next from "@/shared/api/config/i18n/i18next";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";

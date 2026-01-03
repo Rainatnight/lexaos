@@ -7,7 +7,7 @@ import {
   setSelectedItem,
 } from "@/store/slices/desktopSlice";
 import cls from "./ItemContextMenu.module.scss";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { moveItemToFolderThunk } from "@/store/slices/desktopThunks";
 import { createPortal } from "react-dom"; // ← добавили
