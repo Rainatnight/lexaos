@@ -4,9 +4,10 @@ import { api } from "@/shared/api/api";
 import { classNames } from "@/helpers/classNames/classNames";
 import useSession from "@/shared/hooks/useSession";
 import { useTranslation } from "next-i18next";
+import { useQuery } from "@tanstack/react-query";
+import { fetchChatUsers } from "../LexaZoom/LexaZoom";
 
 export const LexaChat = () => {
-  const [users, setUsers] = useState<{ _id: string; login: string }[]>([]);
   const [selectedChat, setSelectedChat] = useState<null | string>(null);
   const [messages, setMessages] = useState<any>([]);
   const [msg, setMsg] = useState("");
@@ -19,6 +20,11 @@ export const LexaChat = () => {
   const { t } = useTranslation("lexachat");
 
   const { socket, user } = useSession();
+
+  const { data: users = [] } = useQuery({
+    queryKey: ["chat-users"],
+    queryFn: fetchChatUsers,
+  });
 
   const sendMsg = () => {
     if (!msg.trim() || !selectedChat) return;
@@ -79,10 +85,6 @@ export const LexaChat = () => {
 
   useEffect(() => {
     if (!user?.id || !socket) return;
-
-    api.get("/users/get-for-chat").then((data) => {
-      setUsers(data.data.users);
-    });
 
     const onNewMessage = (msgData: any) => {
       setMessages((prev) => [...prev, msgData]);

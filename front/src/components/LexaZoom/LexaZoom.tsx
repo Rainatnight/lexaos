@@ -6,26 +6,30 @@ import { OutgoingCall } from "./OutgoingCall/OutgoingCall";
 import { IncomingCall } from "./IncomingCall/IncomingCall";
 import useSession from "@/shared/hooks/useSession";
 import { CallSession } from "./CallSession/CallSession";
+import { useQuery } from "@tanstack/react-query";
 
 export type ChatUser = {
   _id: string;
   login: string;
 };
 
+export const fetchChatUsers = async () => {
+  const res = await api.get("/users/get-for-chat");
+  return res.data.users;
+};
+
 type Mode = "IDLE" | "OUTGOING_CALL" | "INCOMING_CALL" | "IN_CALL";
 
 export const LexaZoom = () => {
   const [mode, setMode] = useState<Mode>("IDLE");
-  const [users, setUsers] = useState<ChatUser[]>([]);
   const [activeUser, setActiveUser] = useState<ChatUser | null>(null);
   const { socket, user } = useSession();
   const [isCallInitiator, setIsCallInitiator] = useState(false);
 
-  useEffect(() => {
-    api.get("/users/get-for-chat").then((data) => {
-      setUsers(data.data.users);
-    });
-  }, []);
+  const { data: users = [] } = useQuery({
+    queryKey: ["chat-users"],
+    queryFn: fetchChatUsers,
+  });
 
   const handleCallUser = (Touser: ChatUser) => {
     setActiveUser(Touser);
