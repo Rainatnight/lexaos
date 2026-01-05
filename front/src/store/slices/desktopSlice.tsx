@@ -238,14 +238,22 @@ export const desktopSlice = createSlice({
     ) => {
       const { id, x, y } = action.payload;
 
-      const existingWindow = state.openFolders.find((f) =>
-        isDescendantOrSameWindow(state.items, id, f.id)
-      );
+      const item = state.items.find((i) => i.id === id);
+      if (!item) return;
 
-      if (existingWindow) {
-        // внутри окна меняем текущую папку
-        existingWindow.currentFolderId = id;
-        return;
+      const isFolder = item.type === "folder";
+      console.log(isFolder);
+
+      if (isFolder) {
+        const existingWindow = state.openFolders.find((f) =>
+          isDescendantOrSameWindow(state.items, id, f.id)
+        );
+
+        if (existingWindow) {
+          // внутри окна меняем текущую папку
+          existingWindow.currentFolderId = id;
+          return;
+        }
       }
 
       // создаём новое окно
@@ -256,6 +264,8 @@ export const desktopSlice = createSlice({
         windowState: "normal",
         currentFolderId: id, // начальная папка окна
       });
+
+      state.activeFolderId = id;
     },
     closeFolder: (state, action: PayloadAction<string>) => {
       state.openFolders = state.openFolders.filter(

@@ -97,7 +97,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
   };
 
   const getSafePosition = (x: number, y: number) => {
-    const padding = 20;
+    const padding = 35;
 
     const windowWidth = 800;
     const windowHeight = window.innerHeight * 0.8;
