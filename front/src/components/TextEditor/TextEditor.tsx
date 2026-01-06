@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import cls from "./TextEditor.module.scss";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { saveTextFileThunk } from "@/store/slices/desktopThunks";
+import { api } from "@/shared/api/api";
+import { getFilePath } from "@/helpers/getFilePath/getFilePath";
 
 const COLORS = [
   "#000000",
@@ -18,10 +20,42 @@ const FONT_SIZES = ["14px", "16px", "18px", "24px", "32px"];
 
 export const TextEditor = ({ item }) => {
   const editorRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [currentColor, setCurrentColor] = useState("#000000");
   const [currentFontSize, setCurrentFontSize] = useState("16px");
   const [isBold, setIsBold] = useState(false);
+  const lastRangeRef = useRef<Range | null>(null);
+
   const dispatch = useAppDispatch();
+
+  const insertNodeAtCursor = (node: Node) => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(node);
+
+    range.setStartAfter(node);
+    range.collapse(true);
+
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    editorRef.current?.focus();
+  };
+
+  const uploadFile = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await api.post<{ data: string }>("/files/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data; charset=UTF-16" },
+    });
+
+    return res.data.data;
+  };
 
   const applyStyle = (style: {
     color?: string;
@@ -34,36 +68,105 @@ export const TextEditor = ({ item }) => {
     const range = sel.getRangeAt(0);
 
     if (!range.collapsed) {
-      // есть выделение → обернуть в span
       const span = document.createElement("span");
       if (style.color) span.style.color = style.color;
       if (style.fontSize) span.style.fontSize = style.fontSize;
       if (style.fontWeight) span.style.fontWeight = style.fontWeight;
+
       span.appendChild(range.extractContents());
       range.insertNode(span);
 
-      // сохраняем выделение
       sel.removeAllRanges();
       const newRange = document.createRange();
       newRange.selectNodeContents(span);
       sel.addRange(newRange);
     } else {
-      // нет выделения → вставляем пустой span для наследования
       const span = document.createElement("span");
       if (style.color) span.style.color = style.color;
       if (style.fontSize) span.style.fontSize = style.fontSize;
       if (style.fontWeight) span.style.fontWeight = style.fontWeight;
-      span.textContent = "\u200B"; // zero-width-space
+
+      span.textContent = "\u200B";
       range.insertNode(span);
 
       const newRange = document.createRange();
       newRange.setStart(span.firstChild!, 1);
       newRange.collapse(true);
+
       sel.removeAllRanges();
       sel.addRange(newRange);
     }
 
     editorRef.current?.focus();
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const fileId = await uploadFile(file);
+
+    if (file.type.startsWith("image/")) {
+      const img = document.createElement("img");
+      img.src = getFilePath(fileId);
+      img.alt = file.name;
+      img.style.maxWidth = "100%";
+
+      insertNodeAtCursor(img);
+    } else {
+      const link = document.createElement("a");
+      link.href = getFilePath(fileId);
+      link.textContent = file.name;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+
+      insertNodeAtCursor(link);
+    }
+
+    e.target.value = "";
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+
+    const fileId = await uploadFile(file);
+
+    if (file.type.startsWith("image/")) {
+      const img = document.createElement("img");
+      img.src = getFilePath(fileId);
+      img.style.maxWidth = "100%";
+
+      insertNodeAtCursor(img);
+    } else {
+      const link = document.createElement("a");
+      link.href = getFilePath(fileId);
+      link.textContent = file.name;
+
+      insertNodeAtCursor(link);
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    const text = e.clipboardData.getData("text/plain");
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+
+    const textNode = document.createTextNode(text);
+    range.insertNode(textNode);
+
+    range.setStartAfter(textNode);
+    range.collapse(true);
+
+    sel.removeAllRanges();
+    sel.addRange(range);
   };
 
   const handleSave = () => {
@@ -77,36 +180,6 @@ export const TextEditor = ({ item }) => {
     );
   };
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    const text = e.clipboardData.getData("text/plain");
-
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
-
-    const range = sel.getRangeAt(0);
-    range.deleteContents();
-
-    // вставляем как текст
-    const textNode = document.createTextNode(text);
-    range.insertNode(textNode);
-
-    // ставим курсор после вставленного текста
-    range.setStartAfter(textNode);
-    range.collapse(true);
-
-    sel.removeAllRanges();
-    sel.addRange(range);
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    const text = e.dataTransfer.getData("text/plain");
-    document.execCommand("insertText", false, text);
-  };
-
   useEffect(() => {
     if (editorRef.current && item?.content) {
       editorRef.current.innerHTML = item.content;
@@ -116,7 +189,7 @@ export const TextEditor = ({ item }) => {
   return (
     <div className={cls.wrap}>
       <div className={cls.toolbar}>
-        {/* Font size */}
+        {/* font size */}
         <select
           className={cls.select}
           value={currentFontSize}
@@ -133,7 +206,7 @@ export const TextEditor = ({ item }) => {
           ))}
         </select>
 
-        {/* Colors */}
+        {/* colors */}
         {COLORS.map((c) => (
           <button
             key={c}
@@ -150,7 +223,7 @@ export const TextEditor = ({ item }) => {
           />
         ))}
 
-        {/* Bold */}
+        {/* bold */}
         <button
           className={`${cls.boldBtn} ${isBold ? cls.active : ""}`}
           onMouseDown={(e) => e.preventDefault()}
@@ -161,22 +234,40 @@ export const TextEditor = ({ item }) => {
         >
           B
         </button>
+
+        {/* attach file */}
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          📎
+        </button>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          hidden
+          onChange={handleFileSelect}
+        />
+
+        {/* save */}
         <button
           className={cls.save}
           onMouseDown={(e) => e.preventDefault()}
           onClick={handleSave}
         >
-          {"Сохранить"}
+          Сохранить
         </button>
       </div>
 
       <div
         ref={editorRef}
-        onPaste={handlePaste}
-        onDrop={handleDrop}
         className={cls.editor}
         contentEditable
         suppressContentEditableWarning
+        onPaste={handlePaste}
+        onDrop={handleDrop}
+        onDragOver={(e) => e.preventDefault()}
         style={{ color: "#000000", fontSize: "16px" }}
       />
     </div>

@@ -26,7 +26,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
 
 app.use(
   cors({
-    origin: true, // разрешаем все
+    origin: true,
     credentials: true,
   })
 )
@@ -56,6 +56,7 @@ const routes = createRoutes(io)
 
 // обработка маршрутов
 app.use('/api/v1', routes.authRouter)
+app.use('/api/v1/files', routes.filesRouter)
 app.use('/api/v1/folders', routes.foldersRouter)
 app.use('/api/v1/users', routes.usersRouter)
 app.use('/api/v1/chats', routes.chatsRouter)

@@ -8,4 +8,4 @@ export const UNMISTAKABLE_CHARS_METEOR = '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefgh
 
 export const DEFAULT_LOGIN_EXPIRATION_DAYS_METEOR = 90
 
-export const DEFAULT_FILE_PATH = '/var/www/winbd/files'
+export const DEFAULT_FILE_PATH = '/var/www/lexaos/files'

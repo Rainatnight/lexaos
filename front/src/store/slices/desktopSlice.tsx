@@ -242,7 +242,6 @@ export const desktopSlice = createSlice({
       if (!item) return;
 
       const isFolder = item.type === "folder";
-      console.log(isFolder);
 
       if (isFolder) {
         const existingWindow = state.openFolders.find((f) =>
