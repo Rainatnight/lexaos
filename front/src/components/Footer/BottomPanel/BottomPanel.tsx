@@ -1,91 +1,53 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/store";
+import React, { FC, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { RootState, AppDispatch } from "@/store";
 import {
   setActiveFolder,
   setFolderWindowState,
 } from "@/store/slices/desktopSlice";
-import Image from "next/image";
 
 import cls from "./BottomPanel.module.scss";
+import { BottomPanelTab } from "../BottomPanelTab/BottomPanelTab";
 
-export const BottomPanel = () => {
-  const dispatch = useDispatch();
-  const openFolders = useSelector(
-    (state: RootState) => state.desktop.openFolders
-  );
-  const items = useSelector((state: RootState) => state.desktop.items);
-  const activeFolderId = useSelector(
-    (state: RootState) => state.desktop.activeFolderId
+export const BottomPanel: FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { openFolders, items, activeFolderId } = useSelector(
+    (state: RootState) => state.desktop
   );
 
-  const getImgSrc = (id: string) => {
-    switch (id) {
-      case "zoom":
-        return "/img/icons/lexazoom.png";
-      case "chat":
-        return "/img/icons/chat.png";
-      case "bin":
-        return "/img/icons/bin.png";
-      case "calc":
-        return "/img/icons/calc.png";
-      case "term":
-        return "/img/icons/term.png";
-      case "chrome":
-        return "/img/icons/chrome.png";
+  const handleTabClick = useCallback(
+    (folderId: string, windowState: string) => {
+      if (windowState === "minimized") {
+        dispatch(
+          setFolderWindowState({
+            id: folderId,
+            windowState: "normal",
+          })
+        );
 
-      default:
-        return "/img/icons/folder.png";
-    }
-  };
+        const audio = new Audio("/sounds/close.mp3");
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      }
+
+      dispatch(setActiveFolder(folderId));
+    },
+    [dispatch]
+  );
 
   return (
     <div className={cls.panel}>
-      {openFolders.map((folder) => {
-        const item = items.find(
-          (i) => i.id === (folder.currentFolderId ?? folder.id)
-        );
-
-        if (!item) return null;
-
-        return (
-          <div
-            key={folder.id}
-            className={`${cls.tab} ${
-              folder.id === activeFolderId ? cls.active : ""
-            }`}
-            onClick={() => {
-              // Если окно свернуто — разворачиваем
-              if (folder.windowState === "minimized") {
-                dispatch(
-                  setFolderWindowState({
-                    id: folder.id,
-                    windowState: "normal",
-                  })
-                );
-                const closeSound = new Audio("/sounds/close.mp3");
-                closeSound.preload = "auto";
-                closeSound.currentTime = 0;
-                closeSound.play().catch((err) => console.log(err));
-              }
-
-              // Делаем активным в любом случае
-              dispatch(setActiveFolder(folder.id));
-            }}
-          >
-            <div className={cls.name}>
-              <Image
-                src={getImgSrc(item.id) || "/img/icons/folder.png"}
-                alt={"folder"}
-                className={cls.img}
-                width={18}
-                height={18}
-              />
-              {item.name ?? <span>{item.name}</span>}
-            </div>
-          </div>
-        );
-      })}
+      {openFolders.map((folder) => (
+        <BottomPanelTab
+          key={folder.id}
+          folder={folder}
+          items={items}
+          isActive={folder.id === activeFolderId}
+          onClick={handleTabClick}
+        />
+      ))}
     </div>
   );
 };
