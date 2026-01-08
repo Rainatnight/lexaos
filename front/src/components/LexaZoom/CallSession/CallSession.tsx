@@ -6,7 +6,7 @@ import useSession from "@/shared/hooks/useSession";
 type Props = {
   user: ChatUser;
   onEndCall: () => void;
-  isInitiator: boolean; // true если мы звонящий
+  isInitiator: boolean;
 };
 
 export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
@@ -15,6 +15,8 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [isVideoOn, setIsVideoOn] = useState(false);
+  const [isAudioOn, setIsAudioOn] = useState(false);
 
   useEffect(() => {
     const pc = new RTCPeerConnection({
@@ -22,32 +24,22 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
     });
     pcRef.current = pc;
 
-    // Получаем локальный поток
-    navigator.mediaDevices
-      .getUserMedia({ video: false, audio: true })
-      .then((stream) => {
-        setLocalStream(stream);
-        if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+    pc.onnegotiationneeded = async () => {
+      try {
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        socket?.emit("webrtc:offer", { toUserId: user._id, sdp: offer });
+      } catch (err) {
+        console.error("Ошибка renegotiation:", err);
+      }
+    };
 
-        if (pcRef.current) {
-          stream
-            .getTracks()
-            .forEach((track) => pcRef.current!.addTrack(track, stream));
-        }
-      })
-      .catch((err) => {
-        console.error("Ошибка доступа к камере/микрофону:", err);
-        alert("Нужен доступ к камере и микрофону для звонка");
-        onEndCall();
-      });
-
-    // Удалённый поток
+    // удалённый поток
     pc.ontrack = (event) => {
       if (remoteVideoRef.current)
         remoteVideoRef.current.srcObject = event.streams[0];
     };
 
-    // ICE кандидаты
     pc.onicecandidate = (event) => {
       if (event.candidate) {
         socket?.emit("webrtc:ice-candidate", {
@@ -57,7 +49,6 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
       }
     };
 
-    // Слушаем события WebRTC через сокет
     const handleOffer = async ({ fromUserId, sdp }: any) => {
       if (fromUserId !== user._id) return;
       if (!pcRef.current) return;
@@ -94,6 +85,7 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
     return () => {
       pc.close();
       pcRef.current = null;
+
       localStream?.getTracks().forEach((track) => track.stop());
 
       socket?.off("webrtc:offer", handleOffer);
@@ -123,6 +115,97 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
     createOffer();
   }, [isInitiator, socket, user._id]);
 
+  // Включение видео
+  const enableVideo = async () => {
+    if (!pcRef.current) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const track = stream.getVideoTracks()[0];
+      if (!track) return;
+
+      const pc = pcRef.current;
+
+      // Добавляем только если ещё нет такого трека
+      const senderExists = pc
+        .getSenders()
+        .some((s) => s.track?.kind === "video");
+      if (!senderExists) {
+        pc.addTrack(track, stream);
+
+        // Добавляем трек в существующий локальный поток
+        if (localStream) {
+          localStream.addTrack(track);
+        } else {
+          setLocalStream(stream);
+        }
+        if (localVideoRef.current)
+          localVideoRef.current.srcObject = localStream || stream;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Включение/выключение аудио
+  const toggleAudio = async () => {
+    if (!pcRef.current) return;
+
+    if (!isAudioOn) {
+      try {
+        // Получаем только аудио
+        const audioStream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        const audioTrack = audioStream.getAudioTracks()[0];
+        if (!audioTrack) return;
+
+        // Проверяем, есть ли уже аудио-трек
+        const senderExists = pcRef.current
+          .getSenders()
+          .some((sender) => sender.track?.kind === "audio");
+
+        if (!senderExists) {
+          pcRef.current.addTrack(audioTrack, audioStream);
+        }
+
+        // Добавляем трек в локальный поток для отображения (или просто для управления)
+        setLocalStream((prev) => {
+          const newStream = prev
+            ? new MediaStream([...prev.getTracks(), audioTrack])
+            : new MediaStream([audioTrack]);
+          if (localVideoRef.current)
+            localVideoRef.current.srcObject = newStream;
+          return newStream;
+        });
+
+        setIsAudioOn(true);
+      } catch (err) {
+        console.error("Не удалось включить микрофон", err);
+      }
+    } else {
+      // Выключаем аудио
+      if (!localStream) return;
+
+      // Удаляем аудио трек из локального потока
+      localStream.getAudioTracks().forEach((track) => track.stop());
+
+      setLocalStream((prev) => {
+        if (!prev) return null;
+        const newStream = new MediaStream(prev.getVideoTracks());
+        if (localVideoRef.current) localVideoRef.current.srcObject = newStream;
+        return newStream;
+      });
+
+      // Удаляем аудио-трек из PeerConnection
+      pcRef.current
+        .getSenders()
+        .filter((sender) => sender.track?.kind === "audio")
+        .forEach((sender) => pcRef.current?.removeTrack(sender));
+
+      setIsAudioOn(false);
+    }
+  };
+
   return (
     <div className={cls.callSession}>
       <video ref={localVideoRef} autoPlay muted className={cls.localVideo} />
@@ -130,6 +213,13 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
 
       <video ref={remoteVideoRef} autoPlay className={cls.remoteVideo} />
       <div className={cls.userLabel}>{user.login}</div>
+
+      <div className={cls.controls}>
+        {!isVideoOn && <button onClick={enableVideo}>Включить видео</button>}
+        <button onClick={toggleAudio}>
+          {isAudioOn ? "Выключить микрофон" : "Включить микрофон"}
+        </button>
+      </div>
 
       <button className={cls.endCallBtn} onClick={onEndCall}>
         Завершить
