@@ -14,9 +14,12 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+
   const [isVideoOn, setIsVideoOn] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(false);
+  const [localStream] = useState(() => new MediaStream());
+
+  if (localVideoRef.current) localVideoRef.current.srcObject = localStream;
 
   useEffect(() => {
     const pc = new RTCPeerConnection({
@@ -24,10 +27,12 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
     });
     pcRef.current = pc;
 
+    // renegotiationneeded
     pc.onnegotiationneeded = async () => {
       try {
-        const offer = await pc.createOffer();
-        await pc.setLocalDescription(offer);
+        if (!pcRef.current) return;
+        const offer = await pcRef.current.createOffer();
+        await pcRef.current.setLocalDescription(offer);
         socket?.emit("webrtc:offer", { toUserId: user._id, sdp: offer });
       } catch (err) {
         console.error("Ошибка renegotiation:", err);
@@ -56,7 +61,6 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
       await pcRef.current.setRemoteDescription(new RTCSessionDescription(sdp));
       const answer = await pcRef.current.createAnswer();
       await pcRef.current.setLocalDescription(answer);
-
       socket?.emit("webrtc:answer", { toUserId: fromUserId, sdp: answer });
     };
 
@@ -82,30 +86,29 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
     socket?.on("webrtc:answer", handleAnswer);
     socket?.on("webrtc:ice-candidate", handleICE);
 
+    // Привязываем локальный поток к видео
+    if (localVideoRef.current) localVideoRef.current.srcObject = localStream;
+
     return () => {
       pc.close();
       pcRef.current = null;
 
-      localStream?.getTracks().forEach((track) => track.stop());
+      localStream.getTracks().forEach((track) => track.stop());
 
       socket?.off("webrtc:offer", handleOffer);
       socket?.off("webrtc:answer", handleAnswer);
       socket?.off("webrtc:ice-candidate", handleICE);
     };
-  }, [socket, user._id]);
+  }, [socket, user._id, localStream]);
 
-  // Если мы инициатор, создаём offer
   useEffect(() => {
     if (!isInitiator) return;
     if (!pcRef.current) return;
 
-    const pc = pcRef.current;
-
     const createOffer = async () => {
       try {
-        const offer = await pc.createOffer();
-        await pc.setLocalDescription(offer);
-
+        const offer = await pcRef.current!.createOffer();
+        await pcRef.current!.setLocalDescription(offer);
         socket?.emit("webrtc:offer", { toUserId: user._id, sdp: offer });
       } catch (err) {
         console.error("Ошибка создания offer:", err);
@@ -115,94 +118,47 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
     createOffer();
   }, [isInitiator, socket, user._id]);
 
-  // Включение видео
   const enableVideo = async () => {
     if (!pcRef.current) return;
+
+    // Если уже есть видео трек, не делаем ничего
+    if (localStream.getVideoTracks().length > 0) return;
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       const track = stream.getVideoTracks()[0];
       if (!track) return;
 
-      const pc = pcRef.current;
-
-      // Добавляем только если ещё нет такого трека
-      const senderExists = pc
-        .getSenders()
-        .some((s) => s.track?.kind === "video");
-      if (!senderExists) {
-        pc.addTrack(track, stream);
-
-        // Добавляем трек в существующий локальный поток
-        if (localStream) {
-          localStream.addTrack(track);
-        } else {
-          setLocalStream(stream);
-        }
-        if (localVideoRef.current)
-          localVideoRef.current.srcObject = localStream || stream;
-      }
+      pcRef.current.addTrack(track, localStream);
+      localStream.addTrack(track);
+      setIsVideoOn(true);
     } catch (err) {
-      console.error(err);
+      console.error("Не удалось включить видео", err);
+      alert(
+        "Не удалось включить камеру. Проверьте разрешения и занятость камеры."
+      );
     }
   };
 
-  // Включение/выключение аудио
-  const toggleAudio = async () => {
-    if (!pcRef.current) return;
+  const toggleAudio = () => {
+    if (!localStream) return;
 
-    if (!isAudioOn) {
-      try {
-        // Получаем только аудио
-        const audioStream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-        const audioTrack = audioStream.getAudioTracks()[0];
-        if (!audioTrack) return;
-
-        // Проверяем, есть ли уже аудио-трек
-        const senderExists = pcRef.current
-          .getSenders()
-          .some((sender) => sender.track?.kind === "audio");
-
-        if (!senderExists) {
-          pcRef.current.addTrack(audioTrack, audioStream);
-        }
-
-        // Добавляем трек в локальный поток для отображения (или просто для управления)
-        setLocalStream((prev) => {
-          const newStream = prev
-            ? new MediaStream([...prev.getTracks(), audioTrack])
-            : new MediaStream([audioTrack]);
-          if (localVideoRef.current)
-            localVideoRef.current.srcObject = newStream;
-          return newStream;
-        });
-
-        setIsAudioOn(true);
-      } catch (err) {
-        console.error("Не удалось включить микрофон", err);
-      }
+    const audioTrack = localStream.getAudioTracks()[0];
+    if (audioTrack) {
+      audioTrack.enabled = !audioTrack.enabled;
+      setIsAudioOn(audioTrack.enabled);
     } else {
-      // Выключаем аудио
-      if (!localStream) return;
+      // если аудио ещё нет, получаем его
+      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+        const track = stream.getAudioTracks()[0];
+        if (!track || !pcRef.current) return;
 
-      // Удаляем аудио трек из локального потока
-      localStream.getAudioTracks().forEach((track) => track.stop());
-
-      setLocalStream((prev) => {
-        if (!prev) return null;
-        const newStream = new MediaStream(prev.getVideoTracks());
-        if (localVideoRef.current) localVideoRef.current.srcObject = newStream;
-        return newStream;
+        pcRef.current.addTrack(track, stream);
+        localStream.addTrack(track);
+        if (localVideoRef.current)
+          localVideoRef.current.srcObject = localStream;
+        setIsAudioOn(true);
       });
-
-      // Удаляем аудио-трек из PeerConnection
-      pcRef.current
-        .getSenders()
-        .filter((sender) => sender.track?.kind === "audio")
-        .forEach((sender) => pcRef.current?.removeTrack(sender));
-
-      setIsAudioOn(false);
     }
   };
 
