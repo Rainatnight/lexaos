@@ -41,9 +41,9 @@ jobs:
           push: true
           tags: rainatnight/lexaos-fr:latest
           build-args: |
-            NEXT_PUBLIC_HOST=http://lexaos.ru
-            NEXT_PUBLIC_HOST_API=http://lexaos.ru/api/v1
-            NEXT_PUBLIC_SOCKET=http://lexaos.ru
+            NEXT_PUBLIC_HOST=https://lexaos.ru
+            NEXT_PUBLIC_HOST_API=https://lexaos.ru/api/v1
+            NEXT_PUBLIC_SOCKET=https://lexaos.ru
 
   deploy:
     name: Deploy to VPS
