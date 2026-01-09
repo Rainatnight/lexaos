@@ -126,7 +126,9 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      <div className={cls.login}>{`${t("Пользователь")}  ${user?.login}`}</div>
+      <div className={cls.login}>{`${t("Пользователь")}  ${
+        user?.login || t("Гость")
+      }`}</div>
 
       {items.map((item) => (
         <DraggableItem key={item.id} item={item} />
