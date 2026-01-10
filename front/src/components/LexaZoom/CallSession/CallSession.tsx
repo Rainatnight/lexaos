@@ -171,10 +171,21 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
       <div className={cls.userLabel}>{user.login}</div>
 
       <div className={cls.controls}>
-        {!isVideoOn && <button onClick={enableVideo}>Включить видео</button>}
-        <button onClick={toggleAudio}>
-          {isAudioOn ? "Выключить микрофон" : "Включить микрофон"}
-        </button>
+        <div className={cls.control} onClick={enableVideo}>
+          <img
+            src={
+              isVideoOn ? "/img/sounds/video.png" : "/img/sounds/no-video.png"
+            }
+            alt={isVideoOn ? "Video on" : "Video off"}
+          />
+        </div>
+
+        <div className={cls.control} onClick={toggleAudio}>
+          <img
+            src={isAudioOn ? "/img/sounds/mute.png" : "/img/sounds/unmute.png"}
+            alt={isAudioOn ? "Mic on" : "Mic off"}
+          />
+        </div>
       </div>
 
       <button className={cls.endCallBtn} onClick={onEndCall}>
