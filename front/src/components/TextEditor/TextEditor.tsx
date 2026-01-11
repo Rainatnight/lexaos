@@ -25,7 +25,6 @@ export const TextEditor = ({ item }) => {
   const [currentColor, setCurrentColor] = useState("#000000");
   const [currentFontSize, setCurrentFontSize] = useState("16px");
   const [isBold, setIsBold] = useState(false);
-  const lastRangeRef = useRef<Range | null>(null);
 
   const dispatch = useAppDispatch();
 

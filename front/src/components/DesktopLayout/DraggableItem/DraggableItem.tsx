@@ -23,7 +23,7 @@ interface IProps {
     name?: string;
     x: number;
     y: number;
-    component?: any;
+    component?: React.FC;
     parentId?: string | null;
   };
 }

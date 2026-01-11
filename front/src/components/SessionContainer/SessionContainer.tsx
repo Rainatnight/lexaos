@@ -11,8 +11,8 @@ export const SessionContainer = () => {
     async function initSession() {
       if (session.token) {
         api
-          .get<UserData>("/user")
-          .then(({ data }: any) => {
+          .get<{ user: UserData }>("/user")
+          .then(({ data }) => {
             session.setUser({
               ...data.user,
             });

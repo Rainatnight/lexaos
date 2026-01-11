@@ -27,7 +27,6 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
     });
     pcRef.current = pc;
 
-    // renegotiationneeded
     pc.onnegotiationneeded = async () => {
       try {
         if (!pcRef.current) return;

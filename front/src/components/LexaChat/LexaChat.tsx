@@ -7,9 +7,16 @@ import { useTranslation } from "next-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { fetchChatUsers } from "../LexaZoom/LexaZoom";
 
+interface IMsg {
+  _id: string;
+  from: string;
+  to: string;
+  msg: string;
+}
+
 export const LexaChat = () => {
   const [selectedChat, setSelectedChat] = useState<null | string>(null);
-  const [messages, setMessages] = useState<any>([]);
+  const [messages, setMessages] = useState<IMsg[]>([]);
   const [msg, setMsg] = useState("");
 
   const [loadingHistory, setLoadingHistory] = useState(false);
@@ -83,6 +90,8 @@ export const LexaChat = () => {
       (m.from === user?.id && m.to === selectedChat) //  сообщения этому собеседнику
   );
 
+  const selectedUser = users.find((u) => u._id === selectedChat);
+
   useEffect(() => {
     if (!user?.id || !socket) return;
 
@@ -118,8 +127,6 @@ export const LexaChat = () => {
       el.scrollTop = el.scrollHeight;
     }
   }, [messages]);
-
-  const selectedUser = users.find((u) => u._id === selectedChat);
 
   return (
     <div className={cls.wrap}>
