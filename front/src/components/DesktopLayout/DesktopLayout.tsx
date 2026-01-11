@@ -10,6 +10,8 @@ import { RootState } from "@/store";
 import { loadDesktopThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { useTranslation } from "next-i18next";
+import { Notifications } from "../Notifications/Notifications";
+import { addNotification, INotification } from "@/store/slices/notifications";
 
 interface Props {
   onBackgroundContextMenu: (x: number, y: number) => void;
@@ -21,7 +23,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
   const openFolders = useSelector(openedWindows);
   const allItems = useSelector((state: RootState) => state.desktop.items);
   const { t } = useTranslation("DesktopLayout");
-
+  const { socket } = useSession();
   const { user } = useSession();
 
   const loaded = useRef(false);
@@ -118,6 +120,22 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const handler = (data: INotification) => {
+      console.log(openFolders);
+      if (openFolders.find((el) => el.id === "chat")) return;
+      dispatch(addNotification(data));
+    };
+
+    socket.on("message:new", handler);
+
+    return () => {
+      socket.off("message:new", handler);
+    };
+  }, [socket, dispatch]);
+
   return (
     <div
       className={cls.desktopWrapper}
@@ -129,6 +147,8 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       <div className={cls.login}>{`${t("Пользователь")}  ${
         user?.login || t("Гость")
       }`}</div>
+
+      <Notifications />
 
       {items.map((item) => (
         <DraggableItem key={item.id} item={item} />

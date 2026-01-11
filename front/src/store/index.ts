@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import themeReducer from "./slices/themeSlice";
 import desktopReducer from "./slices/desktopSlice";
 import desktopLoading from "./slices/loadingSlice";
+import notificationsReducer from "./slices/notifications";
 
 export const store = configureStore({
   reducer: {
     theme: themeReducer,
     desktop: desktopReducer,
     desktopLoading: desktopLoading,
+    notifications: notificationsReducer,
   },
 });
 
