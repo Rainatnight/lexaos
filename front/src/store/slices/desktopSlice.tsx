@@ -239,7 +239,9 @@ export const desktopSlice = createSlice({
       const { id, x, y } = action.payload;
 
       const item = state.items.find((i) => i.id === id);
-      if (!item) return;
+      const alreadyOpened = state.openFolders.find((i) => i.id === id);
+
+      if (!item || alreadyOpened) return;
 
       const isFolder = item.type === "folder";
 
