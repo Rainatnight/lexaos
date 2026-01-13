@@ -3,6 +3,7 @@ import { Server } from 'socket.io'
 import { createId } from '@helpers/createId'
 
 import ChatMessages from '@models/ChatMessages/ChatMessages'
+import Users from '@models/Users/Users'
 
 import { AppSocket } from './types/socket'
 
@@ -19,9 +20,13 @@ export async function onConnection(io: Server, socket: AppSocket) {
       msg,
     })
 
+    const userName = await Users.findOne({ _id: message.from }, { login: 1 }).lean()
+    if (!userName) return
+
     const msgData = {
       _id: message._id,
       from: message.from,
+      fromLogin: userName.login,
       to: message.to,
       msg: message.msg,
     }

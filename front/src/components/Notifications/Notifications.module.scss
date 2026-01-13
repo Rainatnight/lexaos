@@ -6,7 +6,6 @@
   flex-direction: column;
   gap: 12px;
   z-index: 1000;
-  pointer-events: none; // чтобы не мешали кликам по рабочему столу
 }
 
 .msg {
@@ -25,6 +24,7 @@
   line-height: 1.4;
 
   animation: slideIn 0.25s ease-out forwards;
+  cursor: pointer;
 }
 
 .msg p {

@@ -6,6 +6,7 @@ export interface INotification {
   msg: string;
   from: string;
   read?: boolean;
+  fromLogin: string;
 }
 
 interface NotificationsState {
@@ -32,10 +33,18 @@ const notificationsSlice = createSlice({
     clearNotifications(state) {
       state.items = [];
     },
+
+    removeNotification: (state, action: PayloadAction<string>) => {
+      state.items = state.items.filter((n) => n._id !== action.payload);
+    },
   },
 });
 
-export const { addNotification, markAsRead, clearNotifications } =
-  notificationsSlice.actions;
+export const {
+  addNotification,
+  markAsRead,
+  clearNotifications,
+  removeNotification,
+} = notificationsSlice.actions;
 
 export default notificationsSlice.reducer;

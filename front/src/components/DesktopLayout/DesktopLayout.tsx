@@ -11,7 +11,11 @@ import { loadDesktopThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { useTranslation } from "next-i18next";
 import { Notifications } from "../Notifications/Notifications";
-import { addNotification, INotification } from "@/store/slices/notifications";
+import {
+  addNotification,
+  INotification,
+  removeNotification,
+} from "@/store/slices/notifications";
 
 interface Props {
   onBackgroundContextMenu: (x: number, y: number) => void;
@@ -25,6 +29,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
   const { t } = useTranslation("DesktopLayout");
   const { socket } = useSession();
   const { user } = useSession();
+  const notificationAudio = React.useRef<HTMLAudioElement | null>(null);
 
   const loaded = useRef(false);
 
@@ -120,13 +125,26 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     }
   }, [dispatch]);
 
+  const playNotificationSound = () => {
+    const audio = new Audio("/sounds/not.mp3");
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+  };
+
   useEffect(() => {
     if (!socket) return;
 
+    const isChatOpen = openFolders.some((el) => el.id === "chat");
+    if (isChatOpen) return;
+
     const handler = (data: INotification) => {
-      console.log(openFolders);
-      if (openFolders.find((el) => el.id === "chat")) return;
       dispatch(addNotification(data));
+
+      playNotificationSound();
+
+      setTimeout(() => {
+        dispatch(removeNotification(data._id));
+      }, 3000);
     };
 
     socket.on("message:new", handler);
@@ -134,7 +152,11 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     return () => {
       socket.off("message:new", handler);
     };
-  }, [socket, dispatch]);
+  }, [socket, openFolders, dispatch]);
+
+  useEffect(() => {
+    notificationAudio.current = new Audio("/sounds/notifsound.mp3");
+  }, []);
 
   return (
     <div
