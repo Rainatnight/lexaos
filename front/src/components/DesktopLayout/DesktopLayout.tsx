@@ -171,7 +171,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
           msg: t("Входящий звонок"),
           fromLogin: data.fromUser.login,
           app: "zoom",
-        })
+        }),
       );
 
       playNotificationSound();
@@ -188,11 +188,6 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     notificationAudio.current = new Audio("/sounds/notifsound.mp3");
   }, []);
 
-  const fetchChatUsers = async () => {
-    const res = await api.get("/users/get-for-chat1");
-    console.log(res);
-    return res.data.users;
-  };
   return (
     <div
       className={cls.desktopWrapper}
@@ -204,14 +199,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       <div className={cls.login}>{`${t("Пользователь")}  ${
         user?.login || t("Гость")
       }`}</div>
-      <div
-        className={cls.test}
-        onClick={() => {
-          fetchChatUsers();
-        }}
-      >
-        click
-      </div>
+
       <Notifications />
 
       {items.map((item) => (
@@ -235,7 +223,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       {openFolders.map((folder) => {
         // в item передаём текущую папку окна
         const currentItem = allItems.find(
-          (i) => i.id === folder.currentFolderId
+          (i) => i.id === folder.currentFolderId,
         );
         if (!currentItem) return null;
 

@@ -20,7 +20,7 @@ export const SessionContainer = () => {
               process.env.NEXT_PUBLIC_SOCKET || "http://localhost:5000",
               {
                 extraHeaders: { authorization: session.token as string },
-              }
+              },
             );
 
             setSocket(socket);
