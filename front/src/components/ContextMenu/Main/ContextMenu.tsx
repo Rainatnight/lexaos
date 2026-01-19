@@ -39,7 +39,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   const items = useSelector((state: RootState) => state.desktop.items);
   const iconSize = useSelector((state: RootState) => state.desktop.iconSize);
   const backgroundValue = useSelector(
-    (state: RootState) => state.theme.backgroundValue
+    (state: RootState) => state.theme.backgroundValue,
   );
 
   const backgrounds = [
@@ -72,14 +72,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         // Проверка наложений с элементами из Redux
         while (
           items.some(
-            (i) => Math.abs(i.x - newX) < 80 && Math.abs(i.y - newY) < 80
+            (i) => Math.abs(i.x - newX) < 80 && Math.abs(i.y - newY) < 80,
           )
         ) {
           newX += offset;
           newY += offset;
         }
         const folderCount = items.filter(
-          (item) => item.type === "folder"
+          (item) => item.type === "folder" && item.name.includes("Новая папка"),
         ).length;
 
         dispatch(
@@ -89,7 +89,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             y: newY,
             parentId,
             type: "folder",
-          })
+          }),
         );
 
         onClose();
@@ -105,14 +105,15 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         // Проверка наложений с элементами из Redux
         while (
           items.some(
-            (i) => Math.abs(i.x - newX) < 80 && Math.abs(i.y - newY) < 80
+            (i) => Math.abs(i.x - newX) < 80 && Math.abs(i.y - newY) < 80,
           )
         ) {
           newX += offset;
           newY += offset;
         }
-
-        const docsCount = items.filter((item) => item.type === "txt").length;
+        const docsCount = items.filter(
+          (item) => item.type === "txt" && item.name.includes("Документ"),
+        ).length;
 
         dispatch(
           createFolderThunk({
@@ -121,7 +122,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             y: newY,
             parentId,
             type: "txt",
-          })
+          }),
         );
 
         onClose();
@@ -208,6 +209,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         <ContextMenuItem key={idx} option={option} onClose={onClose} />
       ))}
     </ul>,
-    document.body
+    document.body,
   );
 };
