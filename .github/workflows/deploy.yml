@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH to VPS and run deploy script
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.9
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -59,4 +59,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT }}
           script: |
-            /root/lexaos/deploy.sh
+            cd /root/lexaos
+            docker compose pull
+            docker compose up -d
+            docker compose ps
