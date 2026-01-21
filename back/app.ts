@@ -53,7 +53,9 @@ io.on('connection', async (socket: Socket) => {
 })
 
 const routes = createRoutes(io)
-
+app.get('/health', (req, res) => {
+  res.status(200).send('OK')
+})
 // обработка маршрутов
 app.use('/api/v1', routes.authRouter)
 app.use('/api/v1/files', routes.filesRouter)

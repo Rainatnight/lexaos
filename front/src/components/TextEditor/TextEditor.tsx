@@ -48,10 +48,12 @@ export const TextEditor = ({ item }) => {
   const uploadFile = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("file", file);
-
     const res = await api.post<{ data: string }>("/files/upload", formData, {
       headers: { "Content-Type": "multipart/form-data; charset=UTF-16" },
     });
+
+    //nest
+    // const res = await api.post<{ data: string }>("/files/upload", formData, {});
 
     return res.data.data;
   };
@@ -175,7 +177,7 @@ export const TextEditor = ({ item }) => {
       saveTextFileThunk({
         id: item.id,
         content: html,
-      })
+      }),
     );
   };
 

@@ -60,5 +60,25 @@ jobs:
           port: ${{ secrets.VPS_SSH_PORT }}
           script: |
             cd /root/lexaos
+            echo "Pulling new images..."
             docker compose pull
-            docker compose up -d
+
+            echo "Starting backend..."
+            docker compose up -d backend
+            echo "Waiting for backend to be healthy..."
+            while ! docker inspect --format='{{.State.Health.Status}}' backend | grep -q "healthy"; do
+              sleep 2
+            done
+
+            echo "Starting frontend..."
+            docker compose up -d frontend
+            echo "Waiting for frontend to be healthy..."
+            while ! docker inspect --format='{{.State.Health.Status}}' frontend | grep -q "healthy"; do
+              sleep 2
+            done
+
+            echo "Starting Nginx..."
+            docker compose up -d nginx
+
+            echo "Starting Caddy..."
+            docker compose up -d caddy
