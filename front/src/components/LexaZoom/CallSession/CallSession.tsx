@@ -173,6 +173,15 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
     }
   };
 
+  const endCall = () => {
+    // останавливаем все треки
+    localStream.getTracks().forEach((track) => track.stop());
+
+    // закрываем peer connection
+    pcRef.current?.close();
+    pcRef.current = null;
+  };
+
   return (
     <div className={cls.callSession}>
       <video ref={localVideoRef} autoPlay muted className={cls.localVideo} />
@@ -199,7 +208,13 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
         </div>
       </div>
 
-      <button className={cls.endCallBtn} onClick={onEndCall}>
+      <button
+        className={cls.endCallBtn}
+        onClick={() => {
+          endCall();
+          onEndCall();
+        }}
+      >
         Завершить
       </button>
     </div>

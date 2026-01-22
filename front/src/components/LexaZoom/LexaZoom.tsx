@@ -61,6 +61,17 @@ export const LexaZoom = () => {
     });
   };
 
+  const handleEndCall = () => {
+    if (activeUser) {
+      socket?.emit("call:end", {
+        toUserId: activeUser._id,
+      });
+    }
+
+    setMode("IDLE");
+    setActiveUser(null);
+  };
+
   const handleRejectCall = () => {
     if (!activeUser) return;
 
@@ -91,6 +102,11 @@ export const LexaZoom = () => {
       setMode("IDLE");
     });
 
+    socket?.on("call:ended", () => {
+      setActiveUser(null);
+      setMode("IDLE");
+    });
+
     socket?.on("call:accepted", () => {
       setMode("IN_CALL");
     });
@@ -100,9 +116,10 @@ export const LexaZoom = () => {
       socket?.off("call:cancelled");
       socket?.off("call:rejected");
       socket?.off("call:accepted");
+      socket?.off("call:ended");
     };
   }, [socket]);
-
+  console.log("activeUser", activeUser);
   return (
     <div className={cls.wrap}>
       {mode === "IDLE" && <UsersList users={users} onCall={handleCallUser} />}
@@ -123,10 +140,7 @@ export const LexaZoom = () => {
         <CallSession
           user={activeUser}
           isInitiator={isCallInitiator}
-          onEndCall={() => {
-            setMode("IDLE");
-            setActiveUser(null);
-          }}
+          onEndCall={handleEndCall}
         />
       )}
     </div>

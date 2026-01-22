@@ -54,6 +54,12 @@ export async function onConnection(io: Server, socket: AppSocket) {
     io.to(toUserId.toString()).emit('call:cancelled')
   })
 
+  socket.on('call:end', ({ toUserId }) => {
+    io.to(toUserId.toString()).emit('call:ended', {
+      fromUserId: socket.userId,
+    })
+  })
+
   // webrtc
   // Offer
   socket.on('webrtc:offer', ({ toUserId, sdp }) => {
