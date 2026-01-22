@@ -10,6 +10,8 @@
 ---
 [Тот же бэк на Nest.js](https://github.com/Rainatnight/lexaos-nest)
 
+[Тот же бэк на Nest.js+Postgresql](https://github.com/Rainatnight/lexaos-nest-postgress#)
+
 ## 🚀 Функционал
 
 - 🔐 Регистрация и авторизация пользователей  
