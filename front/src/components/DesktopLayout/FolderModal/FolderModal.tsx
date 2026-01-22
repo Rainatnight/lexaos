@@ -31,9 +31,10 @@ export const FolderModal = ({
   const pos = useRef({ x: position.x, y: position.y });
   const allItems = useSelector((state: RootState) => state.desktop.items);
   const children = allItems.filter((i) => i.parentId === item.id);
+  const zoomNode = useRef(<LexaZoom />);
 
   const folderState = useSelector((state: RootState) =>
-    state.desktop.openFolders.find((f) => f.id === folderId)
+    state.desktop.openFolders.find((f) => f.id === folderId),
   );
 
   const windowState = folderState?.windowState || "normal";
@@ -42,7 +43,7 @@ export const FolderModal = ({
   const maximized = windowState === "maximized";
 
   const activeFolderId = useSelector(
-    (state: RootState) => state.desktop.activeFolderId
+    (state: RootState) => state.desktop.activeFolderId,
   );
   const isActive = activeFolderId === folderId;
 
@@ -56,7 +57,7 @@ export const FolderModal = ({
       setFolderWindowState({
         id: folderId,
         windowState: state,
-      })
+      }),
     );
   };
 
@@ -93,7 +94,7 @@ export const FolderModal = ({
       case "chat":
         return <LexaChat />;
       case "zoom":
-        return <LexaZoom />;
+        return zoomNode.current;
       case "calc":
         return <Calculexa />;
       case "txt":
@@ -123,7 +124,7 @@ export const FolderModal = ({
             dispatch(setActiveFolder(folderId));
 
             const transform = element.style.transform.match(
-              /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/
+              /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/,
             );
             if (transform) {
               pos.current.x = parseFloat(transform[1]);
@@ -141,11 +142,11 @@ export const FolderModal = ({
 
             pos.current.x = Math.max(
               0,
-              Math.min(pos.current.x, parentRect.width - element.offsetWidth)
+              Math.min(pos.current.x, parentRect.width - element.offsetWidth),
             );
             pos.current.y = Math.max(
               0,
-              Math.min(pos.current.y, parentRect.height - element.offsetHeight)
+              Math.min(pos.current.y, parentRect.height - element.offsetHeight),
             );
 
             element.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px)`;
@@ -158,7 +159,7 @@ export const FolderModal = ({
                 id: item.id,
                 x: pos.current.x,
                 y: pos.current.y,
-              })
+              }),
             );
           },
         },
@@ -187,7 +188,7 @@ export const FolderModal = ({
                 id: item.id,
                 x: pos.current.x,
                 y: pos.current.y,
-              })
+              }),
             );
           },
         },
@@ -220,7 +221,7 @@ export const FolderModal = ({
         if (!draggedId) return;
 
         dispatch(
-          moveItemToFolderThunk({ itemId: draggedId, parentId: item.id })
+          moveItemToFolderThunk({ itemId: draggedId, parentId: item.id }),
         );
       },
     });
@@ -261,7 +262,7 @@ export const FolderModal = ({
             const dy = event.dy;
 
             const transform = clone.style.transform.match(
-              /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/
+              /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/,
             );
             let x = 0,
               y = 0;
@@ -291,7 +292,7 @@ export const FolderModal = ({
                 parentId: droppedOutside ? null : item.id,
                 x: droppedOutside ? event.clientX - 50 : 10,
                 y: droppedOutside ? event.clientY - 50 : 10,
-              })
+              }),
             );
             const audio = new Audio("/sounds/snap.mp3");
             audio.preload = "auto";

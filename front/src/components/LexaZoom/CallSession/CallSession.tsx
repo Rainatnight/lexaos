@@ -117,12 +117,19 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
     createOffer();
   }, [isInitiator, socket, user._id]);
 
-  const enableVideo = async () => {
+  const toggleVideo = async () => {
     if (!pcRef.current) return;
 
-    // Если уже есть видео трек, не делаем ничего
-    if (localStream.getVideoTracks().length > 0) return;
+    const videoTrack = localStream.getVideoTracks()[0];
 
+    //  если видео уже есть — просто включаем / выключаем
+    if (videoTrack) {
+      videoTrack.enabled = !videoTrack.enabled;
+      setIsVideoOn(videoTrack.enabled);
+      return;
+    }
+
+    // если видео ещё нет — получаем камеру
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       const track = stream.getVideoTracks()[0];
@@ -133,9 +140,6 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
       setIsVideoOn(true);
     } catch (err) {
       console.error("Не удалось включить видео", err);
-      alert(
-        "Не удалось включить камеру. Проверьте разрешения и занятость камеры."
-      );
     }
   };
 
@@ -170,7 +174,7 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
       <div className={cls.userLabel}>{user.login}</div>
 
       <div className={cls.controls}>
-        <div className={cls.control} onClick={enableVideo}>
+        <div className={cls.control} onClick={toggleVideo}>
           <img
             src={
               isVideoOn ? "/img/sounds/video.png" : "/img/sounds/no-video.png"
