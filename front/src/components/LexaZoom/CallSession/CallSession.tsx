@@ -143,25 +143,33 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
     }
   };
 
-  const toggleAudio = () => {
-    if (!localStream) return;
+  const toggleAudio = async () => {
+    if (!pcRef.current) return;
 
     const audioTrack = localStream.getAudioTracks()[0];
+
+    //  если аудио уже есть — просто mute / unmute
     if (audioTrack) {
       audioTrack.enabled = !audioTrack.enabled;
       setIsAudioOn(audioTrack.enabled);
-    } else {
-      // если аудио ещё нет, получаем его
-      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-        const track = stream.getAudioTracks()[0];
-        if (!track || !pcRef.current) return;
+      return;
+    }
 
-        pcRef.current.addTrack(track, stream);
-        localStream.addTrack(track);
-        if (localVideoRef.current)
-          localVideoRef.current.srcObject = localStream;
-        setIsAudioOn(true);
-      });
+    //  если аудио ещё нет — получаем микрофон
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const track = stream.getAudioTracks()[0];
+      if (!track) return;
+
+      // ❗️ВАЖНО: добавляем в localStream
+      localStream.addTrack(track);
+
+      // ❗️И В ТОТ ЖЕ STREAM добавляем в PeerConnection
+      pcRef.current.addTrack(track, localStream);
+
+      setIsAudioOn(true);
+    } catch (err) {
+      console.error("Не удалось включить микрофон", err);
     }
   };
 
