@@ -157,7 +157,14 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
 
     //  если аудио ещё нет — получаем микрофон
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          noiseSuppression: true,
+          echoCancellation: true,
+          autoGainControl: true,
+          sampleRate: 48000,
+        },
+      });
       const track = stream.getAudioTracks()[0];
       if (!track) return;
 
