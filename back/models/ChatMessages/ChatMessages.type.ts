@@ -3,6 +3,6 @@ export interface IChatMessage {
   from: string
   to: string
   msg: string
-  updatedAt: Number
-  createdAt: Number
+  updatedAt: number
+  createdAt: number
 }

@@ -33,7 +33,7 @@ export class FoldersController {
       const { userId } = req.user as any
 
       const folder = await Folders.create({
-        userId: userId,
+        userId,
         _id: createId(),
         type,
         name: name || 'Новая папка',

@@ -168,10 +168,10 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
       const track = stream.getAudioTracks()[0];
       if (!track) return;
 
-      // ❗️ВАЖНО: добавляем в localStream
+      // добавляем в localStream
       localStream.addTrack(track);
 
-      // ❗️И В ТОТ ЖЕ STREAM добавляем в PeerConnection
+      // И В ТОТ ЖЕ STREAM добавляем в PeerConnection
       pcRef.current.addTrack(track, localStream);
 
       setIsAudioOn(true);

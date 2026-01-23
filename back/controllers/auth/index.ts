@@ -102,6 +102,7 @@ export class AuthController {
       return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
     }
   }
+
   async test(req: Request, res: Response) {
     try {
       return res.json({ msg: 'success' })
