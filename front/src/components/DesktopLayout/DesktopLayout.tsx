@@ -16,7 +16,6 @@ import {
   INotification,
   removeNotification,
 } from "@/store/slices/notifications";
-import { api } from "@/shared/api/api";
 
 interface Props {
   onBackgroundContextMenu: (x: number, y: number) => void;
@@ -43,6 +42,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     h: number;
   } | null>(null);
   const startPos = useRef<{ x: number; y: number } | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handleBackgroundContextMenu = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -136,9 +136,8 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     if (!socket) return;
 
     const isChatOpen = openFolders.some((el) => el.id === "chat");
-    const isZoomOpen = openFolders.some((el) => el.id === "zoom");
 
-    if (isChatOpen || isZoomOpen) return;
+    if (isChatOpen) return;
 
     const handler = (data: INotification) => {
       dispatch(addNotification(data));
@@ -161,31 +160,52 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     if (!socket) return;
 
     const isZoomOpen = openFolders.some((el) => el.id === "zoom");
-
     if (isZoomOpen) return;
 
     const handler = (data: any) => {
+      // const id = `${data.fromUser.login}-${Date.now()}`;
+      // notificationIdRef.current = id;
+      console.log(data);
       dispatch(
         addNotification({
           ...data,
+          // id,
           msg: t("Входящий звонок"),
           fromLogin: data.fromUser.login,
           app: "zoom",
         }),
       );
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+      }
 
-      playNotificationSound();
+      audioRef.current?.play().catch(() => {
+        console.warn("Звук заблокирован браузером");
+      });
+    };
+
+    const cancelHandler = () => {
+      audioRef.current?.pause();
+      audioRef.current!.currentTime = 0;
     };
 
     socket.on("call:incoming", handler);
+    socket.on("call:cancelled", cancelHandler);
 
     return () => {
       socket.off("call:incoming", handler);
+      socket.off("call:cancelled", cancelHandler);
     };
   }, [socket, openFolders, dispatch]);
 
   useEffect(() => {
     notificationAudio.current = new Audio("/sounds/notifsound.mp3");
+  }, []);
+
+  useEffect(() => {
+    // создаём объект один раз при монтировании
+    audioRef.current = new Audio("/sounds/ring.mp3");
+    audioRef.current.loop = true;
   }, []);
 
   return (
@@ -197,7 +217,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       onMouseUp={handleMouseUp}
     >
       <div className={cls.login}>{`${t("Пользователь")}  ${
-        user?.login || t("Гость")
+        user?.id || t("Гость")
       }`}</div>
 
       <Notifications />
