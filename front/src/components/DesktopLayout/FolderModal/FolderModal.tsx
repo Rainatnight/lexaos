@@ -65,7 +65,6 @@ export const FolderModal = ({
     const closeSound = new Audio("/sounds/close.mp3");
     closeSound.preload = "auto";
     closeSound.currentTime = 0;
-    closeSound.play().catch((err) => console.log(err));
   };
   // === сворачивание ===
   const handleMinimize = () => {
@@ -297,7 +296,7 @@ export const FolderModal = ({
             const audio = new Audio("/sounds/snap.mp3");
             audio.preload = "auto";
             audio.currentTime = 0;
-            audio.play().catch((err) => console.log(err));
+
             // показываем оригинал
             el.style.visibility = "visible";
           },

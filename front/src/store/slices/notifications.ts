@@ -37,6 +37,10 @@ const notificationsSlice = createSlice({
     removeNotification: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((n) => n._id !== action.payload);
     },
+
+    removeCallNotification: (state, action: PayloadAction<string>) => {
+      state.items = state.items.filter((n) => n.from !== action.payload);
+    },
   },
 });
 
@@ -45,6 +49,7 @@ export const {
   markAsRead,
   clearNotifications,
   removeNotification,
+  removeCallNotification,
 } = notificationsSlice.actions;
 
 export default notificationsSlice.reducer;

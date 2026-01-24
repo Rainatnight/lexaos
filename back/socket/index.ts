@@ -51,7 +51,7 @@ export async function onConnection(io: Server, socket: AppSocket) {
 
   // Отмена звонка
   socket.on('call:cancel', ({ toUserId }) => {
-    io.to(toUserId.toString()).emit('call:cancelled')
+    io.to(toUserId.toString()).emit('call:cancelled', { by: socket.userId })
   })
 
   socket.on('call:end', ({ toUserId }) => {

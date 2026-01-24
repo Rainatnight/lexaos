@@ -119,7 +119,7 @@ export const LexaZoom = () => {
       socket?.off("call:ended");
     };
   }, [socket]);
-  console.log("activeUser", activeUser);
+
   return (
     <div className={cls.wrap}>
       {mode === "IDLE" && <UsersList users={users} onCall={handleCallUser} />}

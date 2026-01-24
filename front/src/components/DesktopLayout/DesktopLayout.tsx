@@ -14,6 +14,7 @@ import { Notifications } from "../Notifications/Notifications";
 import {
   addNotification,
   INotification,
+  removeCallNotification,
   removeNotification,
 } from "@/store/slices/notifications";
 
@@ -163,30 +164,28 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     if (isZoomOpen) return;
 
     const handler = (data: any) => {
-      // const id = `${data.fromUser.login}-${Date.now()}`;
-      // notificationIdRef.current = id;
-      console.log(data);
+      const _id = `${data.fromUser.login}-${Date.now()}`;
+
       dispatch(
         addNotification({
           ...data,
-          // id,
+          _id,
           msg: t("Входящий звонок"),
           fromLogin: data.fromUser.login,
+          from: data.fromUser._id,
           app: "zoom",
         }),
       );
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
       }
-
-      audioRef.current?.play().catch(() => {
-        console.warn("Звук заблокирован браузером");
-      });
     };
 
-    const cancelHandler = () => {
+    const cancelHandler = (data: any) => {
       audioRef.current?.pause();
       audioRef.current!.currentTime = 0;
+
+      dispatch(removeCallNotification(data.by));
     };
 
     socket.on("call:incoming", handler);

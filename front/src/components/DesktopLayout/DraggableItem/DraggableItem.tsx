@@ -33,7 +33,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const currentPos = useRef({ x: item.x, y: item.y });
   const selectedItemId = useSelector(
-    (state: RootState) => state.desktop.selectedItemId
+    (state: RootState) => state.desktop.selectedItemId,
   );
 
   useEffect(() => {
@@ -56,15 +56,15 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
             0,
             Math.min(
               currentPos.current.x + event.dx,
-              parentRect.width - element.offsetWidth
-            )
+              parentRect.width - element.offsetWidth,
+            ),
           );
           currentPos.current.y = Math.max(
             0,
             Math.min(
               currentPos.current.y + event.dy,
-              parentRect.height - element.offsetHeight
-            )
+              parentRect.height - element.offsetHeight,
+            ),
           );
 
           element.style.left = `${currentPos.current.x}px`;
@@ -74,7 +74,6 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
           element.classList.remove(cls.dragging);
           document.body.classList.remove("dragging");
           dragEndSound.currentTime = 0;
-          dragEndSound.play().catch((err) => console.log(err));
 
           if (!["folder", "txt"].includes(item.type)) return;
           dispatch(
@@ -82,7 +81,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
               id: item.id,
               x: currentPos.current.x,
               y: currentPos.current.y,
-            })
+            }),
           );
         },
       },
