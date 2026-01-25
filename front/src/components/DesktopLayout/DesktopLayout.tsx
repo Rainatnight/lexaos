@@ -17,6 +17,7 @@ import {
   removeCallNotification,
   removeNotification,
 } from "@/store/slices/notifications";
+import { resetCall } from "@/store/slices/callSlice";
 
 interface Props {
   onBackgroundContextMenu: (x: number, y: number) => void;
@@ -252,7 +253,11 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
           <FolderModal
             key={folder.id}
             item={currentItem}
-            handleCloseWindow={() => dispatch(closeFolder(folder.id))}
+            handleCloseWindow={() => {
+              dispatch(closeFolder(folder.id));
+
+              dispatch(resetCall());
+            }}
             position={pos}
             folderId={folder.id}
           />
