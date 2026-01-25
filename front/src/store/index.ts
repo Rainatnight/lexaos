@@ -3,6 +3,7 @@ import themeReducer from "./slices/themeSlice";
 import desktopReducer from "./slices/desktopSlice";
 import desktopLoading from "./slices/loadingSlice";
 import notificationsReducer from "./slices/notifications";
+import callReducer from "./slices/callSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     desktop: desktopReducer,
     desktopLoading: desktopLoading,
     notifications: notificationsReducer,
+    call: callReducer,
   },
 });
 
@@ -17,7 +19,7 @@ if (typeof window !== "undefined") {
   store.subscribe(() => {
     localStorage.setItem(
       "desktopItems",
-      JSON.stringify(store.getState().desktop.items)
+      JSON.stringify(store.getState().desktop.items),
     );
   });
 }

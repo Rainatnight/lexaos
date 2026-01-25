@@ -7,6 +7,7 @@ export interface INotification {
   from: string;
   read?: boolean;
   fromLogin: string;
+  fromUser: { _id: string; login: string };
 }
 
 interface NotificationsState {

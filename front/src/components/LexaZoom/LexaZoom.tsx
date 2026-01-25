@@ -1,133 +1,115 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import cls from "./LexaZoom.module.scss";
-import { api } from "@/shared/api/api";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
+import {
+  ChatUser,
+  setOutgoingCall,
+  setIncomingCall,
+  setInCall,
+  resetCall,
+} from "@/store/slices/callSlice";
+import useSession from "@/shared/hooks/useSession";
 import { UsersList } from "./UsersList/UsersList";
 import { OutgoingCall } from "./OutgoingCall/OutgoingCall";
 import { IncomingCall } from "./IncomingCall/IncomingCall";
-import useSession from "@/shared/hooks/useSession";
 import { CallSession } from "./CallSession/CallSession";
+import { api } from "@/shared/api/api";
 import { useQuery } from "@tanstack/react-query";
-
-export type ChatUser = {
-  _id: string;
-  login: string;
-};
 
 export const fetchChatUsers = async () => {
   const res = await api.get("/users/get-for-chat");
   return res.data.users;
 };
 
-type Mode = "IDLE" | "OUTGOING_CALL" | "INCOMING_CALL" | "IN_CALL";
-
 export const LexaZoom = () => {
-  const [mode, setMode] = useState<Mode>("IDLE");
-  const [activeUser, setActiveUser] = useState<ChatUser | null>(null);
   const { socket, user } = useSession();
-  const [isCallInitiator, setIsCallInitiator] = useState(false);
-
+  const dispatch = useAppDispatch();
+  const { mode, activeUser, isCallInitiator } = useSelector(
+    (state: RootState) => state.call,
+  );
   const { data: users = [] } = useQuery({
     queryKey: ["chat-users"],
     queryFn: fetchChatUsers,
   });
 
-  const handleCallUser = (Touser: ChatUser) => {
-    setActiveUser(Touser);
-    setMode("OUTGOING_CALL");
-    setIsCallInitiator(true);
+  // Исходящий звонок
+  const handleCallUser = (toUser: ChatUser) => {
+    dispatch(setOutgoingCall(toUser));
     socket?.emit("call:offer", {
-      toUserId: Touser._id,
+      toUserId: toUser._id,
       fromUser: { _id: user?.id, login: user?.login },
     });
   };
 
   const handleCancelCall = () => {
-    if (activeUser) {
-      // сообщаем вызываемому, что звонок отменён
-      socket?.emit("call:cancel", { toUserId: activeUser._id });
-    }
-
-    setActiveUser(null);
-    setMode("IDLE");
+    if (!activeUser) return;
+    socket?.emit("call:cancel", { toUserId: activeUser._id });
+    dispatch(resetCall());
   };
 
   const handleAcceptCall = () => {
     if (!activeUser) return;
-
-    setMode("IN_CALL");
-
-    socket?.emit("call:accept", {
-      fromUserId: activeUser._id,
-    });
-  };
-
-  const handleEndCall = () => {
-    if (activeUser) {
-      socket?.emit("call:end", {
-        toUserId: activeUser._id,
-      });
-    }
-
-    setMode("IDLE");
-    setActiveUser(null);
+    dispatch(setInCall());
+    socket?.emit("call:accept", { fromUserId: activeUser._id });
   };
 
   const handleRejectCall = () => {
     if (!activeUser) return;
+    socket?.emit("call:reject", { fromUserId: activeUser._id });
+    dispatch(resetCall());
+  };
 
-    socket?.emit("call:reject", {
-      fromUserId: activeUser._id,
-    });
-
-    setActiveUser(null);
-    setMode("IDLE");
+  const handleEndCall = () => {
+    if (!activeUser) return;
+    socket?.emit("call:end", { toUserId: activeUser._id });
+    dispatch(resetCall());
   };
 
   useEffect(() => {
-    socket?.on("call:incoming", ({ fromUser }) => {
-      setActiveUser(fromUser);
-      setMode("INCOMING_CALL");
-      setIsCallInitiator(false);
+    if (!socket) return;
+
+    // Входящий звонок
+    socket.on("call:incoming", ({ fromUser }) => {
+      dispatch(setIncomingCall(fromUser));
     });
 
-    socket?.on("call:cancelled", () => {
-      // вызываемый видит, что звонок отменён
-      setActiveUser(null);
-      setMode("IDLE");
+    // Звонок отклонён вызываемым
+    socket.on("call:rejected", () => {
+      dispatch(resetCall());
     });
 
-    socket?.on("call:rejected", () => {
-      // вызывающий видит, что звонок отклонён
-      setActiveUser(null);
-      setMode("IDLE");
+    // Звонок отменён вызывающим
+    socket.on("call:cancelled", () => {
+      dispatch(resetCall());
     });
 
-    socket?.on("call:ended", () => {
-      setActiveUser(null);
-      setMode("IDLE");
+    // Звонок завершён
+    socket.on("call:ended", () => {
+      dispatch(resetCall());
     });
 
-    socket?.on("call:accepted", () => {
-      setMode("IN_CALL");
+    // Звонок принят
+    socket.on("call:accepted", () => {
+      dispatch(setInCall()); // activeUser у вызывающего уже установлен при исходящем звонке
     });
 
     return () => {
-      socket?.off("call:incoming");
-      socket?.off("call:cancelled");
-      socket?.off("call:rejected");
-      socket?.off("call:accepted");
-      socket?.off("call:ended");
+      socket.off("call:incoming");
+      socket.off("call:rejected");
+      socket.off("call:cancelled");
+      socket.off("call:ended");
+      socket.off("call:accepted");
     };
-  }, [socket]);
+  }, [socket, dispatch]);
 
   return (
     <div className={cls.wrap}>
-      {mode === "IDLE" && <UsersList users={users} onCall={handleCallUser} />}
-
+      {mode === "IDLE" && <UsersList onCall={handleCallUser} users={users} />}
       {mode === "OUTGOING_CALL" && activeUser && (
         <OutgoingCall user={activeUser} onCancel={handleCancelCall} />
       )}
-
       {mode === "INCOMING_CALL" && activeUser && (
         <IncomingCall
           user={activeUser}
@@ -135,7 +117,6 @@ export const LexaZoom = () => {
           onReject={handleRejectCall}
         />
       )}
-
       {mode === "IN_CALL" && activeUser && (
         <CallSession
           user={activeUser}

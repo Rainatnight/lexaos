@@ -39,25 +39,20 @@ export async function onConnection(io: Server, socket: AppSocket) {
     io.to(toUserId.toString()).emit('call:incoming', { fromUser })
   })
 
-  // Принять звонок
   socket.on('call:accept', ({ fromUserId }) => {
-    io.to(fromUserId.toString()).emit('call:accepted', { by: socket.userId })
+    io.to(fromUserId.toString()).emit('call:accepted')
   })
 
-  // Отклонить звонок
   socket.on('call:reject', ({ fromUserId }) => {
-    io.to(fromUserId.toString()).emit('call:rejected', { by: socket.userId })
+    io.to(fromUserId.toString()).emit('call:rejected')
   })
 
-  // Отмена звонка
   socket.on('call:cancel', ({ toUserId }) => {
-    io.to(toUserId.toString()).emit('call:cancelled', { by: socket.userId })
+    io.to(toUserId.toString()).emit('call:cancelled')
   })
 
   socket.on('call:end', ({ toUserId }) => {
-    io.to(toUserId.toString()).emit('call:ended', {
-      fromUserId: socket.userId,
-    })
+    io.to(toUserId.toString()).emit('call:ended')
   })
 
   // webrtc
