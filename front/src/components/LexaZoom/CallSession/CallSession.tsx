@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import cls from "./CallSession.module.scss";
-import { ChatUser } from "../LexaZoom";
 import useSession from "@/shared/hooks/useSession";
+import { ChatUser } from "@/store/slices/callSlice";
 
 type Props = {
   user: ChatUser;

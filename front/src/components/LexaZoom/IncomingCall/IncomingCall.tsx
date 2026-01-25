@@ -1,7 +1,7 @@
 import React from "react";
-import { ChatUser } from "../LexaZoom";
 import cls from "./IncomingCall.module.scss";
 import { useTranslation } from "react-i18next";
+import { ChatUser } from "@/store/slices/callSlice";
 
 type Props = {
   user: ChatUser;

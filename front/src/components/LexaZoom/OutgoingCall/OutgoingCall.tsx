@@ -1,6 +1,6 @@
 import React from "react";
-import { ChatUser } from "../LexaZoom";
 import cls from "./OutgoingCall.module.scss";
+import { ChatUser } from "@/store/slices/callSlice";
 
 type Props = {
   user: ChatUser;

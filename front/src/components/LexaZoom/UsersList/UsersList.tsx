@@ -1,8 +1,8 @@
 import React from "react";
 import cls from "./UsersList.module.scss";
-import { ChatUser } from "../LexaZoom";
 import useSession from "@/shared/hooks/useSession";
 import { useTranslation } from "react-i18next";
+import { ChatUser } from "@/store/slices/callSlice";
 
 type Props = {
   users: ChatUser[];
