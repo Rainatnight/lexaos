@@ -1,6 +1,7 @@
 import React from "react";
 import { ChatUser } from "../LexaZoom";
 import cls from "./IncomingCall.module.scss";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   user: ChatUser;
@@ -9,6 +10,8 @@ type Props = {
 };
 
 export const IncomingCall = ({ user, onAccept, onReject }: Props) => {
+  const { t } = useTranslation("zoom");
+
   return (
     <div className={cls.incomingWrap}>
       <div className={cls.incomingCard}>
@@ -21,11 +24,11 @@ export const IncomingCall = ({ user, onAccept, onReject }: Props) => {
 
         <div className={cls.actions}>
           <button className={cls.acceptBtn} onClick={onAccept}>
-            Принять
+            {t("Принять")}
           </button>
 
           <button className={cls.rejectBtn} onClick={onReject}>
-            Отклонить
+            {t("Отклонить")}
           </button>
         </div>
       </div>

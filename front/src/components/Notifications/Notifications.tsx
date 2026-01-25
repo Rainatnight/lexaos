@@ -7,11 +7,13 @@ import { getShortString } from "@/helpers/getShortString";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { openFolder } from "@/store/slices/desktopSlice";
 import { removeNotification } from "@/store/slices/notifications";
+import useSession from "@/shared/hooks/useSession";
 
 export const Notifications = () => {
   const { t } = useTranslation("notifications");
+  const { socket, user } = useSession();
   const notifications = useSelector(
-    (state: RootState) => state.notifications.items
+    (state: RootState) => state.notifications.items,
   );
 
   const dispatch = useAppDispatch();
@@ -22,8 +24,26 @@ export const Notifications = () => {
         id: "chat",
         x: e.clientX,
         y: e.clientY,
-      })
+      }),
     );
+    dispatch(removeNotification(id));
+  };
+
+  const onAccept = (e, id: string) => {
+    dispatch(
+      openFolder({
+        id: "zoom",
+        x: e.clientX,
+        y: e.clientY,
+      }),
+    );
+    dispatch(removeNotification(id));
+  };
+
+  const onReject = (e, id: string, fromUserId) => {
+    socket?.emit("call:reject", {
+      fromUserId,
+    });
     dispatch(removeNotification(id));
   };
 
@@ -34,11 +54,32 @@ export const Notifications = () => {
           key={n._id}
           className={cls.msg}
           onClick={(e) => {
+            if (n.app !== "chat") return;
             openChat(e, n._id);
           }}
         >
           <p>{`${t("от")} ${n.fromLogin}`}</p>
           <p>{getShortString(n.msg, 50)}</p>
+          {n.app === "zoom" && (
+            <div className={cls.btns}>
+              <button
+                className={cls.acceptBtn}
+                onClick={(e) => {
+                  onAccept(e, n._id);
+                }}
+              >
+                {t("Принять")}
+              </button>
+              <button
+                className={cls.rejectBtn}
+                onClick={(e) => {
+                  onReject(e, n._id, n.from);
+                }}
+              >
+                {t("Отклонить")}
+              </button>
+            </div>
+          )}
         </div>
       ))}
     </div>
