@@ -2,7 +2,7 @@
   "port": 5000,
   "clientPort": 3000,
   "baseUrl": "http://localhost:5000",
-  "mongoUri": "mongodb+srv://faudi:Alexnaf1999uh@test.kzhbe.mongodb.net/lexaos",
+  "mongoUri": "",
   "jwtSecret": "sdfg9ug4mq;o;sdf~ksdmfg!;flgmd",
   "isDev": true
 }
