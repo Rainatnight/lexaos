@@ -87,7 +87,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             name: `Новая папка ${folderCount + 1}`,
             x: newX,
             y: newY,
-            parentId,
+            parentId: parentId === "pc" ? null : parentId,
             type: "folder",
           }),
         );
@@ -120,7 +120,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             name: `Документ ${docsCount + 1}`,
             x: newX,
             y: newY,
-            parentId,
+            parentId: parentId === "pc" ? null : parentId,
             type: "txt",
           }),
         );

@@ -32,11 +32,14 @@ export const FolderModal = ({
   const allItems = useSelector((state: RootState) => state.desktop.items);
   const children = allItems.filter((i) => {
     if (item.id === "pc") {
-      return i.parentId === null;
+      return i.id !== "pc" && i.parentId === null;
     }
 
     return i.parentId === item.id;
   });
+  const renamingItemId = useSelector(
+    (state: RootState) => state.desktop.renamingItemId,
+  );
 
   const zoomNode = useRef(<LexaZoom />);
 
@@ -55,7 +58,8 @@ export const FolderModal = ({
   const isActive = activeFolderId === folderId;
 
   // === делаем окно активным при клике ===
-  const handleMouseDown = () => {
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).tagName === "INPUT") return;
     dispatch(setActiveFolder(folderId));
   };
 
@@ -238,6 +242,7 @@ export const FolderModal = ({
   }, [item.id, dispatch, windowState]);
 
   useEffect(() => {
+    if (item.id === "pc") return;
     children.forEach((child) => {
       const el = document.getElementById(`icon-${child.id}`);
       if (!el) return;

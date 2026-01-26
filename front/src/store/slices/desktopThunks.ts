@@ -51,7 +51,7 @@ export const createFolderThunk = createAsyncThunk(
       parentId?: string | null;
       type: "folder" | "txt";
     },
-    { dispatch, rejectWithValue }
+    { dispatch, rejectWithValue },
   ) => {
     try {
       const user = localStorage.getItem(USER_KEY);
@@ -66,9 +66,9 @@ export const createFolderThunk = createAsyncThunk(
           type,
         });
         folder = res.data;
-
+        console.log(folder);
         dispatch(
-          addItem({ x, y, parentId, name, id: folder.id, type, content: "" })
+          addItem({ x, y, parentId, name, id: folder.id, type, content: "" }),
         );
       } else {
         folder = {
@@ -87,7 +87,7 @@ export const createFolderThunk = createAsyncThunk(
     } catch (err: any) {
       return rejectWithValue(err.response?.data || "Server error");
     }
-  }
+  },
 );
 
 // Загружает все элементы рабочего стола пользователя
@@ -121,14 +121,14 @@ export const loadDesktopThunk = createAsyncThunk(
     } catch (err: any) {
       return rejectWithValue(err.response?.data || "Server error");
     }
-  }
+  },
 );
 
 export const renameFolderThunk = createAsyncThunk(
   "desktop/renameFolder",
   async (
     { id, newName }: { id: string; newName: string },
-    { dispatch, rejectWithValue }
+    { dispatch, rejectWithValue },
   ) => {
     try {
       const user = localStorage.getItem(USER_KEY);
@@ -143,14 +143,14 @@ export const renameFolderThunk = createAsyncThunk(
     } catch (err: any) {
       return rejectWithValue(err.response?.data || "Rename error");
     }
-  }
+  },
 );
 
 export const moveItemThunk = createAsyncThunk(
   "desktop/moveFolder",
   async (
     { id, x, y }: { id: string; x: number; y: number },
-    { dispatch, rejectWithValue }
+    { dispatch, rejectWithValue },
   ) => {
     try {
       const user = localStorage.getItem(USER_KEY);
@@ -164,14 +164,14 @@ export const moveItemThunk = createAsyncThunk(
           id,
           x,
           y,
-        })
+        }),
       );
 
       return { id, x, y };
     } catch (err: any) {
       return rejectWithValue(err.response?.data || "Move error");
     }
-  }
+  },
 );
 
 export const moveItemToFolderThunk = createAsyncThunk(
@@ -188,7 +188,7 @@ export const moveItemToFolderThunk = createAsyncThunk(
       x?: number;
       y?: number;
     },
-    { dispatch, getState, rejectWithValue }
+    { dispatch, getState, rejectWithValue },
   ) => {
     try {
       const state = getState() as RootState;
@@ -221,14 +221,14 @@ export const moveItemToFolderThunk = createAsyncThunk(
           parentId,
           x,
           y,
-        })
+        }),
       );
 
       return { itemId, parentId, x, y };
     } catch (err: any) {
       return rejectWithValue(err.response?.data || "Move error");
     }
-  }
+  },
 );
 
 export const clearbinThunk = createAsyncThunk<
@@ -271,7 +271,7 @@ export const saveTextFileThunk = createAsyncThunk(
   "desktop/saveTextFile",
   async (
     { id, content }: { id: string; content: string },
-    { dispatch, rejectWithValue }
+    { dispatch, rejectWithValue },
   ) => {
     try {
       const user = localStorage.getItem(USER_KEY);
@@ -289,12 +289,12 @@ export const saveTextFileThunk = createAsyncThunk(
         updateTextContent({
           id,
           content,
-        })
+        }),
       );
 
       return { id, content };
     } catch (err: any) {
       return rejectWithValue(err.response?.data || "Save text error");
     }
-  }
+  },
 );

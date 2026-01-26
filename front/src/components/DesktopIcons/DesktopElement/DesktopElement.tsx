@@ -24,7 +24,7 @@ export const DesktopElement = ({
   const dispatch = useAppDispatch();
   const iconSize = useSelector((state: RootState) => state.desktop.iconSize);
   const renamingItemId = useSelector(
-    (state: RootState) => state.desktop.renamingItemId
+    (state: RootState) => state.desktop.renamingItemId,
   );
 
   const [itemMenu, setItemMenu] = useState<{
@@ -94,7 +94,7 @@ export const DesktopElement = ({
           id,
           x: e.clientX,
           y: e.clientY,
-        })
+        }),
       );
     }
   };
@@ -118,7 +118,7 @@ export const DesktopElement = ({
       }}
     >
       <Image
-        src={type === "txt" ? "/img/icons/txt.png" : "/img/icons/folder.png"}
+        src={`/img/icons/${type}.png`}
         alt={type === "txt" ? "txt" : "folder"}
         className={cls.img}
         width={iconSize / 2}
