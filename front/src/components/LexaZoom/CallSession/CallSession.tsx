@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import cls from "./CallSession.module.scss";
 import useSession from "@/shared/hooks/useSession";
 import { ChatUser } from "@/store/slices/callSlice";
+import Image from "next/image";
 
 type Props = {
   user: ChatUser;
@@ -199,18 +200,22 @@ export const CallSession = ({ user, onEndCall, isInitiator }: Props) => {
 
       <div className={cls.controls}>
         <div className={cls.control} onClick={toggleVideo}>
-          <img
+          <Image
             src={
               isVideoOn ? "/img/sounds/video.png" : "/img/sounds/no-video.png"
             }
             alt={isVideoOn ? "Video on" : "Video off"}
+            width={24}
+            height={24}
           />
         </div>
 
         <div className={cls.control} onClick={toggleAudio}>
-          <img
+          <Image
             src={isAudioOn ? "/img/sounds/mute.png" : "/img/sounds/unmute.png"}
             alt={isAudioOn ? "Mic on" : "Mic off"}
+            width={24}
+            height={24}
           />
         </div>
       </div>

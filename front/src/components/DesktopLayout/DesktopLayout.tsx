@@ -196,7 +196,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       socket.off("call:incoming", handler);
       socket.off("call:cancelled", cancelHandler);
     };
-  }, [socket, openFolders, dispatch]);
+  }, [socket, openFolders, dispatch, t]);
 
   useEffect(() => {
     notificationAudio.current = new Audio("/sounds/notifsound.mp3");

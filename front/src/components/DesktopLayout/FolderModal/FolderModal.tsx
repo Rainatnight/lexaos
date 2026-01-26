@@ -210,7 +210,7 @@ export const FolderModal = ({
     return () => {
       interactInstance.unset();
     };
-  }, [windowState, item.id, dispatch]);
+  }, [windowState, item.id, dispatch, folderId]);
 
   useEffect(() => {
     if (!ref.current) return;

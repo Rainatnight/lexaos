@@ -87,7 +87,7 @@ export const LexaChat = () => {
   const filteredMessages = messages.filter(
     (m) =>
       (m.from === selectedChat && m.to === user?.id) || // сообщения от собеседника
-      (m.from === user?.id && m.to === selectedChat) //  сообщения этому собеседнику
+      (m.from === user?.id && m.to === selectedChat), //  сообщения этому собеседнику
   );
 
   const selectedUser = users.find((u) => u._id === selectedChat);

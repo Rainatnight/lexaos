@@ -1,6 +1,7 @@
 import { defaultIcons, openFolder } from "@/store/slices/desktopSlice";
 import cls from "./PanelElements.module.scss";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
+import Image from "next/image";
 
 export const PanelElements = () => {
   const dispatch = useAppDispatch();
@@ -17,11 +18,17 @@ export const PanelElements = () => {
                 id: el.id,
                 x: e.clientX,
                 y: e.clientY,
-              })
+              }),
             );
           }}
         >
-          <img src={`/img/icons/${el.id}.png`} alt={el.name} />
+          <Image
+            src={`/img/icons/${el.id}.png`}
+            alt={el.name}
+            width={32}
+            height={32}
+          />
+
           <p>{el.name}</p>
         </li>
       ))}

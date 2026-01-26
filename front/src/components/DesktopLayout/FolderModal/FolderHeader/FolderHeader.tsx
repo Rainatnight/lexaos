@@ -30,7 +30,7 @@ export const FolderHeader = ({
   // текущая папка окна (если folderWindow есть, иначе используем item)
   const folder =
     items.find((i) => i.id === folderWindow?.currentFolderId) || item;
-  console.log(folder);
+
   // Формируем хлебные крошки
   const breadcrumbs: DesktopItem[] = [];
   let current: DesktopItem | undefined = folder;

@@ -88,7 +88,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
     });
 
     return () => interact(element).unset();
-  }, [dispatch, item.id]);
+  }, [dispatch, item.id, item.type]);
 
   useEffect(() => {
     if (ref.current) {

@@ -18,7 +18,7 @@ export const FolderContent = ({ folders, parentId }) => {
   } | null>(null);
 
   const selectedItemId = useSelector(
-    (state: RootState) => state.desktop.selectedItemId
+    (state: RootState) => state.desktop.selectedItemId,
   );
 
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -32,8 +32,20 @@ export const FolderContent = ({ folders, parentId }) => {
     }
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    // ЛКМ по пустому месту
+    if (e.target === e.currentTarget) {
+      setDesktopMenu(null);
+      dispatch(setSelectedItem(null));
+    }
+  };
+
   return (
-    <div className={cls.folderContent} onContextMenu={handleContextMenu}>
+    <div
+      className={cls.folderContent}
+      onContextMenu={handleContextMenu}
+      onClick={handleClick}
+    >
       {folders.length === 0 ? (
         <p className={cls.empty}>{t("Папка пуста")}</p>
       ) : (
