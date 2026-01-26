@@ -30,7 +30,14 @@ export const FolderModal = ({
   const ref = useRef<HTMLDivElement>(null);
   const pos = useRef({ x: position.x, y: position.y });
   const allItems = useSelector((state: RootState) => state.desktop.items);
-  const children = allItems.filter((i) => i.parentId === item.id);
+  const children = allItems.filter((i) => {
+    if (item.id === "pc") {
+      return i.parentId === null;
+    }
+
+    return i.parentId === item.id;
+  });
+
   const zoomNode = useRef(<LexaZoom />);
 
   const folderState = useSelector((state: RootState) =>
@@ -83,6 +90,7 @@ export const FolderModal = ({
     switch (item.type) {
       case "folder":
       case "bin":
+      case "pc":
         return (
           <>
             <FolderContent folders={children} parentId={item.id} />
@@ -98,6 +106,7 @@ export const FolderModal = ({
         return <Calculexa />;
       case "txt":
         return <TextEditor item={item} />;
+
       default:
         return null;
     }

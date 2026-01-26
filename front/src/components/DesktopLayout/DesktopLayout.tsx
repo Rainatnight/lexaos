@@ -255,7 +255,6 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
             item={currentItem}
             handleCloseWindow={() => {
               dispatch(closeFolder(folder.id));
-
               dispatch(resetCall());
             }}
             position={pos}

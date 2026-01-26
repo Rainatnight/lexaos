@@ -7,6 +7,7 @@
   flex-direction: column;
   flex: 1;
 }
+
 .empty {
   font-size: 14px;
   align-self: center;
@@ -14,6 +15,7 @@
 .itemsGrid {
   display: flex;
   position: relative;
+  flex-wrap: wrap;
   & > div {
     cursor: pointer !important;
   }

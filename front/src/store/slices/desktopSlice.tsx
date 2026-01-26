@@ -43,7 +43,7 @@ export const defaultIcons: DesktopItem[] = [
   {
     id: "pc",
     type: "pc",
-    name: "Этот компьютер",
+    name: "Мой компьютер",
     x: 0,
     y: 0,
     parentId: null,
@@ -133,7 +133,7 @@ export const desktopSlice = createSlice({
 
     moveItem(
       state,
-      action: PayloadAction<{ id: string; x: number; y: number }>
+      action: PayloadAction<{ id: string; x: number; y: number }>,
     ) {
       const item = state.items.find((i) => i.id === action.payload.id);
       if (item) {
@@ -224,17 +224,17 @@ export const desktopSlice = createSlice({
     },
     setWindowFolder: (
       state,
-      action: PayloadAction<{ windowId: string; folderId: string | null }>
+      action: PayloadAction<{ windowId: string; folderId: string | null }>,
     ) => {
       const win = state.openFolders.find(
-        (f) => f.id === action.payload.windowId
+        (f) => f.id === action.payload.windowId,
       );
       if (!win) return;
       win.currentFolderId = action.payload.folderId;
     },
     openFolder: (
       state,
-      action: PayloadAction<{ id: string; x: number; y: number }>
+      action: PayloadAction<{ id: string; x: number; y: number }>,
     ) => {
       const { id, x, y } = action.payload;
 
@@ -247,7 +247,7 @@ export const desktopSlice = createSlice({
 
       if (isFolder) {
         const existingWindow = state.openFolders.find((f) =>
-          isDescendantOrSameWindow(state.items, id, f.id)
+          isDescendantOrSameWindow(state.items, id, f.id),
         );
 
         if (existingWindow) {
@@ -270,7 +270,7 @@ export const desktopSlice = createSlice({
     },
     closeFolder: (state, action: PayloadAction<string>) => {
       state.openFolders = state.openFolders.filter(
-        (f) => f.id !== action.payload
+        (f) => f.id !== action.payload,
       );
     },
 
@@ -279,7 +279,7 @@ export const desktopSlice = createSlice({
       action: PayloadAction<{
         id: string;
         windowState: "normal" | "minimized" | "maximized";
-      }>
+      }>,
     ) {
       const folder = state.openFolders.find((f) => f.id === action.payload.id);
       if (folder) folder.windowState = action.payload.windowState;
@@ -296,7 +296,7 @@ export const desktopSlice = createSlice({
         parentId: string | null; // null = рабочий стол
         x?: number;
         y?: number;
-      }>
+      }>,
     ) => {
       const { itemId, parentId, x, y } = action.payload;
 
@@ -310,7 +310,7 @@ export const desktopSlice = createSlice({
       if (item.type === "folder" && parentId) {
         const isDescendant = (
           childId: string,
-          parentId: string | null
+          parentId: string | null,
         ): boolean => {
           if (!parentId) return false;
           const child = state.items.find((i) => i.id === childId);
@@ -344,7 +344,7 @@ export const desktopSlice = createSlice({
 
     updateTextContent(
       state,
-      action: PayloadAction<{ id: string; content: string }>
+      action: PayloadAction<{ id: string; content: string }>,
     ) {
       const item = state.items.find((i) => i.id === action.payload.id);
       if (item && item.type === "txt") {

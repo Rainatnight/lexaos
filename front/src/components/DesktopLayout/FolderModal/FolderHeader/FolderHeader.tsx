@@ -24,13 +24,13 @@ export const FolderHeader = ({
 
   const items = useSelector((state: RootState) => state.desktop.items);
   const folderWindow = useSelector((state: RootState) =>
-    state.desktop.openFolders.find((f) => f.id === folderWindowId)
+    state.desktop.openFolders.find((f) => f.id === folderWindowId),
   );
 
   // текущая папка окна (если folderWindow есть, иначе используем item)
   const folder =
     items.find((i) => i.id === folderWindow?.currentFolderId) || item;
-
+  console.log(folder);
   // Формируем хлебные крошки
   const breadcrumbs: DesktopItem[] = [];
   let current: DesktopItem | undefined = folder;
@@ -46,7 +46,7 @@ export const FolderHeader = ({
     if (!folder.parentId) return; // уже на рабочем столе
 
     dispatch(
-      setWindowFolder({ windowId: folderWindow.id, folderId: folder.parentId })
+      setWindowFolder({ windowId: folderWindow.id, folderId: folder.parentId }),
     );
   };
 
@@ -54,12 +54,15 @@ export const FolderHeader = ({
     if (!folder || !folderWindow) return;
 
     const childFolder = items.find(
-      (i) => i.parentId === folder.id && i.type === "folder"
+      (i) => i.parentId === folder.id && i.type === "folder",
     );
 
     if (childFolder) {
       dispatch(
-        setWindowFolder({ windowId: folderWindow.id, folderId: childFolder.id })
+        setWindowFolder({
+          windowId: folderWindow.id,
+          folderId: childFolder.id,
+        }),
       );
     }
   };
