@@ -66,7 +66,7 @@ export const createFolderThunk = createAsyncThunk(
           type,
         });
         folder = res.data;
-        console.log(folder);
+
         dispatch(
           addItem({ x, y, parentId, name, id: folder.id, type, content: "" }),
         );

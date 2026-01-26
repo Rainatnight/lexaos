@@ -26,7 +26,7 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   const dispatch = useAppDispatch();
 
   const item = useSelector((state: RootState) =>
-    state.desktop.items.find((i) => i.id === itemId)
+    state.desktop.items.find((i) => i.id === itemId),
   );
 
   useEffect(() => {
@@ -107,6 +107,6 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
         </li>
       ))}
     </ul>,
-    document.body
+    document.body,
   );
 };

@@ -26,6 +26,7 @@ export const DesktopElement = ({
   const renamingItemId = useSelector(
     (state: RootState) => state.desktop.renamingItemId,
   );
+  const [justStartedRename, setJustStartedRename] = useState(false);
 
   const [itemMenu, setItemMenu] = useState<{
     x: number;
@@ -40,14 +41,10 @@ export const DesktopElement = ({
 
   const isRenaming = renamingItemId === id;
 
-  useEffect(() => {
-    if (isRenaming && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isRenaming]);
-
   const handleBlur = () => {
+    if (!justStartedRename) return; // второй вызов игнорируем
+    setJustStartedRename(false);
+
     const newName = tempName.trim();
     if (newName && newName !== name) {
       dispatch(renameFolderThunk({ id, newName }));
@@ -88,20 +85,26 @@ export const DesktopElement = ({
   };
   // --- двойной клик открывает окно
   const handleDoubleClick = (e: React.MouseEvent) => {
-    if (["folder", "bin", "txt"].includes(type)) {
-      dispatch(
-        openFolder({
-          id,
-          x: e.clientX,
-          y: e.clientY,
-        }),
-      );
-    }
+    dispatch(
+      openFolder({
+        id,
+        x: e.clientX,
+        y: e.clientY,
+      }),
+    );
   };
 
   useEffect(() => {
     setTempName(name);
   }, [name]);
+
+  useEffect(() => {
+    if (isRenaming) {
+      setJustStartedRename(true);
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }
+  }, [isRenaming]);
 
   return (
     <div
