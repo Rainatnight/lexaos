@@ -13,12 +13,8 @@ import interact from "interactjs";
 import { moveItemToFolderThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { FolderHeader } from "./FolderHeader/FolderHeader";
-import { FolderContent } from "./FolderContent/FolderContent";
-import { FolderFooter } from "./FolderFooter/FolderFooter";
-import { TextEditor } from "@/components/TextEditor/TextEditor";
-import { LexaChat } from "@/components/LexaChat/LexaChat";
 import { LexaZoom } from "@/components/LexaZoom/LexaZoom";
-import { Calculexa } from "@/components/Calculexa/Calculexa";
+import { getFolderContent } from "./contentMap/contentMap";
 
 export const FolderModal = ({
   item,
@@ -37,9 +33,6 @@ export const FolderModal = ({
 
     return i.parentId === item.id;
   });
-  const renamingItemId = useSelector(
-    (state: RootState) => state.desktop.renamingItemId,
-  );
 
   const zoomNode = useRef(<LexaZoom />);
 
@@ -88,32 +81,6 @@ export const FolderModal = ({
   const handleMaximize = () => {
     changeState(maximized ? "normal" : "maximized");
     playSound();
-  };
-
-  const renderContent = () => {
-    switch (item.type) {
-      case "folder":
-      case "bin":
-      case "pc":
-        return (
-          <>
-            <FolderContent folders={children} parentId={item.id} />
-            <FolderFooter folders={children} item={item} />
-          </>
-        );
-
-      case "chat":
-        return <LexaChat />;
-      case "zoom":
-        return zoomNode.current;
-      case "calc":
-        return <Calculexa />;
-      case "txt":
-        return <TextEditor item={item} />;
-
-      default:
-        return null;
-    }
   };
 
   useEffect(() => {
@@ -348,7 +315,7 @@ export const FolderModal = ({
         />
       </div>
 
-      {renderContent()}
+      {getFolderContent(item, children, zoomNode)}
     </div>
   );
 };
