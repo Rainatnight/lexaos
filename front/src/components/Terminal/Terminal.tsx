@@ -1,15 +1,20 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import cls from "./Terminal.module.scss";
 import useSession from "@/shared/hooks/useSession";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import {
   addHistory,
   handleCommand,
   handleTabCompletion,
 } from "./utils/helpers";
+import { openFolder } from "@/store/slices/desktopSlice";
 
 export const Terminal = () => {
+  const dispatch = useAppDispatch();
   const { user } = useSession();
   const items = useSelector((state: RootState) => state.desktop.items);
 
@@ -26,6 +31,8 @@ export const Terminal = () => {
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
+      if (!input.trim()) return;
+
       if (input.trim().toLowerCase() === "clear") {
         setHistory([]);
         setInput("");
@@ -41,7 +48,30 @@ export const Terminal = () => {
         setCurrentFolderId,
         setCurrentPath,
       );
-      setHistory(addHistory(history, input, output || undefined));
+
+      if (
+        output &&
+        typeof output === "object" &&
+        output.type === "openFolder"
+      ) {
+        dispatch(
+          openFolder({
+            id: output.id,
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2,
+          }),
+        );
+        setHistory(addHistory(history, input));
+      } else {
+        setHistory(
+          addHistory(
+            history,
+            input,
+            typeof output === "string" ? output : undefined,
+          ),
+        );
+      }
+
       setInput("");
     } else if (e.key === "Tab") {
       e.preventDefault();
@@ -51,8 +81,9 @@ export const Terminal = () => {
         currentFolderId,
       );
       setInput(newInput);
-      if (suggestions?.length)
+      if (suggestions?.length) {
         setHistory(addHistory(history, input, suggestions.join("  ")));
+      }
     }
   };
 

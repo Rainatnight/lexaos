@@ -82,16 +82,28 @@ export const handleTabCompletion = (
   let suggestions: string[] = [];
 
   if (parts.length === 1) {
+    // автодополнение команд
     suggestions = COMMANDS.filter((c) => c.startsWith(lastWord));
-  } else if (parts[0] === "cd") {
-    suggestions = getFoldersInCurrent(items, currentFolderId)
-      .map((c) => c.name)
-      .filter((name) => name.toLowerCase().startsWith(lastWord));
+  } else {
+    const baseCmd = parts[0].toLowerCase();
+
+    if (baseCmd === "cd") {
+      // подставляем только папки
+      suggestions = getFoldersInCurrent(items, currentFolderId)
+        .map((c) => c.name)
+        .filter((name) => name.toLowerCase().startsWith(lastWord));
+    } else if (baseCmd === "nano") {
+      // подставляем только .txt файлы
+      suggestions = getItemsInCurrent(items, currentFolderId)
+        .filter((i) => i.type === "txt")
+        .map((i) => i.name)
+        .filter((name) => name.toLowerCase().startsWith(lastWord));
+    }
   }
 
   if (suggestions.length === 1) {
     parts[parts.length - 1] = suggestions[0];
-    return { newInput: parts.join(" ") + (parts.length === 1 ? " " : "") };
+    return { newInput: parts.join(" ") + " " };
   } else if (suggestions.length > 1) {
     return { newInput: input, suggestions };
   }
@@ -107,10 +119,10 @@ export const handleCommand = (
   currentPath: string,
   setCurrentFolderId: (id: string | null) => void,
   setCurrentPath: (path: string) => void,
-): string | null => {
+): string | null | { type: string; id: string } => {
   const parts = cmd.trim().split(" ");
   const baseCmd = parts[0].toLowerCase();
-  let output: string | null = null;
+  let output: string | null | { type: string; id: string } = null;
 
   switch (baseCmd) {
     case "help":
@@ -144,6 +156,23 @@ export const handleCommand = (
     case "clear":
       output = null;
       break;
+    case "nano":
+      if (!parts[1]) {
+        output = "Usage: nano <filename>";
+      } else {
+        const fileName = parts[1].toLowerCase();
+        const file = getItemsInCurrent(items, currentFolderId).find(
+          (i) => i.type === "txt" && i.name.toLowerCase() === fileName,
+        );
+
+        if (file) {
+          output = { type: "openFolder", id: file.id };
+        } else {
+          output = `File not found: ${parts[1]}`;
+        }
+      }
+      break;
+
     default:
       output = `Command not found: ${cmd}`;
   }
