@@ -12,12 +12,12 @@ import {
   handleTabCompletion,
 } from "./utils/helpers";
 import { openFolder } from "@/store/slices/desktopSlice";
+import { createFolderThunk } from "@/store/slices/desktopThunks";
 
 export const Terminal = () => {
   const dispatch = useAppDispatch();
   const { user } = useSession();
   const items = useSelector((state: RootState) => state.desktop.items);
-
   const [history, setHistory] = useState<string[]>([]); // отображение
   const [commandHistory, setCommandHistory] = useState<string[]>([]); // только команды
   const [input, setInput] = useState("");
@@ -37,6 +37,7 @@ export const Terminal = () => {
 
       const cmd = input.trim();
 
+      // clear
       if (cmd.toLowerCase() === "clear") {
         setHistory([]);
         setInput("");
@@ -44,9 +45,10 @@ export const Terminal = () => {
         return;
       }
 
-      // сохраняем только команду для стрелок
+      // сохраняем команду в истории только команд
       setCommandHistory((prev) => [...prev, cmd]);
 
+      // обрабатываем команду
       const output = handleCommand(
         cmd,
         items,
@@ -57,20 +59,57 @@ export const Terminal = () => {
         setCurrentPath,
       );
 
-      if (
-        output &&
-        typeof output === "object" &&
-        output.type === "openFolder"
-      ) {
-        dispatch(
-          openFolder({
-            id: output.id,
-            x: window.innerWidth / 2,
-            y: window.innerHeight / 2,
-          }),
-        );
-        setHistory(addHistory(history, cmd));
+      if (output && typeof output === "object") {
+        if (output.type === "openFolder") {
+          // открываем файл через Redux
+          dispatch(
+            openFolder({
+              id: output.id,
+              x: window.innerWidth / 2,
+              y: window.innerHeight / 2,
+            }),
+          );
+          setHistory(addHistory(history, cmd));
+        } else if (output.type === "mkdir") {
+          // создаём папку через thunk
+          let newX = window.innerWidth / 2;
+          let newY = window.innerHeight / 2;
+          const offset = 10;
+
+          // проверка наложения с существующими элементами
+          while (
+            items.some(
+              (i) => Math.abs(i.x - newX) < 80 && Math.abs(i.y - newY) < 80,
+            )
+          ) {
+            newX += offset;
+            newY += offset;
+          }
+
+          const folderCount = items.filter(
+            (item) =>
+              item.type === "folder" && item.name.includes(output.folderName),
+          ).length;
+
+          dispatch(
+            createFolderThunk({
+              name:
+                folderCount > 0
+                  ? `${output.folderName} ${folderCount + 1}`
+                  : output.folderName,
+              x: newX,
+              y: newY,
+              parentId: output.parentId,
+              type: "folder",
+            }),
+          );
+
+          setHistory(
+            addHistory(history, cmd, `Folder created: ${output.folderName}`),
+          );
+        }
       } else {
+        // обычная строка вывода
         setHistory(
           addHistory(
             history,
@@ -81,7 +120,7 @@ export const Terminal = () => {
       }
 
       setInput("");
-      setHistoryIndex(null); // сброс позиции после ввода
+      setHistoryIndex(null); // сброс позиции в истории после отправки команды
     } else if (e.key === "Tab") {
       e.preventDefault();
       const { newInput, suggestions } = handleTabCompletion(
@@ -112,7 +151,7 @@ export const Terminal = () => {
 
         const newIndex = prev + 1;
         if (newIndex >= commandHistory.length) {
-          setInput("");
+          setInput(""); // очищаем input после последней команды
           return null;
         } else {
           setInput(commandHistory[newIndex]);

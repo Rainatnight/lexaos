@@ -1,4 +1,6 @@
+import { AppDispatch } from "@/store";
 import { DesktopItem } from "@/store/slices/desktopSlice";
+import { createFolderThunk } from "@/store/slices/desktopThunks";
 
 export const COMMANDS = ["help", "clear", "hello", "ls", "cd", "pwd", "whoami"];
 
@@ -111,6 +113,12 @@ export const handleTabCompletion = (
   return { newInput: input };
 };
 
+export type CommandOutput =
+  | string
+  | { type: "openFolder"; id: string }
+  | { type: "mkdir"; folderName: string; parentId: string | null }
+  | null;
+
 export const handleCommand = (
   cmd: string,
   items: DesktopItem[],
@@ -119,10 +127,10 @@ export const handleCommand = (
   currentPath: string,
   setCurrentFolderId: (id: string | null) => void,
   setCurrentPath: (path: string) => void,
-): string | null | { type: string; id: string } => {
+): CommandOutput => {
   const parts = cmd.trim().split(" ");
   const baseCmd = parts[0].toLowerCase();
-  let output: string | null | { type: string; id: string } = null;
+  let output: CommandOutput = null;
 
   switch (baseCmd) {
     case "help":
@@ -170,6 +178,19 @@ export const handleCommand = (
         } else {
           output = `File not found: ${parts[1]}`;
         }
+      }
+      break;
+
+    case "mkdir":
+      if (!parts[1]) {
+        output = "Usage: mkdir <foldername>";
+      } else {
+        const folderName = parts.slice(1).join(" ");
+        output = {
+          type: "mkdir",
+          folderName,
+          parentId: currentFolderId,
+        };
       }
       break;
 
