@@ -18,10 +18,12 @@ export const Terminal = () => {
   const { user } = useSession();
   const items = useSelector((state: RootState) => state.desktop.items);
 
-  const [history, setHistory] = useState<string[]>([]);
+  const [history, setHistory] = useState<string[]>([]); // отображение
+  const [commandHistory, setCommandHistory] = useState<string[]>([]); // только команды
   const [input, setInput] = useState("");
   const [currentPath, setCurrentPath] = useState<string>("~");
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
+  const [historyIndex, setHistoryIndex] = useState<number | null>(null); // для стрелок
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -33,14 +35,20 @@ export const Terminal = () => {
     if (e.key === "Enter") {
       if (!input.trim()) return;
 
-      if (input.trim().toLowerCase() === "clear") {
+      const cmd = input.trim();
+
+      if (cmd.toLowerCase() === "clear") {
         setHistory([]);
         setInput("");
+        setHistoryIndex(null);
         return;
       }
 
+      // сохраняем только команду для стрелок
+      setCommandHistory((prev) => [...prev, cmd]);
+
       const output = handleCommand(
-        input,
+        cmd,
         items,
         user?.login,
         currentFolderId,
@@ -61,18 +69,19 @@ export const Terminal = () => {
             y: window.innerHeight / 2,
           }),
         );
-        setHistory(addHistory(history, input));
+        setHistory(addHistory(history, cmd));
       } else {
         setHistory(
           addHistory(
             history,
-            input,
+            cmd,
             typeof output === "string" ? output : undefined,
           ),
         );
       }
 
       setInput("");
+      setHistoryIndex(null); // сброс позиции после ввода
     } else if (e.key === "Tab") {
       e.preventDefault();
       const { newInput, suggestions } = handleTabCompletion(
@@ -84,6 +93,32 @@ export const Terminal = () => {
       if (suggestions?.length) {
         setHistory(addHistory(history, input, suggestions.join("  ")));
       }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (commandHistory.length === 0) return;
+
+      setHistoryIndex((prev) => {
+        const newIndex =
+          prev === null ? commandHistory.length - 1 : Math.max(0, prev - 1);
+        setInput(commandHistory[newIndex]);
+        return newIndex;
+      });
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (commandHistory.length === 0) return;
+
+      setHistoryIndex((prev) => {
+        if (prev === null) return null;
+
+        const newIndex = prev + 1;
+        if (newIndex >= commandHistory.length) {
+          setInput("");
+          return null;
+        } else {
+          setInput(commandHistory[newIndex]);
+          return newIndex;
+        }
+      });
     }
   };
 
