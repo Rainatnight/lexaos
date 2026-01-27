@@ -1,0 +1,35 @@
+.terminal {
+  background: #1e1e1e;
+  color: #c5c5c5;
+  font-family: monospace;
+  padding: 10px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.history {
+  flex: 1;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.inputLine {
+  display: flex;
+  align-items: center;
+}
+
+.inputLine span {
+  margin-right: 5px;
+}
+
+.inputLine input {
+  background: transparent;
+  border: none;
+  color: #c5c5c5;
+  outline: none;
+  flex: 1;
+  font-family: monospace;
+  font-size: 14px;
+}
