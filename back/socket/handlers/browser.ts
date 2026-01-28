@@ -17,7 +17,10 @@ export async function onBrowser(io: Server, socket: AppSocket) {
   // Если сессия уже есть — используем её
   if (sessions[socket.id]) return sessions[socket.id]
 
-  const browser = await chromium.launch({ headless: true })
+  const browser = await chromium.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+  })
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
 
   const session: BrowserSession = { browser, page }
