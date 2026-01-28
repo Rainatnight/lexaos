@@ -22,8 +22,8 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/config ./config
 COPY --from=builder /app/package.json ./package.json
 
-# Устанавливаем curl для healthcheck
-RUN apk add --no-cache curl
+
+
 
 # Устанавливаем зависимости для Chromium
 RUN apt update && apt install -y \
