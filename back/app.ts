@@ -10,6 +10,7 @@ import passport from 'passport'
 import { Server, Socket } from 'socket.io'
 
 import { errorsCodes } from '@constants/common'
+import { onBrowser } from '@socket/handlers/browser'
 import { AppSocket } from '@socket/types/socket'
 
 import { socketAuthStrict } from '@middleware/socketAuthStrict'
@@ -44,6 +45,62 @@ const io = new Server(server, {
     origin: '*',
   },
   serveClient: false,
+})
+
+const browserNamespace = io.of('/browser')
+browserNamespace.use(socketAuthStrict)
+
+browserNamespace.on('connection', async (socket: any) => {
+  console.log('Browser connected:', socket.id)
+
+  // Создаём сессию один раз для этого сокета
+  const session = await onBrowser(io, socket)
+
+  // Событие открытия URL
+  socket.on('url', async ({ url }: { url: string }) => {
+    if (!session) return
+    console.log('Opening URL:', url)
+    try {
+      await session.page.goto(url)
+    } catch (err) {
+      console.error('Failed to open URL', err)
+    }
+  })
+
+  // Клик мышкой
+  socket.on('click', async ({ x, y }: { x: number; y: number }) => {
+    if (!session) return
+    await session.page.mouse.click(x, y)
+  })
+
+  socket.on('type', async ({ text }: { text: string }) => {
+    if (!session) return
+
+    // Специальные клавиши
+    const specialKeys: Record<string, string> = {
+      ' ': 'Space',
+      Enter: 'Enter',
+      Tab: 'Tab',
+      Backspace: 'Backspace',
+    }
+
+    if (text in specialKeys) {
+      await session.page.keyboard.press(specialKeys[text])
+    } else {
+      await session.page.keyboard.type(text)
+    }
+  })
+
+  // Скролл
+  socket.on('scroll', async ({ deltaY }: { deltaY: number }) => {
+    if (!session) return
+    await session.page.mouse.wheel(0, deltaY)
+  })
+
+  socket.on('resize', async ({ width, height }: any) => {
+    if (!session) return
+    await session.page.setViewportSize({ width, height })
+  })
 })
 
 io.use(socketAuthStrict)

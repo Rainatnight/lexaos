@@ -5,6 +5,7 @@ import { Calculexa } from "@/components/Calculexa/Calculexa";
 import { TextEditor } from "@/components/TextEditor/TextEditor";
 import { Terminal } from "@/components/Terminal/Terminal";
 import { JSX } from "react";
+import Browser from "@/components/Browser/Browser";
 
 export function getFolderContent(
   item: any,
@@ -31,6 +32,8 @@ export function getFolderContent(
       return <TextEditor item={item} />;
     case "term":
       return <Terminal />;
+    case "chrome":
+      return <Browser />;
     default:
       return null;
   }
