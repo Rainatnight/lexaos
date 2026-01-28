@@ -12,9 +12,13 @@ export default function Browser() {
   const [size, setSize] = useState({ width: 1280, height: 720 });
 
   useEffect(() => {
-    const bs = io(process.env.NEXT_PUBLIC_SOCKET || "http://localhost:5000", {
-      extraHeaders: { authorization: token as string },
-    });
+    const bs = io(
+      `${process.env.NEXT_PUBLIC_SOCKET}/browser` ||
+        "http://localhost:5000/browser",
+      {
+        extraHeaders: { authorization: token as string },
+      },
+    );
 
     setBrowserSocket(bs);
 
