@@ -10,6 +10,7 @@ export const COMMANDS = [
   "whoami",
   "echo",
   "date",
+  "touch",
 ];
 
 export const addHistory = (history: string[], cmd: string, output?: string) => [
@@ -125,6 +126,7 @@ export type CommandOutput =
   | string
   | { type: "openFolder"; id: string }
   | { type: "mkdir"; folderName: string; parentId: string | null }
+  | { type: "touch"; fileName: string; parentId: string | null }
   | null;
 
 export const handleCommand = (
@@ -197,6 +199,19 @@ export const handleCommand = (
         output = {
           type: "mkdir",
           folderName,
+          parentId: currentFolderId,
+        };
+      }
+      break;
+
+    case "touch":
+      if (!parts[1]) {
+        output = "Usage: touch <filename>";
+      } else {
+        const fileName = parts.slice(1).join(" ");
+        output = {
+          type: "touch",
+          fileName,
           parentId: currentFolderId,
         };
       }

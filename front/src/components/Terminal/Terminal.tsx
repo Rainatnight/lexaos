@@ -107,6 +107,42 @@ export const Terminal = () => {
           setHistory(
             addHistory(history, cmd, `Folder created: ${output.folderName}`),
           );
+        } else if (output.type === "touch") {
+          let newX = window.innerWidth / 2;
+          let newY = window.innerHeight / 2;
+          const offset = 10;
+
+          while (
+            items.some(
+              (i) => Math.abs(i.x - newX) < 80 && Math.abs(i.y - newY) < 80,
+            )
+          ) {
+            newX += offset;
+            newY += offset;
+          }
+
+          const docsCount = items.filter(
+            (item) =>
+              item.type === "txt" &&
+              item.name.toLowerCase().includes(output.fileName.toLowerCase()),
+          ).length;
+
+          dispatch(
+            createFolderThunk({
+              name:
+                docsCount > 0
+                  ? `${output.fileName} ${docsCount + 1}`
+                  : output.fileName,
+              x: newX,
+              y: newY,
+              parentId: output.parentId,
+              type: "txt",
+            }),
+          );
+
+          setHistory(
+            addHistory(history, cmd, `File created: ${output.fileName}`),
+          );
         }
       } else {
         // обычная строка вывода
