@@ -1,4 +1,4 @@
-import { DesktopItem } from "@/store/slices/desktopSlice";
+import { closeFolder, DesktopItem } from "@/store/slices/desktopSlice";
 import { AppDispatch } from "@/store";
 import { openFolder } from "@/store/slices/desktopSlice";
 import { createFolderThunk } from "@/store/slices/desktopThunks";
@@ -100,6 +100,8 @@ export const handleEnterKey = ({
           `${output.type === "mkdir" ? "Folder" : "File"} created: ${name}`,
         ),
       );
+    } else if (output.type === "exit") {
+      dispatch(closeFolder("term"));
     }
   } else {
     // Если это просто строка

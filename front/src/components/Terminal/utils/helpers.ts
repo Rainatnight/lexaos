@@ -11,6 +11,7 @@ export const COMMANDS = [
   "echo",
   "date",
   "touch",
+  "exit",
 ];
 
 export const addHistory = (history: string[], cmd: string, output?: string) => [
@@ -127,6 +128,7 @@ export type CommandOutput =
   | { type: "openFolder"; id: string }
   | { type: "mkdir"; folderName: string; parentId: string | null }
   | { type: "touch"; fileName: string; parentId: string | null }
+  | { type: "exit" }
   | null;
 
 export const handleCommand = (
@@ -160,6 +162,11 @@ export const handleCommand = (
       break;
     case "whoami":
       output = userLogin || "Guest";
+      break;
+    case "exit":
+      output = {
+        type: "exit",
+      };
       break;
     case "cd":
       output = handleCD(
