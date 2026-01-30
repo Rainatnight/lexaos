@@ -1,8 +1,16 @@
-import { AppDispatch } from "@/store";
 import { DesktopItem } from "@/store/slices/desktopSlice";
-import { createFolderThunk } from "@/store/slices/desktopThunks";
 
-export const COMMANDS = ["help", "clear", "hello", "ls", "cd", "pwd", "whoami"];
+export const COMMANDS = [
+  "help",
+  "clear",
+  "hello",
+  "ls",
+  "cd",
+  "pwd",
+  "whoami",
+  "echo",
+  "date",
+];
 
 export const addHistory = (history: string[], cmd: string, output?: string) => [
   ...history,
@@ -192,6 +200,14 @@ export const handleCommand = (
           parentId: currentFolderId,
         };
       }
+      break;
+
+    case "echo":
+      output = parts.slice(1).join(" ");
+      break;
+
+    case "date":
+      output = new Date().toLocaleString();
       break;
 
     default:
