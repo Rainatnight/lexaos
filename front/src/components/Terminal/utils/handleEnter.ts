@@ -1,7 +1,10 @@
 import { closeFolder, DesktopItem } from "@/store/slices/desktopSlice";
 import { AppDispatch } from "@/store";
 import { openFolder } from "@/store/slices/desktopSlice";
-import { createFolderThunk } from "@/store/slices/desktopThunks";
+import {
+  createFolderThunk,
+  moveItemToFolderThunk,
+} from "@/store/slices/desktopThunks";
 import { addHistory, handleCommand } from "./helpers";
 
 interface HandleEnterParams {
@@ -57,6 +60,8 @@ export const handleEnterKey = ({
         }),
       );
       setHistory(addHistory(history, cmd));
+    } else if (output.type === "rm") {
+      dispatch(moveItemToFolderThunk({ itemId: output.id, parentId: "bin" }));
     } else if (output.type === "mkdir" || output.type === "touch") {
       const name =
         output.type === "mkdir" ? output.folderName : output.fileName;

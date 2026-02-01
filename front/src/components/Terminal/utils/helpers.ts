@@ -13,6 +13,7 @@ export const COMMANDS = [
   "echo",
   "date",
   "touch",
+  "rm",
   "exit",
 ];
 
@@ -130,6 +131,7 @@ export type CommandOutput =
   | { type: "openFolder"; id: string }
   | { type: "mkdir"; folderName: string; parentId: string | null }
   | { type: "touch"; fileName: string; parentId: string | null }
+  | { type: "rm"; id: string }
   | { type: "exit" }
   | null;
 
@@ -224,6 +226,29 @@ export const handleCommand = (
           parentId: currentFolderId,
         };
       }
+      break;
+
+    case "rm":
+      if (!parts[1]) {
+        output = "Usage: rm <filename | foldername>";
+        break;
+      }
+
+      const targetName = parts.slice(1).join(" ").toLowerCase();
+
+      const target = getItemsInCurrent(items, currentFolderId).find(
+        (i) => i.name.toLowerCase() === targetName,
+      );
+
+      if (!target) {
+        output = `No such file or folder: ${parts[1]}`;
+      } else {
+        output = {
+          type: "rm",
+          id: target.id,
+        };
+      }
+
       break;
 
     case "echo":
