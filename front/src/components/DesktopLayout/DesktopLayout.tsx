@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { DraggableItem } from "./DraggableItem/DraggableItem";
-import { closeFolder, setSelectedItem } from "@/store/slices/desktopSlice";
+import {
+  closeFolder,
+  openFolder,
+  setSelectedItem,
+} from "@/store/slices/desktopSlice";
 import cls from "./DesktopLayout.module.scss";
 import useSession from "@/shared/hooks/useSession";
 import { openedWindows, selectRootDesktopItems } from "@/store/selectors";
@@ -232,6 +236,25 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     window.addEventListener("click", unlock);
     return () => window.removeEventListener("click", unlock);
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "t") {
+        e.preventDefault();
+
+        dispatch(
+          openFolder({
+            id: "term",
+            x: 100,
+            y: 50,
+          }),
+        );
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [dispatch]);
 
   return (
     <div
