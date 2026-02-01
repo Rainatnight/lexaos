@@ -134,6 +134,12 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     audio.play().catch(() => {});
   };
 
+  const playClose = () => {
+    const closeSound = new Audio("/sounds/close.mp3");
+    closeSound.currentTime = 0;
+    closeSound.play().catch(() => {});
+  };
+
   useEffect(() => {
     if (!socket) return;
 
@@ -179,6 +185,9 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       );
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
+        audioRef.current.play().catch((err) => {
+          console.log("ring play blocked:", err);
+        });
       }
     };
 
@@ -208,6 +217,22 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     audioRef.current.loop = true;
   }, []);
 
+  useEffect(() => {
+    const unlock = () => {
+      audioRef.current
+        ?.play()
+        .then(() => {
+          audioRef.current?.pause();
+          audioRef.current!.currentTime = 0;
+        })
+        .catch(() => {});
+      window.removeEventListener("click", unlock);
+    };
+
+    window.addEventListener("click", unlock);
+    return () => window.removeEventListener("click", unlock);
+  }, []);
+
   return (
     <div
       className={cls.desktopWrapper}
@@ -217,7 +242,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       onMouseUp={handleMouseUp}
     >
       <div className={cls.login}>{`${t("Пользователь")}  ${
-        user?.id || t("Гость")
+        user?.login || t("Гость")
       }`}</div>
 
       <Notifications />
@@ -256,6 +281,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
             handleCloseWindow={() => {
               dispatch(closeFolder(folder.id));
               dispatch(resetCall());
+              playClose();
             }}
             position={pos}
             folderId={folder.id}

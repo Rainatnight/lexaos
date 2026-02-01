@@ -67,9 +67,16 @@ export const FolderModal = ({
 
   const playSound = () => {
     const closeSound = new Audio("/sounds/close.mp3");
-    closeSound.preload = "auto";
     closeSound.currentTime = 0;
+    closeSound.play().catch(() => {});
   };
+
+  const playMove = () => {
+    const closeSound = new Audio("/sounds/snap.mp3");
+    closeSound.currentTime = 0;
+    closeSound.play().catch(() => {});
+  };
+
   // === сворачивание ===
   const handleMinimize = () => {
     changeState("minimized");
@@ -140,6 +147,8 @@ export const FolderModal = ({
                 y: pos.current.y,
               }),
             );
+
+            playMove();
           },
         },
       })
@@ -169,6 +178,8 @@ export const FolderModal = ({
                 y: pos.current.y,
               }),
             );
+            console.log(1);
+            // playMove();
           },
         },
         modifiers: [
@@ -274,9 +285,7 @@ export const FolderModal = ({
                 y: droppedOutside ? event.clientY - 50 : 10,
               }),
             );
-            const audio = new Audio("/sounds/snap.mp3");
-            audio.preload = "auto";
-            audio.currentTime = 0;
+            playMove();
 
             // показываем оригинал
             el.style.visibility = "visible";

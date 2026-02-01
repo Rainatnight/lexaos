@@ -8,6 +8,8 @@ export const COMMANDS = [
   "cd",
   "pwd",
   "whoami",
+  "mkdir",
+  "nano",
   "echo",
   "date",
   "touch",

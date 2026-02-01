@@ -36,6 +36,12 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
     (state: RootState) => state.desktop.selectedItemId,
   );
 
+  const playMove = () => {
+    const closeSound = new Audio("/sounds/snap.mp3");
+    closeSound.currentTime = 0;
+    closeSound.play().catch(() => {});
+  };
+
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
@@ -83,6 +89,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
               y: currentPos.current.y,
             }),
           );
+          playMove();
         },
       },
     });
