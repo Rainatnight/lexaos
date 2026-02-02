@@ -14,6 +14,7 @@ export interface DesktopItem {
     | "calc"
     | "term"
     | "chrome"
+    | "algos"
     | string;
   name: string;
   x: number;
@@ -103,6 +104,14 @@ export const defaultIcons: DesktopItem[] = [
     name: "Chrome",
     x: 0,
     y: 560,
+    parentId: null,
+  },
+  {
+    id: "algos",
+    type: "algos",
+    name: "Algos",
+    x: 0,
+    y: 640,
     parentId: null,
   },
 ];

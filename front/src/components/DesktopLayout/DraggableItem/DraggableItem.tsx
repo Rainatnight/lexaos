@@ -15,6 +15,7 @@ import { LexaZoomEl } from "@/components/DesktopIcons/LexaZoom/LexaZoom";
 import { Calculexa } from "@/components/DesktopIcons/Calculexa/Calculexa";
 import { Terminal } from "@/components/DesktopIcons/Terminal/Terminal";
 import { Chrome } from "@/components/DesktopIcons/Chrome/Chrome";
+import { AlgosIcon } from "@/components/DesktopIcons/AlgosIcon/AlgosIcon";
 
 interface IProps {
   item: {
@@ -136,6 +137,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
         {item.type === "calc" && <Calculexa />}
         {item.type === "term" && <Terminal />}
         {item.type === "chrome" && <Chrome />}
+        {item.type === "algos" && <AlgosIcon />}
         {item.type === "folder" && (
           <DesktopElement
             id={item.id}

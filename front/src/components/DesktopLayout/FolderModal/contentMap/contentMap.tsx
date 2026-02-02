@@ -6,6 +6,7 @@ import { TextEditor } from "@/components/TextEditor/TextEditor";
 import { Terminal } from "@/components/Terminal/Terminal";
 import { JSX } from "react";
 import Browser from "@/components/Browser/Browser";
+import { Algos } from "@/components/Algos/Algos";
 
 export function getFolderContent(
   item: any,
@@ -24,6 +25,8 @@ export function getFolderContent(
       );
     case "chat":
       return <LexaChat />;
+    case "algos":
+      return <Algos />;
     case "zoom":
       return zoomNode.current;
     case "calc":
