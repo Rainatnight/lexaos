@@ -8,6 +8,12 @@ import { JSX } from "react";
 import Browser from "@/components/Browser/Browser";
 import { Algos } from "@/components/Algos/Algos";
 
+import dynamic from "next/dynamic";
+
+const SandBoxVS = dynamic(() => import("../../../SandBoxVS/SandBoxVS"), {
+  ssr: false,
+});
+
 export function getFolderContent(
   item: any,
   children: any[],
@@ -37,6 +43,8 @@ export function getFolderContent(
       return <Terminal />;
     case "chrome":
       return <Browser />;
+    case "vs":
+      return <SandBoxVS />;
     default:
       return null;
   }
