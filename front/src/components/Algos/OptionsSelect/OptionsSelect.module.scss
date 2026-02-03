@@ -1,0 +1,40 @@
+.selectWrapper {
+  position: relative;
+  display: inline-block;
+  width: 200px;
+}
+
+.selectWrapper select {
+  width: 100%;
+  padding: 10px 40px 10px 15px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  appearance: none;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  transition:
+    border 0.2s,
+    box-shadow 0.2s;
+}
+
+.selectWrapper select:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+  outline: none;
+}
+
+.selectWrapper::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #333;
+  transform: translateY(-50%);
+}

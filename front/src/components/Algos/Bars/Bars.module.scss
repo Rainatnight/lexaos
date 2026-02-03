@@ -1,0 +1,44 @@
+.bars {
+  display: flex;
+  align-items: flex-end;
+  height: 500px;
+  width: 100%;
+
+  gap: 4px;
+}
+
+.barWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.value {
+  font-size: 12px;
+  margin-bottom: 4px;
+  color: #ffffff;
+}
+
+.bar {
+  width: 100%;
+  transition:
+    height 0.2s,
+    background-color 0.2s;
+}
+.default {
+  background-color: #9ca3af;
+}
+
+.compare {
+  background-color: #f59e0b;
+}
+
+.swap {
+  background-color: #ef4444;
+}
+
+.sorted {
+  background-color: #22c55e;
+}

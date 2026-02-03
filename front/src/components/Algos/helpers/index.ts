@@ -1,4 +1,4 @@
-import { BarState, SortStep } from "../Algos";
+import { BarState, SortStep } from "./types";
 
 export const bubbleSortSteps = (arr: number[]): SortStep[] => {
   const steps: SortStep[] = [];

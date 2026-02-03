@@ -1,46 +1,43 @@
 .wrapper {
-  color: black;
+  height: 100%;
+  width: 100%;
+  color: white;
+  background-color: #170542;
+  padding: 10px;
 }
 
-.bars {
+.controls {
+  margin: 10px 0;
   display: flex;
-  align-items: flex-end;
-  height: 300px;
   gap: 4px;
 }
 
-.barWrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.value {
-  font-size: 12px;
-  margin-bottom: 4px;
-  color: #374151;
-}
-
-.bar {
-  width: 14px;
+.button {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
   transition:
-    height 0.2s,
-    background-color 0.2s;
+    background-color 0.2s,
+    transform 0.1s,
+    box-shadow 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-.default {
-  background-color: #9ca3af;
+.button:hover {
+  background-color: #2980b9;
 }
 
-.compare {
-  background-color: #f59e0b;
+.button:active {
+  transform: scale(0.97);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.swap {
-  background-color: #ef4444;
-}
-
-.sorted {
-  background-color: #22c55e;
+.button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+  box-shadow: none;
 }

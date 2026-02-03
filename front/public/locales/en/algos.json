@@ -1,0 +1,12 @@
+{
+  "Новый массив": "New array",
+  "Старт": "Start",
+  "Шаг": "Step",
+  "из": "out of",
+  "Назад": "Back",
+  "Вперёд": "Next",
+  "Пузырьковая": "Bubblesort",
+  "Быстрая": "Quicksort",
+  "Слиянием": "Mergesort",
+  "Вставками": "Insertsort"
+}

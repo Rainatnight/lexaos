@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from "react";
 import cls from "./Algos.module.scss";
 import { bubbleSortSteps } from "./helpers";
-
-type AlgoType = "bubble" | "quick" | "merge" | "insertion";
-
-export type BarState = "default" | "compare" | "swap" | "sorted";
-
-export interface SortStep {
-  array: number[];
-  states: BarState[];
-  action: "compare" | "swap" | "done";
-  indices?: number[]; // какие элементы участвуют
-}
+import { useTranslation } from "react-i18next";
+import { AlgoType, BarState, SortStep } from "./helpers/types";
+import { OptionsSelect } from "./OptionsSelect/OptionsSelect";
+import { Bars } from "./Bars/Bars";
 
 const actionText: Record<SortStep["action"], string> = {
   compare: "Сравниваются элементы",
@@ -20,7 +13,8 @@ const actionText: Record<SortStep["action"], string> = {
 };
 
 const algoDescriptions: Record<AlgoType, string> = {
-  bubble: "Пузырьковая сортировка — простейший алгоритм...",
+  bubble:
+    "Пузырьковая сортировка — простейший алгоритм сортировки, который многократно проходит по массиву, сравнивая соседние элементы и меняя их местами, если они стоят в неправильном порядке. Проходы повторяются до тех пор, пока массив полностью не отсортирован. Алгоритм получил название из-за того, что большие элементы «всплывают» к концу массива, подобно пузырькам в воде.",
   quick: "Быстрая сортировка использует принцип разделяй и властвуй...",
   merge: "Сортировка слиянием рекурсивно делит массив...",
   insertion: "Сортировка вставками последовательно вставляет элементы...",
@@ -32,6 +26,7 @@ export const Algos = () => {
   const [barStates, setBarStates] = useState<BarState[]>([]);
   const [steps, setSteps] = useState<SortStep[]>([]);
   const [stepIndex, setStepIndex] = useState(0);
+  const { t } = useTranslation("algos");
 
   const generateArray = (size = 30) => {
     const arr = Array.from(
@@ -107,40 +102,23 @@ export const Algos = () => {
 
   return (
     <div className={cls.wrapper}>
-      <select
-        value={algo}
-        onChange={(e) => setAlgo(e.target.value as AlgoType)}
-      >
-        <option value="bubble">Пузырьковая</option>
-        <option value="quick">Быстрая</option>
-        <option value="merge">Слиянием</option>
-        <option value="insertion">Вставками</option>
-      </select>
+      <OptionsSelect algo={algo} setAlgo={setAlgo} />
 
-      <div className={cls.bars}>
-        {array.map((value, index) => (
-          <div key={index} className={cls.barWrapper}>
-            <div className={cls.value}>{value}</div>
-
-            <div
-              className={`${cls.bar} ${cls[barStates[index] || "default"]}`}
-              style={{ height: `${value * 3}px` }}
-            />
-          </div>
-        ))}
-      </div>
+      <Bars array={array} barStates={barStates} />
 
       <div className={cls.controls}>
-        <button onClick={() => generateArray()}>Новый массив</button>
-        <button onClick={startSorting}>Старт</button>
+        <button onClick={() => generateArray()} className={cls.button}>
+          {t("Новый массив")}
+        </button>
+        <button onClick={startSorting} className={cls.button}>
+          {t("Старт")}
+        </button>
       </div>
-
-      <div className={cls.description}>{algoDescriptions[algo]}</div>
 
       {steps.length > 0 && (
         <>
           <div>
-            Шаг {stepIndex + 1} из {steps.length}
+            {t("Шаг")} {stepIndex + 1} {t("из")} {steps.length}
           </div>
 
           <div className={cls.stepDescription}>
@@ -148,16 +126,26 @@ export const Algos = () => {
           </div>
 
           <div className={cls.controls}>
-            <button onClick={prevStep} disabled={stepIndex === 0}>
-              ← Назад
+            <button
+              onClick={prevStep}
+              disabled={stepIndex === 0}
+              className={cls.button}
+            >
+              ← {t("Назад")}
             </button>
 
-            <button onClick={nextStep} disabled={stepIndex >= steps.length - 1}>
-              Вперёд →
+            <button
+              onClick={nextStep}
+              disabled={stepIndex >= steps.length - 1}
+              className={cls.button}
+            >
+              {t("Вперёд")} →
             </button>
           </div>
         </>
       )}
+
+      <div className={cls.description}>{algoDescriptions[algo]}</div>
     </div>
   );
 };
