@@ -1,6 +1,63 @@
+.browser {
+  width: 100%;
+  height: 720px; /* фиксированная высота как viewport Playwright */
+  border: 1px solid #ccc;
+  overflow: hidden;
+}
+
+.browser img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
 .guest {
   padding: 4px;
   color: #6b7280;
   text-align: center;
   align-self: center;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.urlInput {
+  flex: 1;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  font-size: 14px;
+
+  &:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+  }
+}
+
+.goButton {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: none;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.05s ease;
+
+  &:hover {
+    background: #4338ca;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
 }

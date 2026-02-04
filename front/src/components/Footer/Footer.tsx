@@ -119,9 +119,9 @@ const Footer: FC = () => {
         <div className={cls.hover} onClick={toggleMenu}>
           <InstrumentsIcon />
         </div>
-        <div className={cls.hover}>
+        {/* <div className={cls.hover}>
           <SearchIcon />
-        </div>
+        </div> */}
       </div>
 
       {/* MIDDLE */}

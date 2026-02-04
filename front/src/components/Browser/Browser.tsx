@@ -34,11 +34,15 @@ export default function Browser() {
   }, []);
 
   const sendClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!browserSocket) return;
-    const rect = e.currentTarget.getBoundingClientRect();
+    if (!browserSocket || !containerRef.current) return;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const scaleX = imgRef.current!.naturalWidth / rect.width;
+    const scaleY = imgRef.current!.naturalHeight / rect.height;
+
     browserSocket.emit("click", {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
     });
   };
 
@@ -58,24 +62,21 @@ export default function Browser() {
   };
 
   useEffect(() => {
-    if (!browserSocket) return;
+    if (!browserSocket || !containerRef.current) return;
 
-    const updateSize = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+
       browserSocket.emit("resize", {
-        width: Math.floor(rect.width),
-        height: Math.floor(rect.height),
+        width: Math.floor(width),
+        height: Math.floor(height),
       });
-    };
+    });
 
-    // первый вызов
-    updateSize();
+    ro.observe(containerRef.current);
 
-    // слушаем изменение окна
-    window.addEventListener("resize", updateSize);
-    return () => window.removeEventListener("resize", updateSize);
-  }, [browserSocket]);
+    return () => ro.disconnect();
+  }, [browserSocket, containerRef.current]);
 
   if (!user?.id) {
     return (
@@ -86,18 +87,21 @@ export default function Browser() {
   }
 
   return (
-    <div ref={containerRef}>
-      <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+    <div ref={containerRef} className={cls.wrap}>
+      <div className={cls.controls}>
         <input
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          style={{ flex: 1 }}
+          className={cls.urlInput}
+          placeholder="Введите URL"
         />
-        <button onClick={openUrl}>Go</button>
+        <button className={cls.goButton} onClick={openUrl}>
+          Go
+        </button>
       </div>
 
       <div
-        style={{ border: "1px solid #ccc", width: 1280, height: 720 }}
+        className={cls.browser}
         onClick={sendClick}
         onKeyDown={sendType}
         onWheel={sendScroll}
