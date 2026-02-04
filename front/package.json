@@ -28,14 +28,9 @@
     "react-dom": "19.1.0",
     "react-i18next": "^16.5.1",
     "react-redux": "^9.2.0",
-    "react-tsparticles": "^2.12.2",
     "sass": "^1.92.1",
     "simple-peer": "^9.11.1",
-    "socket.io-client": "^4.6.0",
-    "tsparticles": "^3.9.1",
-    "tsparticles-preset-firefly": "^2.12.0",
-    "tsparticles-preset-snow": "^2.12.0",
-    "tsparticles-preset-stars": "^2.12.0"
+    "socket.io-client": "^4.6.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

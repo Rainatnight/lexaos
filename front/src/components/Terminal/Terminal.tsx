@@ -6,13 +6,7 @@ import useSession from "@/shared/hooks/useSession";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
-import {
-  addHistory,
-  handleCommand,
-  handleTabCompletion,
-} from "./utils/helpers";
-import { openFolder } from "@/store/slices/desktopSlice";
-import { createFolderThunk } from "@/store/slices/desktopThunks";
+
 import { handleEnterKey } from "./utils/handleEnter";
 import {
   handleArrowDown,

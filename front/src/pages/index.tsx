@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import MainComponent from "@/components/MainComponent/MainComponent";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import ParticlesBG from "@/components/ParticlesBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export default function Home() {
   const { backgroundType, backgroundValue } = useSelector(
-    (state: RootState) => state.theme
+    (state: RootState) => state.theme,
   );
 
   return (
@@ -47,9 +46,7 @@ export default function Home() {
             }}
           />
         ) : (
-          <ParticlesBG
-            preset={backgroundValue as "stars" | "snow" | "firefly"}
-          />
+          <div></div>
         )}
 
         {/* Основной контент */}
