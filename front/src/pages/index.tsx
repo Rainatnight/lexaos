@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import MainComponent from "@/components/MainComponent/MainComponent";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import Background from "@/components/Backgrounds";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,7 +47,7 @@ export default function Home() {
             }}
           />
         ) : (
-          <div></div>
+          <Background />
         )}
 
         {/* Основной контент */}

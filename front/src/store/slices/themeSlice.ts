@@ -9,7 +9,7 @@ interface ThemeState {
 
 const initialState: ThemeState = {
   backgroundType: "preset",
-  backgroundValue: "snow", // белый по умолчанию
+  backgroundValue: "fog", // туман по умолчанию
 };
 
 const themeSlice = createSlice({
@@ -25,7 +25,7 @@ const themeSlice = createSlice({
     // Удобный редьюсер для выбора любого background (цвет или preset)
     setBackground: (
       state,
-      action: PayloadAction<{ type: BackgroundType; value: string }>
+      action: PayloadAction<{ type: BackgroundType; value: string }>,
     ) => {
       state.backgroundType = action.payload.type;
       state.backgroundValue = action.payload.value;

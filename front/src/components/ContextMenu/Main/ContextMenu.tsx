@@ -46,9 +46,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     { label: t("Серый"), value: "#ffffff50", type: "color" },
     { label: t("Черный"), value: "#000000b0", type: "color" },
     { label: t("Синий"), value: "#3c3cff79", type: "color" },
-    { label: "Stars", value: "stars", type: "preset" },
-    { label: "Snow", value: "snow", type: "preset" },
-    { label: "Firefly", value: "firefly", type: "preset" },
+    { label: "net", value: "net", type: "preset" },
+    { label: "fog", value: "fog", type: "preset" },
+    { label: "cells", value: "cells", type: "preset" },
   ];
 
   const sortOptions = [

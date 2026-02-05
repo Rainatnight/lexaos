@@ -178,8 +178,6 @@ export const FolderModal = ({
                 y: pos.current.y,
               }),
             );
-            console.log(1);
-            // playMove();
           },
         },
         modifiers: [
