@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import cls from "./Algos.module.scss";
-import { bubbleSortSteps } from "./helpers";
+import { bubbleSortSteps, mergeSortSteps } from "./helpers";
 import { useTranslation } from "react-i18next";
 import { AlgoType, BarState, SortStep } from "./helpers/types";
 import { OptionsSelect } from "./OptionsSelect/OptionsSelect";
@@ -16,7 +16,8 @@ const algoDescriptions: Record<AlgoType, string> = {
   bubble:
     "Пузырьковая сортировка — простейший алгоритм сортировки, который многократно проходит по массиву, сравнивая соседние элементы и меняя их местами, если они стоят в неправильном порядке. Проходы повторяются до тех пор, пока массив полностью не отсортирован. Алгоритм получил название из-за того, что большие элементы «всплывают» к концу массива, подобно пузырькам в воде.",
   quick: "Быстрая сортировка использует принцип разделяй и властвуй...",
-  merge: "Сортировка слиянием рекурсивно делит массив...",
+  merge:
+    "Сортировка слиянием (Merge Sort) рекурсивно делит массив на половины и затем объединяет их, формируя отсортированный массив. Хорошо работает на больших данных. O(n log n)",
   insertion: "Сортировка вставками последовательно вставляет элементы...",
 };
 
@@ -27,6 +28,9 @@ export const Algos = () => {
   const [steps, setSteps] = useState<SortStep[]>([]);
   const [stepIndex, setStepIndex] = useState(0);
   const { t } = useTranslation("algos");
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const generateArray = (size = 30) => {
     const arr = Array.from(
@@ -40,11 +44,13 @@ export const Algos = () => {
     setStepIndex(0);
   };
 
-  const startSorting = () => {
+  const startSorting = (auto = false) => {
     let generatedSteps: SortStep[] = [];
 
     if (algo === "bubble") {
       generatedSteps = bubbleSortSteps(array);
+    } else if (algo === "merge") {
+      generatedSteps = mergeSortSteps(array);
     }
 
     if (!generatedSteps.length) return;
@@ -53,6 +59,10 @@ export const Algos = () => {
     setStepIndex(0);
     setArray(generatedSteps[0].array);
     setBarStates(generatedSteps[0].states);
+
+    if (auto) {
+      setIsPlaying(true);
+    }
   };
 
   const nextStep = () => {
@@ -100,9 +110,37 @@ export const Algos = () => {
     generateArray(30);
   }, []);
 
+  useEffect(() => {
+    if (isPlaying) {
+      intervalRef.current = setInterval(() => {
+        setStepIndex((prev) => {
+          if (prev >= steps.length - 1) {
+            setIsPlaying(false);
+            return prev;
+          }
+          const next = prev + 1;
+          setArray(steps[next].array);
+          setBarStates(steps[next].states);
+          return next;
+        });
+      }, 500);
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isPlaying, steps]);
+
   return (
     <div className={cls.wrapper}>
-      <OptionsSelect algo={algo} setAlgo={setAlgo} />
+      <OptionsSelect
+        algo={algo}
+        setAlgo={setAlgo}
+        generateArray={generateArray}
+      />
 
       <Bars array={array} barStates={barStates} />
 
@@ -110,9 +148,20 @@ export const Algos = () => {
         <button onClick={() => generateArray()} className={cls.button}>
           {t("Новый массив")}
         </button>
-        <button onClick={startSorting} className={cls.button}>
-          {t("Старт")}
+
+        <button onClick={() => startSorting(false)} className={cls.button}>
+          {t("Старт пошаговый")}
         </button>
+
+        <button onClick={() => startSorting(true)} className={cls.button}>
+          {t("Старт автоматический")}
+        </button>
+
+        {isPlaying && (
+          <button onClick={() => setIsPlaying(false)} className={cls.button}>
+            {t("Стоп")}
+          </button>
+        )}
       </div>
 
       {steps.length > 0 && (
