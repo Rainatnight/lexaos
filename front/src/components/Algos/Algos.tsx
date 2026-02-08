@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import cls from "./Algos.module.scss";
-import { bubbleSortSteps, mergeSortSteps } from "./helpers";
+import {
+  bubbleSortSteps,
+  mergeSortSteps,
+  insertionSortSteps,
+  quickSortSteps,
+} from "./helpers";
 import { useTranslation } from "react-i18next";
 import { AlgoType, BarState, SortStep } from "./helpers/types";
 import { OptionsSelect } from "./OptionsSelect/OptionsSelect";
@@ -15,10 +20,19 @@ const actionText: Record<SortStep["action"], string> = {
 const algoDescriptions: Record<AlgoType, string> = {
   bubble:
     "Пузырьковая сортировка — простейший алгоритм сортировки, который многократно проходит по массиву, сравнивая соседние элементы и меняя их местами, если они стоят в неправильном порядке. Проходы повторяются до тех пор, пока массив полностью не отсортирован. Алгоритм получил название из-за того, что большие элементы «всплывают» к концу массива, подобно пузырькам в воде.",
-  quick: "Быстрая сортировка использует принцип разделяй и властвуй...",
+  quick:
+    "Быстрая сортировка (Quick Sort) выбирает опорный элемент и разделяет массив на части: элементы меньше опорного и больше. Рекурсивно сортирует части. Эффективна на больших данных. O(n log n) в среднем.",
   merge:
     "Сортировка слиянием (Merge Sort) рекурсивно делит массив на половины и затем объединяет их, формируя отсортированный массив. Хорошо работает на больших данных. O(n log n)",
-  insertion: "Сортировка вставками последовательно вставляет элементы...",
+  insertion:
+    "Сортировка вставками последовательно берёт каждый элемент и вставляет его в нужное место в уже отсортированной части массива. Хорошо работает на небольших данных. Лучший O(n) остальные n^2",
+};
+
+const sortingAlgorithms: Record<string, (arr: number[]) => SortStep[]> = {
+  bubble: bubbleSortSteps,
+  merge: mergeSortSteps,
+  insertion: insertionSortSteps,
+  quick: quickSortSteps,
 };
 
 export const Algos = () => {
@@ -32,27 +46,11 @@ export const Algos = () => {
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const generateArray = (size = 30) => {
-    const arr = Array.from(
-      { length: size },
-      () => Math.floor(Math.random() * 100) + 10,
-    );
-
-    setArray(arr);
-    setBarStates(Array(size).fill("default"));
-    setSteps([]);
-    setStepIndex(0);
-  };
-
   const startSorting = (auto = false) => {
-    let generatedSteps: SortStep[] = [];
+    const generateSteps = sortingAlgorithms[algo];
+    if (!generateSteps) return;
 
-    if (algo === "bubble") {
-      generatedSteps = bubbleSortSteps(array);
-    } else if (algo === "merge") {
-      generatedSteps = mergeSortSteps(array);
-    }
-
+    const generatedSteps = generateSteps(array);
     if (!generatedSteps.length) return;
 
     setSteps(generatedSteps);
@@ -63,6 +61,18 @@ export const Algos = () => {
     if (auto) {
       setIsPlaying(true);
     }
+  };
+
+  const generateArray = (size = 30) => {
+    const arr = Array.from(
+      { length: size },
+      () => Math.floor(Math.random() * 100) + 10,
+    );
+
+    setArray(arr);
+    setBarStates(Array(size).fill("default"));
+    setSteps([]);
+    setStepIndex(0);
   };
 
   const nextStep = () => {

@@ -143,3 +143,156 @@ export const mergeSortSteps = (array: number[]): SortStep[] => {
 
   return steps;
 };
+
+export const insertionSortSteps = (arr: number[]): SortStep[] => {
+  const steps: SortStep[] = [];
+  const a = [...arr];
+  const states: BarState[] = Array(a.length).fill("default");
+
+  for (let i = 1; i < a.length; i++) {
+    const key = a[i];
+    let j = i - 1;
+
+    // Шаг: берем ключевой элемент
+    const keyStates = [...states];
+    keyStates[i] = "compare";
+    steps.push({
+      array: [...a],
+      states: keyStates,
+      action: "compare",
+      indices: [i],
+    });
+
+    // Сдвигаем элементы отсортированной части вправо
+    while (j >= 0 && a[j] > key) {
+      // Сравнение
+      const compareStates: BarState[] = Array(a.length).fill("default");
+      compareStates[j] = "compare";
+      compareStates[j + 1] = "compare";
+      steps.push({
+        array: [...a],
+        states: compareStates,
+        action: "compare",
+        indices: [j, j + 1],
+      });
+
+      // Сдвиг вправо
+      a[j + 1] = a[j];
+      const shiftStates: BarState[] = Array(a.length).fill("default");
+      shiftStates[j] = "swap";
+      shiftStates[j + 1] = "swap";
+      steps.push({
+        array: [...a],
+        states: shiftStates,
+        action: "swap",
+        indices: [j, j + 1],
+      });
+
+      j--;
+    }
+
+    // Вставка key
+    a[j + 1] = key;
+    const insertStates: BarState[] = Array(a.length).fill("default");
+    insertStates[j + 1] = "swap";
+    steps.push({
+      array: [...a],
+      states: insertStates,
+      action: "swap",
+      indices: [j + 1],
+    });
+
+    // Отмечаем все элементы до i как отсортированные
+    const doneStates = [...states];
+    for (let k = 0; k <= i; k++) doneStates[k] = "sorted";
+    steps.push({
+      array: [...a],
+      states: doneStates,
+      action: "done",
+    });
+  }
+
+  return steps;
+};
+
+export const quickSortSteps = (array: number[]): SortStep[] => {
+  const steps: SortStep[] = [];
+  const arr = [...array];
+
+  const partition = (low: number, high: number): number => {
+    const pivot = arr[high];
+    let i = low - 1;
+
+    for (let j = low; j < high; j++) {
+      // Сравнение с pivot
+      const compareStates: BarState[] = Array(arr.length).fill("default");
+      compareStates[j] = "compare";
+      compareStates[high] = "compare"; // pivot
+      steps.push({
+        array: [...arr],
+        states: compareStates,
+        action: "compare",
+        indices: [j, high],
+      });
+
+      if (arr[j] <= pivot) {
+        i++;
+        // Меняем местами arr[i] и arr[j]
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+        const swapStates: BarState[] = Array(arr.length).fill("default");
+        swapStates[i] = "swap";
+        swapStates[j] = "swap";
+        steps.push({
+          array: [...arr],
+          states: swapStates,
+          action: "swap",
+          indices: [i, j],
+        });
+      }
+    }
+
+    // Меняем местами pivot с arr[i+1]
+    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+    const pivotSwapStates: BarState[] = Array(arr.length).fill("default");
+    pivotSwapStates[i + 1] = "swap";
+    pivotSwapStates[high] = "swap";
+    steps.push({
+      array: [...arr],
+      states: pivotSwapStates,
+      action: "swap",
+      indices: [i + 1, high],
+    });
+
+    return i + 1;
+  };
+
+  const quickSort = (low: number, high: number) => {
+    if (low < high) {
+      const pi = partition(low, high);
+      quickSort(low, pi - 1);
+      quickSort(pi + 1, high);
+    } else if (low === high) {
+      // Один элемент - сразу отсортирован
+      const doneStates: BarState[] = Array(arr.length).fill("default");
+      doneStates[low] = "sorted";
+      steps.push({
+        array: [...arr],
+        states: doneStates,
+        action: "done",
+        indices: [low],
+      });
+    }
+  };
+
+  quickSort(0, arr.length - 1);
+
+  // Отмечаем все элементы как отсортированные в конце
+  steps.push({
+    array: [...arr],
+    states: Array(arr.length).fill("sorted") as BarState[],
+    action: "done",
+    indices: [],
+  });
+
+  return steps;
+};
