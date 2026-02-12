@@ -113,7 +113,7 @@ export const LexaChat = () => {
       setHasMoreHistory(true);
       loadHistory();
     }
-  }, [selectedChat]);
+  }, [selectedChat, loadHistory]);
 
   useEffect(() => {
     const el = messagesRef.current;

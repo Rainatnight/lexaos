@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import cls from "./Login.module.scss";
 import { Input } from "@/shared/api/ui/Input/Input";
 import { useTranslation } from "next-i18next";
 import { Text, TextVariants } from "@/shared/api/ui/Text/Text";
 import { useRouter } from "next/router";
 import { api } from "@/shared/api/api";
 import useSession from "@/shared/hooks/useSession";
+import cls from "./Login.module.scss";
 
 export const Login = () => {
   const router = useRouter();

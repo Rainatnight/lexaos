@@ -10,7 +10,6 @@ import Calendar from "react-calendar";
 import { useTranslation } from "next-i18next";
 
 import InstrumentsIcon from "@/shared/api/ui/Icons/InstrumentsIcon";
-import SearchIcon from "@/shared/api/ui/Icons/SearchIcon";
 import i18next from "@/shared/api/config/i18n/i18next";
 
 import { Menu } from "./Menu/Menu";
