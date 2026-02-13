@@ -1,27 +1,6 @@
 import React, { useState } from "react";
 import cls from "./Calculexa.module.scss";
-
-const buttons = [
-  "AC",
-  "+/-",
-  "%",
-  "/",
-  "7",
-  "8",
-  "9",
-  "*",
-  "4",
-  "5",
-  "6",
-  "-",
-  "1",
-  "2",
-  "3",
-  "+",
-  "0",
-  ".",
-  "=",
-];
+import { buttons } from "./helpers";
 
 export const Calculexa = () => {
   const [value, setValue] = useState("0");
@@ -39,7 +18,7 @@ export const Calculexa = () => {
     }
 
     setValue((prev) =>
-      prev === "0" && !isNaN(Number(val)) ? val : prev + val
+      prev === "0" && !isNaN(Number(val)) ? val : prev + val,
     );
   };
 

@@ -9,24 +9,9 @@ import { RootState } from "@/store";
 import { createFolderThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { createPortal } from "react-dom";
+import { IContextMenuProps, IMenuOption } from "../types";
 
-interface ContextMenuProps {
-  x: number;
-  y: number;
-  onClose: () => void;
-  parentId?: string | null;
-}
-
-export interface MenuOption {
-  label: string;
-  value?: string;
-  action?: () => void;
-  submenu?: MenuOption[];
-  hasUnderline?: boolean;
-  selected?: boolean;
-}
-
-export const ContextMenu: React.FC<ContextMenuProps> = ({
+export const ContextMenu: React.FC<IContextMenuProps> = ({
   x,
   y,
   onClose,
@@ -130,7 +115,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     },
   ];
 
-  const options: MenuOption[] = [
+  const options: IMenuOption[] = [
     {
       label: t("Фон"),
       hasUnderline: true,

@@ -125,13 +125,6 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     };
   };
 
-  useEffect(() => {
-    if (!loaded.current) {
-      loaded.current = true;
-      dispatch(loadDesktopThunk());
-    }
-  }, [dispatch]);
-
   const playNotificationSound = () => {
     const audio = new Audio("/sounds/not.mp3");
     audio.currentTime = 0;
@@ -254,6 +247,13 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!loaded.current) {
+      loaded.current = true;
+      dispatch(loadDesktopThunk());
+    }
   }, [dispatch]);
 
   return (

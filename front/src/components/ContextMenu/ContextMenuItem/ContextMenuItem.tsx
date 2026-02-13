@@ -1,15 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
-import { MenuOption } from "../Main/ContextMenu";
-import cls from "./ContextMenuItem.module.scss";
 import { classNames } from "@/helpers/classNames/classNames";
+import cls from "./ContextMenuItem.module.scss";
+import { IMenuOption } from "../types";
 
 export const ContextMenuItem: React.FC<{
-  option: MenuOption;
+  option: IMenuOption;
   onClose: () => void;
 }> = ({ option, onClose }) => {
   const [submenuVisible, setSubmenuVisible] = useState(false);
   const [submenuPosition, setSubmenuPosition] = useState<"left" | "right">(
-    "right"
+    "right",
   );
 
   const liRef = useRef<HTMLLIElement | null>(null);
@@ -61,7 +61,7 @@ export const ContextMenuItem: React.FC<{
       className={classNames(
         cls.item,
         { [cls.underline]: option.hasUnderline },
-        []
+        [],
       )}
     >
       <span>{option.label}</span>
