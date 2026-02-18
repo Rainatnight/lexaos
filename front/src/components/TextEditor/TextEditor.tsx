@@ -4,19 +4,7 @@ import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { saveTextFileThunk } from "@/store/slices/desktopThunks";
 import { api } from "@/shared/api/api";
 import { getFilePath } from "@/helpers/getFilePath/getFilePath";
-
-const COLORS = [
-  "#000000",
-  "#FF0000",
-  "#00FF00",
-  "#0000FF",
-  "#FFA500",
-  "#800080",
-  "#008080",
-  "#FFC0CB",
-];
-
-const FONT_SIZES = ["14px", "16px", "18px", "24px", "32px"];
+import { COLORS, FONT_SIZES } from "./helpers";
 
 export const TextEditor = ({ item }) => {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -48,12 +36,11 @@ export const TextEditor = ({ item }) => {
   const uploadFile = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("file", file);
-    const res = await api.post<{ data: string }>("/files/upload", formData, {
-      headers: { "Content-Type": "multipart/form-data; charset=UTF-16" },
-    });
+    // const res = await api.post<{ data: string }>("/files/upload", formData, {
+    //   headers: { "Content-Type": "multipart/form-data; charset=UTF-16" },
+    // });
 
-    //nest
-    // const res = await api.post<{ data: string }>("/files/upload", formData, {});
+    const res = await api.post<{ data: string }>("/files/upload", formData, {});
 
     return res.data.data;
   };
@@ -109,17 +96,18 @@ export const TextEditor = ({ item }) => {
 
     if (file.type.startsWith("image/")) {
       const img = document.createElement("img");
+      img.dataset.fileId = fileId;
       img.src = getFilePath(fileId);
-      img.alt = file.name;
       img.style.maxWidth = "100%";
+      img.contentEditable = "false";
 
       insertNodeAtCursor(img);
     } else {
       const link = document.createElement("a");
+      link.dataset.fileId = fileId;
       link.href = getFilePath(fileId);
       link.textContent = file.name;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
+      link.contentEditable = "false";
 
       insertNodeAtCursor(link);
     }
@@ -180,11 +168,25 @@ export const TextEditor = ({ item }) => {
       }),
     );
   };
-
   useEffect(() => {
-    if (editorRef.current && item?.content) {
-      editorRef.current.innerHTML = item.content;
-    }
+    if (!editorRef.current) return;
+
+    editorRef.current.innerHTML = item?.content || "";
+
+    const elements = editorRef.current.querySelectorAll("[data-file-id]");
+
+    elements.forEach((el) => {
+      const fileId = el.getAttribute("data-file-id");
+      if (!fileId) return;
+
+      if (el.tagName === "IMG") {
+        el.setAttribute("src", getFilePath(fileId));
+      }
+
+      if (el.tagName === "A") {
+        el.setAttribute("href", getFilePath(fileId));
+      }
+    });
   }, [item]);
 
   return (
@@ -207,7 +209,6 @@ export const TextEditor = ({ item }) => {
           ))}
         </select>
 
-        {/* colors */}
         {COLORS.map((c) => (
           <button
             key={c}
