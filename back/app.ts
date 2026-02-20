@@ -2,7 +2,7 @@ import { ApolloServer, gql } from 'apollo-server-express'
 import config from 'config'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import express, { Application, Request, Response } from 'express'
+import express, { Request, Response } from 'express'
 import fileUpload from 'express-fileupload'
 import { createServer } from 'http'
 import 'module-alias/register'
@@ -20,16 +20,34 @@ import { createRoutes } from './routes'
 import { onConnection } from './socket'
 
 const typeDefs = gql`
+  type User {
+    id: ID!
+    name: String!
+  }
+
   type Query {
     health: String
     add(x: Int!, y: Int!): Int
   }
-`
 
+  type Mutation {
+    createUser(name: String!): User
+  }
+`
 const resolvers = {
   Query: {
-    health: () => 'OK',
+    health: () => {
+      console.log('graphql req')
+      ;('OK')
+    },
     add: (_: any, { x, y }: { x: number; y: number }) => x + y,
+  },
+  Mutation: {
+    createUser: async (_: any, { name }: { name: string }) => {
+      console.log(1)
+      const user = { id: '1', name }
+      return user
+    },
   },
 }
 

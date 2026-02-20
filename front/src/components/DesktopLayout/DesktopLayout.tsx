@@ -22,6 +22,7 @@ import {
   removeNotification,
 } from "@/store/slices/notifications";
 import { resetCall } from "@/store/slices/callSlice";
+import { graphqlApi } from "@/shared/api/graphqlapi";
 
 interface Props {
   onBackgroundContextMenu: (x: number, y: number) => void;
@@ -255,6 +256,22 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       dispatch(loadDesktopThunk());
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    const getHealth = async () => {
+      const { data } = await graphqlApi.post("", {
+        query: `
+      query {
+        health
+      }
+    `,
+      });
+
+      return data.data.health;
+    };
+
+    getHealth();
+  }, []);
 
   return (
     <div
