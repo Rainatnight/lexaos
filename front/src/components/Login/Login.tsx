@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { api } from "@/shared/api/api";
 import useSession from "@/shared/hooks/useSession";
 import cls from "./Login.module.scss";
+import bg from "/public/img/login.jpg";
 
 export const Login = () => {
   const router = useRouter();
@@ -55,7 +56,18 @@ export const Login = () => {
 
   return (
     <div className={cls.wrapper}>
-      <div className={cls.background}></div>
+      <div className={cls.background}>
+        <Image
+          src={bg}
+          alt="Background"
+          fill
+          priority
+          sizes="100vw"
+          quality={65}
+          placeholder="blur"
+          style={{ objectFit: "cover", filter: "blur(4px)" }}
+        />
+      </div>
       <div className={cls.content}>
         <div className={cls.centerBlock}>
           <Image
