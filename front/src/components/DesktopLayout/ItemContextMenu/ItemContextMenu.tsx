@@ -11,6 +11,7 @@ import { useTranslation } from "next-i18next";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { moveItemToFolderThunk } from "@/store/slices/desktopThunks";
 import { createPortal } from "react-dom"; // ← добавили
+import { ItemPropertiesModal } from "./ItemProperties/ItemProperties";
 
 interface Props {
   x: number;
@@ -22,12 +23,43 @@ interface Props {
 export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   const { t } = useTranslation("itemContextMenu");
   const ref = useRef<HTMLUListElement>(null);
+  const [showProperties, setShowProperties] = useState(false);
   const [pos, setPos] = useState({ top: y, left: x });
   const dispatch = useAppDispatch();
 
   const item = useSelector((state: RootState) =>
     state.desktop.items.find((i) => i.id === itemId),
   );
+
+  if (!item) return null;
+
+  const handleRename = () => {
+    dispatch(setRenamingItem(itemId));
+    onClose();
+  };
+
+  const handleDelete = () => {
+    dispatch(moveItemToFolderThunk({ itemId, parentId: "bin" }));
+    onClose();
+  };
+
+  const handleProperties = () => {
+    setShowProperties(true);
+  };
+  const handleOpen = () => {
+    dispatch(openFolder({ id: itemId, x, y }));
+    onClose();
+  };
+
+  const options = [
+    { label: t("Переименовать"), action: handleRename },
+    { label: t("Удалить"), action: handleDelete },
+    { label: t("Свойства"), action: handleProperties },
+  ];
+
+  if (item.type === "folder") {
+    options.push({ label: t("Открыть"), action: handleOpen });
+  }
 
   useEffect(() => {
     const menu = ref.current;
@@ -59,54 +91,35 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
       document.removeEventListener("contextmenu", handleOutsideEvent, true);
     };
   }, [x, y, onClose, dispatch]);
-
-  if (!item) return null;
-
-  const handleRename = () => {
-    dispatch(setRenamingItem(itemId));
-    onClose();
-  };
-
-  const handleDelete = () => {
-    dispatch(moveItemToFolderThunk({ itemId, parentId: "bin" }));
-    onClose();
-  };
-
-  const handleProperties = () => onClose();
-
-  const handleOpen = () => {
-    dispatch(openFolder({ id: itemId, x, y }));
-    onClose();
-  };
-
-  const options = [
-    { label: t("Переименовать"), action: handleRename },
-    { label: t("Удалить"), action: handleDelete },
-    { label: t("Свойства"), action: handleProperties },
-  ];
-
-  if (item.type === "folder") {
-    options.push({ label: t("Открыть"), action: handleOpen });
-  }
-
   //  оборачиваем меню в createPortal
-  return createPortal(
-    <ul
-      ref={ref}
-      className={cls.itemContextMenu}
-      style={{
-        position: "fixed",
-        top: `${pos.top}px`,
-        left: `${pos.left}px`,
-        zIndex: 9999,
-      }}
-    >
-      {options.map((opt, i) => (
-        <li key={i} className={cls.menuItem} onClick={opt.action}>
-          {opt.label}
-        </li>
-      ))}
-    </ul>,
-    document.body,
+  return (
+    <>
+      {createPortal(
+        <ul
+          ref={ref}
+          className={cls.itemContextMenu}
+          style={{
+            position: "fixed",
+            top: `${pos.top}px`,
+            left: `${pos.left}px`,
+            zIndex: 9999,
+          }}
+        >
+          {options.map((opt, i) => (
+            <li key={i} className={cls.menuItem} onClick={opt.action}>
+              {opt.label}
+            </li>
+          ))}
+        </ul>,
+        document.body,
+      )}
+
+      {showProperties && (
+        <ItemPropertiesModal
+          itemId={itemId}
+          onClose={() => setShowProperties(false)}
+        />
+      )}
+    </>
   );
 };
