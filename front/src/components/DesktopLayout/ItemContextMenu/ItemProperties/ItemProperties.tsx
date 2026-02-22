@@ -14,8 +14,6 @@ export const ItemPropertiesModal: React.FC<Props> = ({ itemId, onClose }) => {
 
   const item = items.find((i) => i.id === itemId);
 
-  if (!item) return null;
-
   //  Находим родительскую папку
   const getFullPath = (id: string | null): string => {
     if (!id) return "Рабочий стол";
@@ -25,8 +23,6 @@ export const ItemPropertiesModal: React.FC<Props> = ({ itemId, onClose }) => {
 
     return `${getFullPath(current.parentId ?? null)} / ${current.name}`;
   };
-
-  const locationName = getFullPath(item.parentId ?? null);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -38,6 +34,7 @@ export const ItemPropertiesModal: React.FC<Props> = ({ itemId, onClose }) => {
   }, [onClose]);
 
   if (!item) return null;
+  const locationName = getFullPath(item.parentId ?? null);
 
   return createPortal(
     <div className={cls.overlay}>

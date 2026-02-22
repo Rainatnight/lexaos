@@ -31,8 +31,6 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
     state.desktop.items.find((i) => i.id === itemId),
   );
 
-  if (!item) return null;
-
   const handleRename = () => {
     dispatch(setRenamingItem(itemId));
     onClose();
@@ -56,10 +54,6 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
     { label: t("Удалить"), action: handleDelete },
     { label: t("Свойства"), action: handleProperties },
   ];
-
-  if (item.type === "folder") {
-    options.push({ label: t("Открыть"), action: handleOpen });
-  }
 
   useEffect(() => {
     const menu = ref.current;
@@ -91,6 +85,12 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
       document.removeEventListener("contextmenu", handleOutsideEvent, true);
     };
   }, [x, y, onClose, dispatch]);
+
+  if (!item) return null;
+
+  if (item.type === "folder") {
+    options.push({ label: t("Открыть"), action: handleOpen });
+  }
   //  оборачиваем меню в createPortal
   return (
     <>
