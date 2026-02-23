@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import cls from "./ItemProperties.module.scss";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   itemId: string;
@@ -11,7 +12,7 @@ interface Props {
 
 export const ItemPropertiesModal: React.FC<Props> = ({ itemId, onClose }) => {
   const items = useSelector((state: RootState) => state.desktop.items);
-
+  const { t } = useTranslation("properties");
   const item = items.find((i) => i.id === itemId);
 
   //  Находим родительскую папку
@@ -40,7 +41,9 @@ export const ItemPropertiesModal: React.FC<Props> = ({ itemId, onClose }) => {
     <div className={cls.overlay}>
       <div className={cls.modal}>
         <div className={cls.header}>
-          <span>{item.name} — Свойства</span>
+          <span>
+            {item.name} {t("Свойства")}
+          </span>
           <button onClick={onClose}>✕</button>
         </div>
 
@@ -52,20 +55,22 @@ export const ItemPropertiesModal: React.FC<Props> = ({ itemId, onClose }) => {
             <div>
               <div className={cls.name}>{item.name}</div>
               <div className={cls.type}>
-                Тип: {item.type === "folder" ? "Папка" : "Файл"}
+                {t("Тип:")} {item.type === "folder" ? t("Папка") : t("Файл")}
               </div>
             </div>
           </div>
 
           <div className={cls.infoBlock}>
-            <div>Расположение: {locationName}</div>
+            <div>
+              {t("Расположение")}: {locationName}
+            </div>
             <div>ID: {item.id}</div>
             {/* {item.size && <div>Размер: {item.size} KB</div>} */}
           </div>
         </div>
 
         <div className={cls.footer}>
-          <button onClick={onClose}>OK</button>
+          <button onClick={onClose}>{t("OK")}</button>
         </div>
       </div>
     </div>,
