@@ -65,7 +65,6 @@ export const ItemPropertiesModal: React.FC<Props> = ({ itemId, onClose }) => {
               {t("Расположение")}: {locationName}
             </div>
             <div>ID: {item.id}</div>
-            {/* {item.size && <div>Размер: {item.size} KB</div>} */}
           </div>
         </div>
 

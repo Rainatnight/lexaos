@@ -10,7 +10,7 @@ import cls from "./ItemContextMenu.module.scss";
 import { useTranslation } from "next-i18next";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 import { moveItemToFolderThunk } from "@/store/slices/desktopThunks";
-import { createPortal } from "react-dom"; // ← добавили
+import { createPortal } from "react-dom";
 import { ItemPropertiesModal } from "./ItemProperties/ItemProperties";
 
 interface Props {
@@ -91,7 +91,6 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   if (item.type === "folder") {
     options.push({ label: t("Открыть"), action: handleOpen });
   }
-  //  оборачиваем меню в createPortal
   return (
     <>
       {createPortal(
